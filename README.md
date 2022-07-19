@@ -6,6 +6,8 @@ the breakdown analysis.
 
 Examples:
 
-![sched_add](examples/sched_add.csv.png)
-![sched_get](examples/sched_get.csv.png)
-![register_deps](examples/register_deps.csv.png)
+<img src="examples/sched_add.csv.png" width="400px"/>
+
+<img src="examples/sched_get.csv.png" width="400px"/>
+
+<img src="examples/register_deps.csv.png" width="100%"/>
