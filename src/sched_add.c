@@ -13,6 +13,7 @@
 #include <time.h>
 #include <unistd.h>
 
+static int ncpus = -1;
 static long nruns = 30L;
 static long ntasks = 10000L;
 
@@ -22,7 +23,8 @@ static void **handle;
 static int
 usage(char *argv[])
 {
-	fprintf(stderr, "Usage: bench6 %s [-r NRUNS] [-t NTASKS]\n", argv[0]);
+	fprintf(stderr, "Bench6: A set of Nanos6 micro-benchmarks\n");
+	fprintf(stderr, "Usage: %s [-r NRUNS] [-t NTASKS]\n", argv[0]);
 	fprintf(stderr, "\n");
 	fprintf(stderr,
 "Measure the time it takes to unblock NTASKS which will end\n"
@@ -66,11 +68,11 @@ do_run(int run)
 	double t1 = get_time();
 	printf("%d,%ld,%e,%e\n",
 			run, ntasks, (t1 - t0),
-			(t1 - t0) / ((double) ntasks));
+			(t1 - t0) / ((double) ntasks) * ((double) ncpus));
 }
 
 int
-bench6_sched_add(int argc, char *argv[])
+main(int argc, char *argv[])
 {
 	int opt;
 	while ((opt = getopt(argc, argv, "hr:t:")) != -1) {
@@ -87,6 +89,8 @@ bench6_sched_add(int argc, char *argv[])
 		}
 	}
 
+	ncpus = get_ncpus();
+
 	handle = calloc(ntasks, sizeof(void *));
 
 	if (handle == NULL) {
@@ -94,7 +98,7 @@ bench6_sched_add(int argc, char *argv[])
 		return -1;
 	}
 
-	printf("%s,%s,%s,%s\n", "run", "ntasks", "time_us", "time_per_task");
+	printf("%s,%s,%s,%s\n", "run", "ntasks", "time", "time_per_task_per_cpu");
 	for (int run = 0; run < nruns; run++)
 		do_run(run);
 

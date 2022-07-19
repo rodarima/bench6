@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+static int ncpus = -1;
 static long nruns = 30L;
 static long ntasks = 20000L;
 
@@ -18,7 +19,8 @@ static atomic_int wait = 0;
 static int
 usage(char *argv[])
 {
-	fprintf(stderr, "Usage: bench6 %s [-r NRUNS] [-t NTASKS]\n", argv[0]);
+	fprintf(stderr, "Bench6: A set of Nanos6 micro-benchmarks\n");
+	fprintf(stderr, "Usage: %s [-r NRUNS] [-t NTASKS]\n", argv[0]);
 	fprintf(stderr, "\n");
 	fprintf(stderr,
 "Creates NTASKS tasks without dependencies, but the tasks don't\n"
@@ -48,13 +50,13 @@ do_run(int run)
 
 	#pragma oss taskwait
 	double t1 = get_time();
-	printf("%d,%ld,%e,%e\n",
-			run, ntasks, (t1 - t0),
-			(t1 - t0) / ((double) ntasks));
+	printf("%d,%ld,%d,%e,%e\n",
+			run, ntasks, ncpus, (t1 - t0),
+			(t1 - t0) / ((double) ntasks) * ((double) ncpus));
 }
 
 int
-bench6_sched_get(int argc, char *argv[])
+main(int argc, char *argv[])
 {
 	int opt;
 
@@ -72,7 +74,9 @@ bench6_sched_get(int argc, char *argv[])
 		}
 	}
 
-	printf("%s,%s,%s,%s\n", "run", "ntasks", "time", "time_per_task");
+	ncpus = get_ncpus();
+
+	printf("%s,%s,%s,%s,%s\n", "run", "ntasks", "ncpus", "time", "time_per_task_per_cpu");
 	for (int run = 0; run < nruns; run++)
 		do_run(run);
 

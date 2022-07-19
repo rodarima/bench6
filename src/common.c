@@ -5,6 +5,7 @@
 
 #include "bench6.h"
 
+#include <nanos6/debug.h>
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,4 +22,9 @@ double get_time()
 
 	return (double)(tv.tv_sec) +
 		(double)tv.tv_nsec * 1.0e-9;
+}
+
+int get_ncpus()
+{
+	return (int) nanos6_get_num_cpus();
 }

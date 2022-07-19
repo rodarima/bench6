@@ -18,7 +18,8 @@ static long ntasks = 100;
 static int
 usage(char *argv[])
 {
-	fprintf(stderr, "Usage: bench6 %s [-r NRUNS] [-t NTASKS]\n", argv[0]);
+	fprintf(stderr, "Bench6: A set of Nanos6 micro-benchmarks\n");
+	fprintf(stderr, "Usage: %s [-r NRUNS] [-t NTASKS]\n", argv[0]);
 	fprintf(stderr, "\n");
 	fprintf(stderr,
 "Measure the time it takes to create and register NTASKS tasks\n"
@@ -49,7 +50,7 @@ do_run(int run)
 }
 
 int
-bench6_register_deps(int argc, char *argv[])
+main(int argc, char *argv[])
 {
 	int opt;
 

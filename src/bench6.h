@@ -7,6 +7,7 @@
 #define UNUSED(x) (void)(x)
 
 double get_time(void);
+int get_ncpus();
 
 int bench6_creator(int argc, char *argv[]);
 int bench6_sched_get(int argc, char *argv[]);
