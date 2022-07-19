@@ -13,7 +13,7 @@ df = read_delim(input_file, delim=",", comment="#") %>%
   mutate(run = as.factor(run)) %>%
   mutate(time_per_task_per_cpu = time_per_task_per_cpu * 1e9)
 
-dpi = 150
+dpi = 96
 h = 2
 w = 6
 
