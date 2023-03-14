@@ -27,19 +27,11 @@ busywork(long loops)
 	for (volatile long j = 0; j < loops; j++);
 }
 
-static double
-get_time_ms(void)
-{
-	struct timespec ts;
-	clock_gettime(CLOCK_MONOTONIC, &ts);
-	return (double) ts.tv_sec + (double) ts.tv_nsec * 1.0e-9;
-}
-
 static void
 dummy_work(double ms)
 {
-	double end = get_time_ms() + ms * 1e-3;
-	while (get_time_ms() < end);
+	double end = get_time() + ms * 1e-3;
+	while (get_time() < end);
 }
 
 static void
