@@ -13,7 +13,7 @@
 #include <sys/time.h>
 
 static int ncpus = -1;
-static long nruns = 300L;
+static long nruns = 100L;
 static long ntasks_per_cpu = 5000L;
 static double taskwork_us = 10.0;
 
