@@ -11,3 +11,5 @@ Examples:
 <img src="examples/sched_get.csv.png" width="400px"/>
 
 <img src="examples/register_deps.csv.png" width="100%"/>
+
+<img src="examples/readywave-instr.csv.png" width="600px"/>

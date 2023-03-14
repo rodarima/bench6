@@ -4,7 +4,8 @@ CFLAGS=-O3 -fompss-2
 BENCHMARKS=\
 	sched_get \
 	sched_add \
-	register_deps
+	register_deps \
+	readywave
 
 BIN=$(addprefix bench6.,$(BENCHMARKS)) 
 DATA=$(addsuffix .csv, $(addprefix data/,$(BENCHMARKS)))
