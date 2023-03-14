@@ -97,7 +97,7 @@ main(int argc, char *argv[])
 {
 	int opt;
 
-	while ((opt = getopt(argc, argv, "hr:t:")) != -1) {
+	while ((opt = getopt(argc, argv, "hr:t:w:")) != -1) {
 		switch (opt) {
 		case 'r':
 			nruns = atol(optarg);
