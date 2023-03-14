@@ -11,7 +11,12 @@ BIN=$(addprefix bench6.,$(BENCHMARKS))
 DATA=$(addsuffix .csv, $(addprefix data/,$(BENCHMARKS)))
 PLOT=$(DATA:=.png)
 
-all: $(BIN) $(DATA) $(PLOT)
+all: $(BIN)
+
+clean:
+	rm -f $(BIN)
+
+plot: $(BIN) $(DATA) $(PLOT)
 
 bench6.%: src/%.c src/common.c
 	$(CC) $(CFLAGS) -o $@ $^
