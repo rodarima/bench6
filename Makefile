@@ -1,5 +1,6 @@
 CC=clang
 CFLAGS=-O3 -fompss-2
+DESTDIR?=/usr
 
 BENCHMARKS=\
 	sched_get \
@@ -15,6 +16,10 @@ all: $(BIN)
 
 clean:
 	rm -f $(BIN)
+
+install: $(BIN)
+	mkdir -p $(DESTDIR)/bin
+	cp bench6* $(DESTDIR)/bin
 
 plot: $(BIN) $(DATA) $(PLOT)
 
