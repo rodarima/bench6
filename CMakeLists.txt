@@ -90,5 +90,9 @@ cmake_policy(SET CMP0074 NEW)
 endif()
 find_package(MPI)
 find_package(Nanos6)
+find_package(Nodes)
 
 add_subdirectory(src)
+
+include(FeatureSummary)
+feature_summary(WHAT ALL)

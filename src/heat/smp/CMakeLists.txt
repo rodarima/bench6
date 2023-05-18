@@ -1,10 +1,25 @@
-add_executable(heat_seq main.c solver_seq.c)
-target_link_libraries(heat_seq PUBLIC heat_common)
+add_library(heat_seq_common STATIC main.c)
+target_link_libraries(heat_seq_common PUBLIC heat_common)
 
-add_executable(heat_ompss2 main.c solver_ompss2.c)
-target_link_libraries(heat_ompss2 PRIVATE heat_common
-  Nanos6::wrapper)
+add_executable(heat_seq solver_seq.c)
+target_link_libraries(heat_seq PUBLIC heat_seq_common)
 
-add_executable(heat_ompss2_residual main.c solver_ompss2_residual.c)
-target_link_libraries(heat_ompss2_residual PRIVATE heat_common
-  Nanos6::wrapper)
+if(NANOS6_FOUND)
+  macro(mk_heat_nanos6 NAME SOURCE)
+    add_executable(${NAME} ${SOURCE})
+    target_link_libraries(${NAME} PRIVATE heat_seq_common Nanos6::wrapper)
+    install(TARGETS ${NAME} RUNTIME DESTINATION bin)
+  endmacro()
+  mk_heat_nanos6(heat_nanos6 solver_ompss2.c)
+  mk_heat_nanos6(heat_nanos6_residual solver_ompss2_residual.c)
+endif()
+
+if(NODES_FOUND)
+  macro(mk_heat_nodes NAME SOURCE)
+    add_executable(${NAME} ${SOURCE})
+    target_link_libraries(${NAME} PRIVATE heat_seq_common Nodes::wrapper)
+    install(TARGETS ${NAME} RUNTIME DESTINATION bin)
+  endmacro()
+  mk_heat_nodes(heat_nodes solver_ompss2.c)
+  mk_heat_nodes(heat_nodes_residual solver_ompss2_residual.c)
+endif()
