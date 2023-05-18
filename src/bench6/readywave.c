@@ -56,8 +56,6 @@ do_run(int run)
 
 	atomic_store(&wait, 1);
 
-	int flag = 0;
-
 	/* Cover 2 times the number of CPUs so no quickie starts before the
 	 * blockers */
 	for (long i = 0L; i < 2*ncpus; i++) {
@@ -128,7 +126,7 @@ do_warmup(void)
 }
 
 static int
-usage(char *argv[])
+usage(void)
 {
 	fprintf(stderr, "%s - Create a wave of ready rasks\n", progname);
 	fprintf(stderr, "\n");
@@ -189,7 +187,7 @@ main(int argc, char *argv[])
 			break;
 		case 'h': /* Fall through */
 		default: /* '?' */
-			return usage(argv);
+			return usage();
 		}
 	}
 
