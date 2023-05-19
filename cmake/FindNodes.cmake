@@ -1,14 +1,8 @@
 include(GNUInstallDirs)
 
-if(DEFINED ENV{NODES_HOME})
-  set(NODES_HOME "$ENV{NODES_HOME}")
-else()
-  message(STATUS "NODES_HOME not set, refusing to search")
-endif()
-
-find_library(NODES_LIBRARY NAMES nodes PATHS "${NODES_HOME}/lib" NO_DEFAULT_PATH)
-find_file(NODES_WRAPPER NAMES nodes-main-wrapper.o PATHS "${NODES_HOME}/lib" NO_DEFAULT_PATH)
-find_path(NODES_INCLUDE_DIR nodes.h PATHS "${NODES_HOME}/include" NO_DEFAULT_PATH)
+find_library(NODES_LIBRARY NAMES nodes)
+find_path(NODES_INCLUDE_DIR nodes.h)
+find_file(NODES_WRAPPER NAMES nodes-main-wrapper.o PATH_SUFFIXES "lib")
 
 include(FindPackageHandleStandardArgs)
 
