@@ -36,22 +36,6 @@ endif(NOT CMAKE_BUILD_TYPE)
 
 include(GNUInstallDirs)
 
-include(CheckIPOSupported)
-check_ipo_supported(RESULT ipo_available OUTPUT error LANGUAGES C)
-
-# Enable IPO by default, if available
-if(NOT DEFINED CMAKE_INTERPROCEDURAL_OPTIMIZATION)
-  if(ipo_available)
-    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
-  else()
-    message(WARNING "IPO is not supported, disabling")
-  endif()
-endif()
-
-if(NOT CMAKE_INTERPROCEDURAL_OPTIMIZATION)
-  message(WARNING "IPO is not enabled, expect performance penalty")
-endif()
-
 # Extra build type for AddressSanitizer (Asan)
 set(CMAKE_C_FLAGS_ASAN "${CMAKE_C_FLAGS_DEBUG} \
   -fsanitize=address \
