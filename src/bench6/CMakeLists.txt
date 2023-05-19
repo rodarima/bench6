@@ -6,7 +6,8 @@ macro(mk_bench6 NAME SOURCE)
   install(TARGETS ${NAME} RUNTIME DESTINATION bin)
 endmacro()
 
-mk_bench6(bench6_register_deps register_deps.c)
+# FIXME: broken in last clang
+#mk_bench6(bench6_register_deps register_deps.c)
 mk_bench6(bench6_sched_add sched_add.c)
 mk_bench6(bench6_sched_get sched_get.c)
 mk_bench6(bench6_readywave readywave.c)
