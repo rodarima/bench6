@@ -3,6 +3,11 @@
 #include "utils.h"
 #include "common/heat.h"
 
+const char *
+summary(void)
+{
+	return "Parallel version using MPI and blocking primitives";
+}
 
 static inline void send(const double *data, int nelems, int dst, int tag)
 {

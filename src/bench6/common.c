@@ -1,28 +1,69 @@
-/* Copyright (c) 2022 Barcelona Supercomputing Center (BSC)
+/* Copyright (c) 2021-2023 Barcelona Supercomputing Center (BSC)
  * SPDX-License-Identifier: GPL-3.0-or-later */
 
-#include "bench6.h"
+#include "common.h"
 
-#include <nanos6/debug.h>
-#include <time.h>
 #include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
+#include <errno.h>
 #include <stdlib.h>
 
-/* Returns the current time in seconds since some point in the past */
-double get_time(void)
-{
-	struct timespec tv;
-	if(clock_gettime(CLOCK_MONOTONIC, &tv) != 0)
-	{
-		perror("clock_gettime failed");
-		exit(EXIT_FAILURE);
-	}
+char *progname = NULL;
+int is_debug_enabled = 0;
 
-	return (double)(tv.tv_sec) +
-		(double)tv.tv_nsec * 1.0e-9;
+void
+progname_set(char *name)
+{
+	progname = name;
 }
 
-int get_ncpus(void)
+void
+enable_debug(void)
 {
-	return (int) nanos6_get_num_cpus();
+	is_debug_enabled = 1;
+}
+
+static void
+vaerr(const char *prefix, const char *func, const char *errstr, va_list ap)
+{
+	if (progname != NULL)
+		fprintf(stderr, "%s: ", progname);
+
+	if (prefix != NULL)
+		fprintf(stderr, "%s: ", prefix);
+
+	if (func != NULL)
+		fprintf(stderr, "%s: ", func);
+
+	vfprintf(stderr, errstr, ap);
+
+	int len = strlen(errstr);
+
+	if (len > 0) {
+		char last = errstr[len - 1];
+		if (last == ':')
+			fprintf(stderr, " %s\n", strerror(errno));
+		else if (last != '\n' && last != '\r')
+			fprintf(stderr, "\n");
+	}
+}
+
+void
+verr(const char *prefix, const char *func, const char *errstr, ...)
+{
+	va_list ap;
+	va_start(ap, errstr);
+	vaerr(prefix, func, errstr, ap);
+	va_end(ap);
+}
+
+void
+vdie(const char *prefix, const char *func, const char *errstr, ...)
+{
+	va_list ap;
+	va_start(ap, errstr);
+	vaerr(prefix, func, errstr, ap);
+	va_end(ap);
+	abort();
 }

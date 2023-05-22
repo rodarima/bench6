@@ -1,13 +1,2 @@
-add_library(bench6_common STATIC common.c)
-
-macro(mk_bench6 NAME SOURCE)
-  add_executable(${NAME} ${SOURCE})
-  target_link_libraries(${NAME} PRIVATE bench6_common Nanos6::wrapper)
-  install(TARGETS ${NAME} RUNTIME DESTINATION bin)
-endmacro()
-
-# FIXME: broken in last clang
-#mk_bench6(bench6_register_deps register_deps.c)
-mk_bench6(bench6_sched_add sched_add.c)
-mk_bench6(bench6_sched_get sched_get.c)
-mk_bench6(bench6_readywave readywave.c)
+add_library(bench6_lib STATIC bench6.c common.c)
+target_include_directories(bench6_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

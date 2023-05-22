@@ -8,6 +8,13 @@ typedef struct {
 	MPI_Request recv;
 } HaloRequests;
 
+const char *
+summary(void)
+{
+	return "Parallel version using MPI and non-blocking primitives with\n"
+		"overlap of computation and communication phases";
+}
+
 static inline void isend(const double *data, int nelems, int dst, int tag, HaloRequests *reqs)
 {
 	MPI_Isend(data, nelems, MPI_DOUBLE, dst, tag, MPI_COMM_WORLD, &reqs->send);

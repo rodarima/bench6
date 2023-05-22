@@ -35,16 +35,13 @@ int main(int argc, char **argv)
 	int threads = 1;
 #endif
 
-	fprintf(stderr, "%14s %14s %14s %8s %8s %8s %8s %8s %8s\n",
-			"time", "updates/s", "error", 
-			"rows", "cols",
-			"rbs", "cbs", "threads",
-			"steps");
-	fprintf(stdout, "%14e %14e %14e %8ld %8ld %8d %8d %8d %8d\n", 
-			end-start, throughput, residual,
+	fprintf(stderr,"%8s %8s %8s %8s %8s %8s %14s %14s %14s",
+			"rows", "cols", "rbs", "cbs", "threads",
+			"steps", "error", "time", "updates/s\n");
+	fprintf(stdout, "%8ld %8ld %8d %8d %8d %8d %14e %14e %14e\n", 
 			conf.rows, conf.cols, 
 			conf.rbs, conf.cbs, threads,
-			conf.convergenceTimesteps);
+			conf.convergenceTimesteps, residual, end-start, throughput);
 
 	if (conf.generateImage)
 		writeImage(conf.imageFileName, conf.matrix, rows, cols);

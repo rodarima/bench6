@@ -1,5 +1,10 @@
 #include "common/heat.h"
 
+const char *
+summary(void)
+{
+	return "Sequential solver with one CPU";
+}
 
 static inline void gaussSeidelSolver(int64_t rows, int64_t cols, int rbs, int cbs, double M[rows][cols])
 {

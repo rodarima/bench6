@@ -3,11 +3,11 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <limits.h>
 
 #define IGNORE_RESIDUAL ((double) -1.0)
 #define DEFAULT_DELTA ((double) 0.00005)
 #define DEFAULT_BS 1024
-#define MAX_STRING_SIZE 100
 
 #define ROUND(a, b) ((((a) + (b) - 1) / (b)) * (b))
 
@@ -30,8 +30,8 @@ typedef struct {
 	double *matrix;
 	int numHeatSources;
 	HeatSource *heatSources;
-	char confFileName[MAX_STRING_SIZE];
-	char imageFileName[MAX_STRING_SIZE];
+	char confFileName[PATH_MAX];
+	char imageFileName[PATH_MAX];
 	bool generateImage;
 	bool warmup;
 	bool verbose;
@@ -47,6 +47,7 @@ void printConfiguration(const HeatConfiguration *conf);
 void initializeMatrix(const HeatConfiguration *conf, double *matrix, int64_t rows, int64_t cols, int64_t rowOffset);
 double getTime(void);
 
+const char *summary(void);
 double solve(HeatConfiguration *conf, int64_t rows, int64_t cols, int timesteps, void *extraData);
 void computeBlock(const int64_t rows, const int64_t cols, const int rstart, const int rend, const int cstart, const int cend, double M[rows][cols]);
 double computeBlockResidual(const int64_t rows, const int64_t cols, const int rstart, const int rend, const int cstart, const int cend, double M[rows][cols]);

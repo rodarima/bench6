@@ -18,9 +18,6 @@ add_compile_options(
   -Werror
 )
 
-set(CMAKE_C_COMPILER "clang")
-set(CMAKE_CXX_COMPILER "clang++")
-
 set(CMAKE_C_VISIBILITY_PRESET hidden)
 
 set(CMAKE_C_STANDARD 11)
@@ -75,6 +72,23 @@ endif()
 find_package(MPI)
 find_package(Nanos6)
 find_package(Nodes)
+
+set_property(GLOBAL PROPERTY bench6_list "")
+
+macro(mk_bench NAME)
+  if(NOT "${NAME}" MATCHES "b6_.*")
+    message(FATAL_ERROR "benchmark name must begin with b6_: ${NAME}")
+  endif()
+  add_executable(${NAME})
+
+  get_property(BENCH6_LIST GLOBAL PROPERTY bench6_list)
+  message(STATUS "Before BENCH6_LIST=${BENCH6_LIST}")
+  list(APPEND BENCH6_LIST ${NAME})
+  message(STATUS "After BENCH6_LIST=${BENCH6_LIST}")
+  set_property(GLOBAL PROPERTY bench6_list "${BENCH6_LIST}")
+
+  install(TARGETS ${NAME} RUNTIME DESTINATION bin)
+endmacro()
 
 add_subdirectory(src)
 

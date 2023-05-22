@@ -3,6 +3,12 @@
 #include "utils.h"
 #include "common/heat.h"
 
+const char *
+summary(void)
+{
+	return "Parallel version using MPI + OmpSs-2 following a fork-join\n"
+		"parallelization.";
+}
 
 static inline void send(const double *data, int nelems, int dst, int tag)
 {

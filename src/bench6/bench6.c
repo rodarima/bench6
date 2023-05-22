@@ -1,0 +1,35 @@
+/* Copyright (c) 2022 Barcelona Supercomputing Center (BSC)
+ * SPDX-License-Identifier: GPL-3.0-or-later */
+
+#include "bench6.h"
+
+//#include <nanos6/debug.h>
+#include <time.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Returns the current time in seconds since some point in the past */
+double bench6_time(void)
+{
+	struct timespec tv;
+	if(clock_gettime(CLOCK_MONOTONIC, &tv) != 0)
+	{
+		perror("clock_gettime failed");
+		exit(EXIT_FAILURE);
+	}
+
+	return (double)(tv.tv_sec) +
+		(double)tv.tv_nsec * 1.0e-9;
+}
+
+int get_ncpus(void)
+{
+	return -1;
+	//return (int) nanos6_get_num_cpus();
+}
+
+void
+bench6_report(double time)
+{
+	printf("time %e\n", time);
+}

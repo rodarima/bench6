@@ -1,11 +1,11 @@
-#define _POSIX_C_SOURCE 200809L
-
 #include <assert.h>
 #include <float.h>
 #include <getopt.h>
+#include <libgen.h>
+#include <limits.h>
 #include <math.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
@@ -105,7 +105,11 @@ static void printUsage(int argc, char **argv)
 {
 	(void) argc;
 
-	fprintf(stdout, "Usage: %s [OPTION]...\n", argv[0]);
+	const char *prog = basename(argv[0]);
+	fprintf(stdout, "%s - %s\n", prog, summary());
+	fprintf(stdout, "\n");
+	fprintf(stdout, "Usage: %s [OPTION]...\n", prog);
+	fprintf(stdout, "\n");
 	fprintf(stdout, "Parameters:\n");
 	fprintf(stdout, "  -s, --size=SIZE          use SIZExSIZE matrix as the surface\n");
 	fprintf(stdout, "  -r, --rows=ROWS          use ROWS as the number of rows of the surface\n");
@@ -176,7 +180,7 @@ static void readParameters(int argc, char **argv, HeatConfiguration *conf)
 				conf->verbose = true;
 				break;
 			case 'f':
-				if (strlen(optarg) >= MAX_STRING_SIZE) {
+				if (strlen(optarg) >= PATH_MAX) {
 					fprintf(stderr, "Error: Configuration name is too long!\n");
 					exit(1);
 				}
@@ -185,7 +189,7 @@ static void readParameters(int argc, char **argv, HeatConfiguration *conf)
 			case 'o':
 				conf->generateImage = true;
 				conf->warmup = false;
-				if (strlen(optarg) >= MAX_STRING_SIZE) {
+				if (strlen(optarg) >= PATH_MAX) {
 					fprintf(stderr, "Error: Image name is too long!\n");
 					exit(1);
 				}
@@ -263,8 +267,8 @@ static void readParameters(int argc, char **argv, HeatConfiguration *conf)
 
 static void readSourcesFile(HeatConfiguration *conf, FILE *file)
 {
-	char line[MAX_STRING_SIZE];
-	if (!fgets(line, MAX_STRING_SIZE, file)) {
+	char line[4096];
+	if (!fgets(line, 4096, file)) {
 		fprintf(stderr, "Error: Configuration file is not correct!\n");
 		exit(1);
 	}
@@ -283,7 +287,7 @@ static void readSourcesFile(HeatConfiguration *conf, FILE *file)
 	assert(conf->heatSources != NULL);
 
 	for (int i = 0; i < conf->numHeatSources; i++) {
-		if (!fgets(line, MAX_STRING_SIZE, file)) {
+		if (!fgets(line, 4096, file)) {
 			fprintf(stderr, "Error: Configuration file is not correct!\n");
 			exit(1);
 		}

@@ -3,8 +3,14 @@
 #include "utils.h"
 #include "common/heat.h"
 
-
 static int serial;
+
+const char *
+summary(void)
+{
+	return "Parallel version using MPI + OmpSs-2 tasks where communication\n"
+		"tasks are serialized";
+}
 
 static inline void send(const double *data, int nelems, int dst, int tag)
 {
