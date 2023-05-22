@@ -36,12 +36,12 @@ do_run(int run)
 	int buf[DEPMAX] = { 0 };
 
 	for (int d = 0; d <= DEPMAX; d += DEPSTEP) {
-		double t0 = get_time();
+		double t0 = bench6_time();
 		for (int t = 0; t < ntasks; t++) {
 			#pragma oss task inout({buf[i], i=0;d+1})
 			{}
 		}
-		double t1 = get_time();
+		double t1 = bench6_time();
 		printf("%d,%d,%ld,%e\n",
 				run, d, ntasks, (t1 - t0) / ntasks);
 	}

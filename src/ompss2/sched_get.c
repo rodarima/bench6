@@ -43,11 +43,11 @@ do_run(int run)
 		}
 	}
 
-	double t0 = get_time();
+	double t0 = bench6_time();
 	atomic_fetch_sub(&wait, 1);
 
 	#pragma oss taskwait
-	double t1 = get_time();
+	double t1 = bench6_time();
 	printf("%d,%ld,%d,%e,%e\n",
 			run, ntasks, ncpus, (t1 - t0),
 			(t1 - t0) / ((double) ntasks) * ((double) ncpus));

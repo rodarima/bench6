@@ -39,10 +39,10 @@ busywork(long loops)
 static double
 dummy_work(double ms)
 {
-	double start = get_time();
+	double start = bench6_time();
 	double end = start + ms * 1e-3;
 	double last;
-	while ((last = get_time()) < end) {
+	while ((last = bench6_time()) < end) {
 		busywork(100L);
 	}
 
@@ -87,13 +87,13 @@ do_run(int run)
 	atomic_fetch_sub(&wait, 1);
 
 	/* Start counting the time as the quickies will run now */
-	double t0 = get_time();
+	double t0 = bench6_time();
 
 	/* Wait until all tasks are ready */
 	#pragma oss taskwait
 
 	/* And measure the end time */
-	double t1 = get_time();
+	double t1 = bench6_time();
 
 	/* Warmup run */
 	if (run < 0)
