@@ -6,7 +6,8 @@ endmacro()
 
 macro(mk_heat_nanos6 NAME SOURCE)
   mk_heat_smp(${NAME} ${SOURCE})
-  target_link_libraries(${NAME} PRIVATE Nanos6::wrapper)
+  target_compile_options(${NAME} PRIVATE "-fompss-2=libnanos6")
+  target_link_options(${NAME} PRIVATE "-fompss-2=libnanos6")
 endmacro()
 
 macro(mk_heat_nodes NAME SOURCE)
