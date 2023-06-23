@@ -120,6 +120,7 @@ static void printUsage(int argc, char **argv)
 	fprintf(stdout, "  -C, --cbs=BS             use BS as the number of columns of each block (overrides -b option)\n");
 	fprintf(stdout, "  -w, --wins=WINS          use WINS as the number of MPI RMA windows for each halo row\n");
 	fprintf(stdout, "  -d, --delta=DELTA        use DELTA as the residual threshold (default: %f)\n", DEFAULT_DELTA);
+	fprintf(stdout, "  -x, --relax=X            use X as the relaxation value (default: %f)\n", DEFAULT_RELAX);
 	fprintf(stdout, "  -f, --sources-file=NAME  get the heat sources from the NAME configuration file\n");
 	fprintf(stdout, "  -W, --no-warmup          do not perform warmup timestep (warmup enabled by default)\n");
 	fprintf(stdout, "  -o, --output=NAME        save the computed matrix to the PPM file named NAME.ppm and disable warmup (disabled by default)\n");
@@ -132,6 +133,7 @@ static void setDefaultConfiguration(HeatConfiguration *conf)
 	conf->timesteps = 1;
 	conf->convergenceTimesteps = -1;
 	conf->delta = DEFAULT_DELTA;
+	conf->relax = DEFAULT_RELAX;
 	conf->rows = DEFAULT_BS * 8;
 	conf->cols = DEFAULT_BS * 8;
 	conf->rbs = DEFAULT_BS;
@@ -159,6 +161,7 @@ static void readParameters(int argc, char **argv, HeatConfiguration *conf)
 		{"cbs",          required_argument,  0, 'C'},
 		{"wins",         required_argument,  0, 'w'},
 		{"delta",        required_argument,  0, 'd'},
+		{"relax",        required_argument,  0, 'x'},
 		{"sources-file", required_argument,  0, 'f'},
 		{"output",       required_argument,  0, 'o'},
 		{"no-warmup",    no_argument,        0, 'W'},
@@ -171,7 +174,7 @@ static void readParameters(int argc, char **argv, HeatConfiguration *conf)
 	int bs = DEFAULT_BS;
 	int rbs = 0, cbs = 0;
 
-	while ((c = getopt_long(argc, argv, "ho:f:s:r:c:t:b:R:C:d:w:Wv", long_options, &index)) != -1) {
+	while ((c = getopt_long(argc, argv, "ho:f:s:r:c:t:b:R:C:d:x:w:Wv", long_options, &index)) != -1) {
 		switch (c) {
 			case 'h':
 				printUsage(argc, argv);
@@ -234,6 +237,10 @@ static void readParameters(int argc, char **argv, HeatConfiguration *conf)
 			case 'd':
 				conf->delta = atof(optarg);
 				assert(conf->delta > 0.0);
+				break;
+			case 'x':
+				conf->relax = atof(optarg);
+				assert(conf->relax > 0.0);
 				break;
 			case '?':
 				exit(1);
@@ -356,6 +363,7 @@ void printConfiguration(const HeatConfiguration *conf)
 	fprintf(stderr, "Block size        : %d x %d\n", conf->rbs, conf->cbs);
 	fprintf(stderr, "Timesteps         : %d\n", conf->timesteps);
 	fprintf(stderr, "Delta             : %f\n", conf->delta);
+	fprintf(stderr, "Relax             : %f\n", conf->relax);
 	fprintf(stderr, "Num. heat sources : %d\n", conf->numHeatSources);
 
 	for (int i = 0; i < conf->numHeatSources; i++) {

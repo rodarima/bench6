@@ -4,9 +4,11 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <limits.h>
+#include <math.h>
 
-#define IGNORE_RESIDUAL ((double) -1.0)
-#define DEFAULT_DELTA ((double) 0.00005)
+#define IGNORE_RESIDUAL (NAN)
+#define DEFAULT_DELTA ((double) 0.05)
+#define DEFAULT_RELAX 1.9766
 #define DEFAULT_BS 1024
 
 #define ROUND(a, b) ((((a) + (b) - 1) / (b)) * (b))
@@ -22,6 +24,7 @@ typedef struct {
 	int timesteps;
 	int convergenceTimesteps;
 	double delta;
+	double relax;
 	int64_t rows;
 	int64_t cols;
 	int rbs;
