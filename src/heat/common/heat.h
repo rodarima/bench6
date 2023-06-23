@@ -53,6 +53,6 @@ double getTime(void);
 const char *summary(void);
 double solve(HeatConfiguration *conf, int64_t rows, int64_t cols, int timesteps, void *extraData);
 void computeBlock(const int64_t rows, const int64_t cols, const int rstart, const int rend, const int cstart, const int cend, double M[rows][cols]);
-double computeBlockResidual(const int64_t rows, const int64_t cols, const int rstart, const int rend, const int cstart, const int cend, double M[rows][cols]);
+void computeBlockResidual(const int64_t rows, const int64_t cols, const int rstart, const int rend, const int cstart, const int cend, double M[rows][cols], double relax, double *residual, double *max_elem);
 
 #endif // HEAT_H
