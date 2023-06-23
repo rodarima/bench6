@@ -3,6 +3,12 @@
 #include "utils.h"
 #include "common/heat.h"
 
+int
+mpi_level(void)
+{
+	return MPI_THREAD_SINGLE;
+}
+
 const char *
 summary(void)
 {

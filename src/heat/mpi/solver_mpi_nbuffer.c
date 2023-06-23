@@ -8,6 +8,12 @@ typedef struct {
 	MPI_Request recv;
 } HaloRequests;
 
+int
+mpi_level(void)
+{
+	return MPI_THREAD_SINGLE;
+}
+
 const char *
 summary(void)
 {

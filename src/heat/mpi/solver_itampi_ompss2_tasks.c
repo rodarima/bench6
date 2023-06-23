@@ -4,6 +4,17 @@
 #include "utils.h"
 #include "common/heat.h"
 
+const char *
+summary(void)
+{
+	return "Parallel version using MPI + OmpSs-2 tasks + Non-blocking TAMPI";
+}
+
+int
+mpi_level(void)
+{
+	return MPI_TASK_MULTIPLE;
+}
 
 static inline void send(const double *data, int nelems, int dst, int tag)
 {
@@ -55,6 +66,7 @@ static inline void gaussSeidelSolver(int64_t rows, int64_t cols, int rbs, int cb
 
 double solve(HeatConfiguration *conf, int64_t rows, int64_t cols, int timesteps, void *extraData)
 {
+	(void) extraData;
 	double (*matrix)[cols] = (double (*)[cols]) conf->matrix;
 	const int rbs = conf->rbs;
 	const int cbs = conf->cbs;

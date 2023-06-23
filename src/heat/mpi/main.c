@@ -1,4 +1,5 @@
 #include <mpi.h>
+#include <math.h>
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,16 +20,7 @@ void generateImage(const HeatConfiguration *conf, int64_t rows, int64_t cols, in
 
 int main(int argc, char **argv)
 {
-#if defined(TAMPI)
-	// TAMPI+OmpSs-2 variants
-	const int required = MPI_TASK_MULTIPLE;
-#elif defined(_OMPSS_2)
-	// MPI+OmpSs-2 variants
-	const int required = MPI_THREAD_SERIALIZED;
-#else
-	// MPI-only variants
-	const int required = MPI_THREAD_SINGLE;
-#endif
+	const int required = mpi_level();
 
 	int provided;
 	MPI_Init_thread(&argc, &argv, required, &provided);
@@ -76,8 +68,10 @@ int main(int argc, char **argv)
 
 	if (!rank) {
 		int64_t totalElements = conf.rows*conf.cols;
+		//double time_element = (end-start)/(totalElements*conf.timesteps);
 		double throughput = (totalElements*conf.timesteps)/(end-start);
-		throughput = throughput/1000000.0;
+		//throughput = throughput/1000000.0;
+		double residual = NAN;
 
 #ifdef _OMPSS_2
 		int threads = nanos6_get_num_cpus();
@@ -85,10 +79,17 @@ int main(int argc, char **argv)
 		int threads = 1;
 #endif
 
-		fprintf(stdout, "rows, %ld, cols, %ld, rows/rank, %ld, total, %ld, total/rank, %ld, rbs, %d, "
-				"cbs, %d, ranks, %d, threads, %d, timesteps, %d, time, %f, Mupdates/s, %f\n",
-				conf.rows, conf.cols, conf.rows/nranks, totalElements, totalElements/nranks,
-				conf.rbs, conf.cbs, nranks, threads, conf.timesteps, end-start, throughput);
+		fprintf(stderr, "%14s %14s %14s %8s %8s %8s %8s %8s %8s\n",
+				"throughput", "time", "error", 
+				"rows", "cols",
+				"rbs", "cbs", "threads",
+				"steps");
+		fprintf(stdout, "%14e %14e %14e %8ld %8ld %8d %8d %8d %8d\n", 
+				throughput, end-start, residual,
+				conf.rows, conf.cols, 
+				conf.rbs, conf.cbs, threads,
+				conf.convergenceTimesteps);
+
 	}
 
 	if (conf.generateImage) {

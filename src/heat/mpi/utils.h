@@ -17,5 +17,6 @@ typedef struct {
 void broadcastConfiguration(HeatConfiguration *configuration);
 void initializeWindows(HeatConfiguration *configuration, int64_t rows, int64_t cols, MPIRMAInfo *info);
 void finalizeWindows(MPIRMAInfo *info);
+int mpi_level(void);
 
 #endif // MPI_UTILS_H

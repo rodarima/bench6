@@ -5,6 +5,12 @@
 
 static int serial;
 
+int
+mpi_level(void)
+{
+	return MPI_THREAD_SERIALIZED;
+}
+
 const char *
 summary(void)
 {
