@@ -9,11 +9,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-//static void
-//usage(void)
-//{
-//	exit(1);
-//}
+static char *progname = "b6_runner";
 
 struct sampling {
 	int nmax;
@@ -47,7 +43,6 @@ do_run(char *argv[], double *ptime)
 		*nl = '\0';
 
 	/* Clean status line */
-	fprintf(stderr, "                                                                     \r");
 	fprintf(stderr, "%s\n", line);
 
 	double time;
@@ -111,8 +106,8 @@ stats(struct sampling *s)
 	double se = stdev / sqrt(n);
 	double rse = 100.0 * se * 1.96 / mean;
 
-	fprintf(stderr, "n=%03d  median=%.3e  mean=%.3e  SD=%.3e  RSD=%.2f%%  RSE=%.2f%%   \r",
-			s->n, median, mean, stdev, rstdev, rse);
+	fprintf(stderr, "%s: n=%03d  median=%.3e  mean=%.3e  SD=%.3e  RSD=%.2f%%  RSE=%.2f%%\n",
+			progname, s->n, median, mean, stdev, rstdev, rse);
 
 	s->rse = rse;
 }
@@ -143,20 +138,6 @@ add_sample(struct sampling *s, double time)
 	}
 }
 
-//static int
-//compare_double(const void *a, const void *b)
-//{
-//	double aa = *(const double *) a;
-//	double bb = *(const double *) b;
-//
-//	if (aa < bb)
-//		return -1;
-//	else if (aa > bb)
-//		return +1;
-//	else
-//		return 0;
-//}
-
 static int
 sample(char *argv[])
 {
@@ -186,6 +167,7 @@ sample(char *argv[])
 int
 main(int argc, char *argv[])
 {
+	progname_set(progname);
 	(void) argc;
 
 	if (sample(argv+1) != 0) {
