@@ -3,6 +3,9 @@
 
 cmake_minimum_required(VERSION 3.20)
 
+set(CMAKE_C_COMPILER "clang")
+set(CMAKE_CXX_COMPILER "clang++")
+
 project(BENCH6 LANGUAGES C CXX)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
@@ -83,9 +86,9 @@ macro(mk_bench NAME)
   add_executable(${NAME})
 
   get_property(BENCH6_LIST GLOBAL PROPERTY bench6_list)
-  message(STATUS "Before BENCH6_LIST=${BENCH6_LIST}")
+  #message(STATUS "Before BENCH6_LIST=${BENCH6_LIST}")
   list(APPEND BENCH6_LIST ${NAME})
-  message(STATUS "After BENCH6_LIST=${BENCH6_LIST}")
+  #message(STATUS "After BENCH6_LIST=${BENCH6_LIST}")
   set_property(GLOBAL PROPERTY bench6_list "${BENCH6_LIST}")
 
   install(TARGETS ${NAME} RUNTIME DESTINATION bin)
