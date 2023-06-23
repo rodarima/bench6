@@ -27,69 +27,57 @@ struct sampling {
 static int
 do_run(char *argv[], double *ptime)
 {
-	/* Gather binary path */
-	char path[PATH_MAX];
-	sprintf(path, "%s/%s", BENCH6_BIN, argv[0]);
+	int ret = 0;
+	FILE *p = popen(argv[0], "r");
 
-	if (access(path, R_OK | X_OK) != 0) {
-		err("cannot find benchmark %s:", path);
+	if (p == NULL) {
+		err("popen failed:");
 		return -1;
 	}
 
-	int pipefd[2];
-	if (pipe(pipefd) != 0) {
-		err("pipe failed:");
+	char line[4096];
+	if (fgets(line, 4096, p) == NULL) {
+		err("missing stdout line");
+		ret = -1;
+		goto bad_close;
+	}
+
+	char *nl = strchr(line, '\n');
+	if (nl != NULL)
+		*nl = '\0';
+
+	/* Clean status line */
+	fprintf(stderr, "                                                                     \r");
+	fprintf(stderr, "%s\n", line);
+
+	double time;
+	sscanf(line, "%le", &time);
+	//printf("got %e\n", time);
+	*ptime = time;
+
+	/* Drain the rest of the stdout */
+	while (fgets(line, 4096, p) != NULL) {
+		fprintf(stderr, "%s", line);
+	}
+
+bad_close:
+	pclose(p);
+
+	return ret;
+}
+
+static int
+cmp_double(const void *pa, const void *pb)
+{
+	double a = *(const double *) pa;
+	double b = *(const double *) pb;
+
+	if (a < b)
 		return -1;
-	}
-
-	/* Fork */
-	pid_t p = fork();
-
-	if (p < 0) {
-		err("fork failed:");
-		return -1;
-	}
-
-	/* In children execute benchmark */
-	if (p == 0) {
-		close(pipefd[0]);
-		dup2(pipefd[1], 1);
-		close(2);
-		if (execve(path, argv, NULL) != 0) {
-			err("execve failed:");
-			return -1;
-		}
-		/* Not reached */
-	} else {
-		close(pipefd[1]);
-		char line[4096];
-		FILE *f = fdopen(pipefd[0], "r");
-		if (f == NULL) {
-			err("fdopen failed:");
-			return -1;
-		}
-
-		if (fgets(line, 4096, f) == NULL) {
-			err("missing stdout line");
-			return -1;
-		}
-
-		char *nl = strchr(line, '\n');
-		if (nl != NULL)
-			*nl = '\0';
-
-		double time;
-		sscanf(line, "%le", &time);
-		//printf("got %e\n", time);
-		*ptime = time;
-
-		/* Drain the rest of the stdout */
-		while (fgets(line, 4096, f) != NULL) { }
-		fclose(f);
-		close(pipefd[0]);
-	}
-
-	return 0;
+	else if (a > b)
+		return 1;
+	else
+		return 0;
 }
 
 static void
@@ -99,6 +87,13 @@ stats(struct sampling *s)
 		return;
 
 	double n = s->n;
+	//double last = s->samples[s->n - 1];
+
+	/* Sort samples to take the median */
+	qsort(s->samples, s->n, sizeof(double), cmp_double);
+
+	double median = s->samples[s->n / 2];
+
 	double sum = 0.0;
 	for (int i = 0; i < s->n; i++)
 		sum += s->samples[i];
@@ -112,11 +107,12 @@ stats(struct sampling *s)
 
 	double var = sumsqr / n;
 	double stdev = sqrt(var);
+	double rstdev = 100.0 * stdev / mean;
 	double se = stdev / sqrt(n);
-	double rse = se * 1.96 / mean;
+	double rse = 100.0 * se * 1.96 / mean;
 
-	fprintf(stderr, "\rn=%d last=%e mean=%e stdev=%e se=%e rse=%e",
-			s->n, s->last, mean, stdev, se, rse);
+	fprintf(stderr, "n=%03d  median=%.3e  mean=%.3e  SD=%.3e  RSD=%.2f%%  RSE=%.2f%%   \r",
+			s->n, median, mean, stdev, rstdev, rse);
 
 	s->rse = rse;
 }
@@ -129,7 +125,7 @@ should_continue(struct sampling *s)
 	if (s->n < s->nmin)
 		return 1;
 
-	if (s->rse * 100.0 > 1.0 /* % */)
+	if (s->rse > 1.0 /* % */)
 		return 1;
 
 	return 0;
@@ -179,6 +175,8 @@ sample(char *argv[])
 
 		add_sample(&s, time);
 	}
+
+	fprintf(stderr, "\n");
 
 	free(s.samples);
 
