@@ -34,6 +34,7 @@ double solve(HeatConfiguration *conf, int64_t rows, int64_t cols, int timesteps,
 		gaussSeidelSolver(rows, cols, rbs, cbs, nrb, ncb, matrix, representatives);
 	}
 	#pragma oss taskwait
+	conf->convergenceTimesteps = timesteps;
 
 	return IGNORE_RESIDUAL;
 }
