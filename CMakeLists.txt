@@ -58,7 +58,7 @@ if (NOT HAVE_CLOCK_GETTIME)
   endif()
 endif()
 
-set(USE_SIMD OFF CACHE BOOL "Define SIMD and build with -fopenmp-simd")
+set(USE_SIMD ON CACHE BOOL "Define SIMD and build with -fopenmp-simd")
 if(USE_SIMD)
   add_definitions(-DSIMD)
   add_compile_options(-fopenmp-simd)
@@ -72,6 +72,7 @@ endif()
 find_package(MPI)
 find_package(Nanos6)
 find_package(Nodes)
+find_package(Tampi)
 
 set_property(GLOBAL PROPERTY bench6_list "")
 
