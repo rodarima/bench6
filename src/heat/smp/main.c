@@ -25,26 +25,21 @@ int main(int argc, char **argv)
 	double start = getTime();
 	double residual = solve(&conf, rows, cols, conf.timesteps, NULL);
 	double end = getTime();
+	double delta_time = end - start;
 
-	int64_t totalElements = conf.rows*conf.cols;
-	double throughput = (totalElements*conf.timesteps)/(end-start);
+	long niter = conf.convergenceTimesteps;
+	long iter_elem = conf.rows * conf.cols;
+	long total_elem = iter_elem * niter;
+	double throughput = total_elem / delta_time;
 
-#ifdef _OMPSS_2
-	int threads = sysconf(_SC_NPROCESSORS_ONLN);
-#else
-	int threads = 1;
-#endif
-
-	fprintf(stderr, "%14s %14s %14s %8s %8s %8s %8s %8s %8s\n",
-			"time", "updates/s", "error", 
+	fprintf(stderr, "%14s %14s %14s %8s %8s %8s %8s %8s\n",
+			"time", "updates/s", "rel. error", 
 			"rows", "cols",
-			"rbs", "cbs", "threads",
-			"steps");
-	fprintf(stdout, "%14e %14e %14e %8ld %8ld %8d %8d %8d %8d\n", 
-			end-start, throughput, residual,
+			"rbs", "cbs", "iters");
+	fprintf(stdout, "%14e %14e %14e %8ld %8ld %8d %8d %8ld\n", 
+			delta_time, throughput, residual,
 			conf.rows, conf.cols, 
-			conf.rbs, conf.cbs, threads,
-			conf.convergenceTimesteps);
+			conf.rbs, conf.cbs, niter);
 
 	if (conf.generateImage)
 		writeImage(conf.imageFileName, conf.matrix, rows, cols);
