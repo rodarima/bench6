@@ -370,50 +370,58 @@ void printConfiguration(const HeatConfiguration *conf)
 
 void initializeMatrix(const HeatConfiguration *conf, double *matrix, int64_t rows, int64_t cols, int64_t rowOffset)
 {
-	const int totalRows = conf->rows+2;
+	//const int totalRows = conf->rows+2;
 
 	// Set all elements to zero
 	memset(matrix, 0, rows*cols*sizeof(double));
 
-	for (int i = 0; i < conf->numHeatSources; i++) {
-		const HeatSource *src = &(conf->heatSources[i]);
-
-		// Initialize top row
-		if (rowOffset == 0) {
-			for (int c = 0; c < cols; ++c) {
-				double dist = sqrt(pow((double)c/(double)cols-src->col, 2) + pow(src->row, 2));
-				if (dist <= src->range) {
-					matrix[c] += (src->range-dist)/src->range*src->temperature;
-				}
-			}
-		}
-
-		// Initialize bottom row
-		if (rowOffset+rows == totalRows) {
-			for (int c = 0; c < cols; ++c) {
-				double dist = sqrt(pow((double)c/(double)cols-src->col, 2) + pow(1-src->row, 2));
-				if (dist <= src->range) {
-					matrix[(rows-1)*cols+c] += (src->range-dist)/src->range*src->temperature;
-				}
-			}
-		}
-
-		// Initialize left column
-		for (int r = 1; r < rows-1; ++r) {
-			double dist = sqrt(pow(src->col, 2) + pow((double)(rowOffset+r)/(double)totalRows-src->row, 2));
-			if (dist <= src->range) {
-				matrix[r*cols] += (src->range-dist)/src->range*src->temperature;
-			}
-		}
-
-		// Initialize right column
-		for (int r = 1; r < rows-1; ++r) {
-			double dist = sqrt(pow(1-src->col, 2) + pow((double)(rowOffset+r)/(double)totalRows-src->row, 2));
-			if (dist <= src->range) {
-				matrix[r*cols+cols-1] += (src->range-dist)/src->range*src->temperature;
-			}
-		}
+	/* Set the left side to 1.0 */
+	for (int i = 0; i < rows; i++) {
+		matrix[i*cols] = 1.0;
 	}
+
+	(void)(conf);
+	(void)(rowOffset);
+
+//	for (int i = 0; i < conf->numHeatSources; i++) {
+//		const HeatSource *src = &(conf->heatSources[i]);
+//
+//		// Initialize top row
+//		if (rowOffset == 0) {
+//			for (int c = 0; c < cols; ++c) {
+//				double dist = sqrt(pow((double)c/(double)cols-src->col, 2) + pow(src->row, 2));
+//				if (dist <= src->range) {
+//					matrix[c] += (src->range-dist)/src->range*src->temperature;
+//				}
+//			}
+//		}
+//
+//		// Initialize bottom row
+//		if (rowOffset+rows == totalRows) {
+//			for (int c = 0; c < cols; ++c) {
+//				double dist = sqrt(pow((double)c/(double)cols-src->col, 2) + pow(1-src->row, 2));
+//				if (dist <= src->range) {
+//					matrix[(rows-1)*cols+c] += (src->range-dist)/src->range*src->temperature;
+//				}
+//			}
+//		}
+//
+//		// Initialize left column
+//		for (int r = 1; r < rows-1; ++r) {
+//			double dist = sqrt(pow(src->col, 2) + pow((double)(rowOffset+r)/(double)totalRows-src->row, 2));
+//			if (dist <= src->range) {
+//				matrix[r*cols] += (src->range-dist)/src->range*src->temperature;
+//			}
+//		}
+//
+//		// Initialize right column
+//		for (int r = 1; r < rows-1; ++r) {
+//			double dist = sqrt(pow(1-src->col, 2) + pow((double)(rowOffset+r)/(double)totalRows-src->row, 2));
+//			if (dist <= src->range) {
+//				matrix[r*cols+cols-1] += (src->range-dist)/src->range*src->temperature;
+//			}
+//		}
+//	}
 }
 
 double getTime(void)
