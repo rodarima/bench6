@@ -9,7 +9,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-static char *progname = "b6_runner";
+static char *progname = "bench6";
 
 struct sampling {
 	int nmax;
@@ -162,6 +162,34 @@ sample(char *argv[])
 	free(s.samples);
 
 	return 0;
+}
+
+static void
+parse_options(struct options *options, int argc, char *argv[])
+{
+	/* Default options */
+	options->ndrift_samples = 1;
+	options->nsamples = 100;
+	options->verbose = 0;
+	options->drift_wait = 5;
+	options->outpath = "ovni/clock-offsets.txt";
+
+	int opt;
+	while ((opt = getopt(argc, argv, "hl")) != -1) {
+		switch (opt) {
+			case 'l':
+				list();
+				break;
+			case 'h':
+			default: /* '?' */
+				usage();
+		}
+	}
+
+	if (optind < argc) {
+		fprintf(stderr, "error: unexpected extra arguments\n");
+		exit(EXIT_FAILURE);
+	}
 }
 
 int
