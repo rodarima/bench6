@@ -2,24 +2,26 @@
   description = "bench6";
   nixConfig.bash-prompt = "\[nix-develop\]$ ";
 
-  inputs.jungle.url = "jungle";
+  inputs.jungle.url = "git+https://git.sr.ht/~rodarima/jungle";
 
-  outputs = { self, jungle }:
-  let pkgs = jungle.packages.x86_64-linux.hut; in
-  {
+  outputs = { self, jungle, ... }:
+  let
+    targetMachine = jungle.outputs.nixosConfigurations.hut;
+    pkgs = targetMachine.pkgs;
+  in {
     packages.x86_64-linux.default = pkgs.stdenv.mkDerivation rec {
       pname = "bench6";
-      version = "local";
+      version = if self ? shortRev then self.shortRev else "dirty";
 
       src = self.outPath;
 
       buildInputs = with pkgs; [
         cmake
-        bsc.clangOmpss2
-        bsc.nanos6
-        bsc.nodes
-        bsc.mpi
-        bsc.tampi
+        clangOmpss2
+        nanos6
+        nodes
+        mpi
+        tampi
       ];
 
       enableParallelBuilding = false;
