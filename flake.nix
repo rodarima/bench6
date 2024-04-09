@@ -2,7 +2,7 @@
   description = "bench6";
   nixConfig.bash-prompt = "\[nix-develop\]$ ";
 
-  inputs.jungle.url = "git+https://git.sr.ht/~rodarima/jungle";
+  inputs.jungle.url = "path:/home/Computational/rarias/jungle";
 
   outputs = { self, jungle, ... }:
   let
