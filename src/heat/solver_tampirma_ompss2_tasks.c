@@ -2,7 +2,7 @@
 #include <TAMPI.h>
 
 #include "utils.h"
-#include "common/heat.h"
+#include "heat.h"
 
 
 static inline void fence(MPI_Win win)

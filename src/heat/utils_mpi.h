@@ -3,7 +3,7 @@
 
 #include <mpi.h>
 
-#include "common/heat.h"
+#include "heat.h"
 
 extern int rank;
 extern int nranks;

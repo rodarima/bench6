@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "utils.h"
-#include "common/heat.h"
+#include "utils_mpi.h"
+#include "heat.h"
 
 typedef struct {
 	MPI_Request send;

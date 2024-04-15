@@ -1,4 +1,4 @@
-#include "common/heat.h"
+#include "heat.h"
 
 const char *
 summary(void)

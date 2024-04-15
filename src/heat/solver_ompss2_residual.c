@@ -1,7 +1,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "common/heat.h"
+#include "heat.h"
 
 const char *
 summary(void)

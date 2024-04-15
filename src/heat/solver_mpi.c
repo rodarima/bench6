@@ -1,7 +1,7 @@
 #include <mpi.h>
 
-#include "utils.h"
-#include "common/heat.h"
+#include "utils_mpi.h"
+#include "heat.h"
 
 int
 mpi_level(void)

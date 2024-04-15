@@ -1,47 +1,49 @@
 #include <mpi.h>
+#include <TAMPI.h>
 
-#include "utils.h"
-#include "common/heat.h"
-
-static int serial;
-
-int
-mpi_level(void)
-{
-	return MPI_THREAD_SERIALIZED;
-}
+#include "utils_mpi.h"
+#include "heat.h"
 
 const char *
 summary(void)
 {
-	return "Parallel version using MPI + OmpSs-2 tasks where communication\n"
-		"tasks are serialized";
+	return "Parallel version using MPI + OmpSs-2 tasks + Non-blocking TAMPI";
+}
+
+int
+mpi_level(void)
+{
+	return MPI_TASK_MULTIPLE;
 }
 
 static inline void send(const double *data, int nelems, int dst, int tag)
 {
-	MPI_Send(data, nelems, MPI_DOUBLE, dst, tag, MPI_COMM_WORLD);
+	MPI_Request request;
+	MPI_Isend(data, nelems, MPI_DOUBLE, dst, tag, MPI_COMM_WORLD, &request);
+	TAMPI_Iwait(&request, MPI_STATUS_IGNORE);
 }
 
 static inline void recv(double *data, int nelems, int src, int tag)
 {
-	MPI_Recv(data, nelems, MPI_DOUBLE, src, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+	MPI_Request request;
+	MPI_Irecv(data, nelems, MPI_DOUBLE, src, tag, MPI_COMM_WORLD, &request);
+	TAMPI_Iwait(&request, MPI_STATUS_IGNORE);
 }
 
 static inline void gaussSeidelSolver(int64_t rows, int64_t cols, int rbs, int cbs, int nrb, int ncb, double M[rows][cols], char reps[nrb][ncb])
 {
 	if (rank != 0) {
 		for (int C = 1; C < ncb-1; ++C)
-			#pragma oss task label("send upper inner") in(reps[1][C]) inout(serial)
+			#pragma oss task label("send upper inner") in(reps[1][C])
 			send(&M[1][(C-1)*cbs+1], cbs, rank-1, C);
 		for (int C = 1; C < ncb-1; ++C)
-			#pragma oss task label("recv upper outer") out(reps[0][C]) inout(serial)
+			#pragma oss task label("recv upper outer") out(reps[0][C])
 			recv(&M[0][(C-1)*cbs+1], cbs, rank-1, C);
     }
 
 	if (rank != nranks-1) {
 		for (int C = 1; C < ncb-1; ++C)
-			#pragma oss task label("recv lower outer") out(reps[nrb-1][C]) inout(serial)
+			#pragma oss task label("recv lower outer") out(reps[nrb-1][C])
 			recv(&M[rows-1][(C-1)*cbs+1], cbs, rank+1, C);
 	}
 
@@ -57,7 +59,7 @@ static inline void gaussSeidelSolver(int64_t rows, int64_t cols, int rbs, int cb
 
 	if (rank != nranks-1) {
 		for (int C = 1; C < ncb-1; ++C)
-			#pragma oss task label("send lower inner") in(reps[nrb-2][C]) inout(serial)
+			#pragma oss task label("send lower inner") in(reps[nrb-2][C])
 			send(&M[rows-2][(C-1)*cbs+1], cbs, rank+1, C);
 	}
 }

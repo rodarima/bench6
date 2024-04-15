@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
-#include "common/heat.h"
+#include "heat.h"
 
 #ifndef SIMD
 void computeBlock(const int64_t rows, const int64_t cols,

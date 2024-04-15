@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "utils.h"
-#include "common/heat.h"
+#include "utils_mpi.h"
+#include "heat.h"
 
 int rank;
 int nranks;
