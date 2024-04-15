@@ -3,6 +3,7 @@
   nixConfig.bash-prompt = "\[nix-develop\]$ ";
 
   inputs.jungle.url = "path:/home/Computational/rarias/jungle";
+  inputs.jungle.inputs.bscpkgs.url = "path:/home/Computational/rarias/bscpkgs";
 
   outputs = { self, jungle, ... }:
   let
@@ -20,6 +21,7 @@
         clangOmpss2
         nanos6
         nodes
+        nosv
         mpi
         tampi
       ];
