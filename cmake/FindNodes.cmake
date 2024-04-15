@@ -11,37 +11,48 @@
 # rule to add the compile and link time flags.
 
 include(GNUInstallDirs)
+include(FeatureSummary)
 
-if(DEFINED ENV{NODES_HOME})
-  set(NODES_HOME "$ENV{NODES_HOME}")
-else()
-  message(STATUS "NODES_HOME not set, refusing to search")
+set(NODES_FLAG "-fompss-2=libnodes")
+
+set(can_search_nodes TRUE)
+
+if(NOT DEFINED ENV{NODES_HOME})
+  message(STATUS "NODES_HOME not set, refusing to search Nodes")
+  set(can_search_nodes FALSE)
 endif()
 
-find_library(NODES_LIBRARY NAMES nodes PATHS "${NODES_HOME}/lib" NO_DEFAULT_PATH)
-find_path(NODES_INCLUDE_DIR nodes.h PATHS "${NODES_HOME}/include" NO_DEFAULT_PATH)
+if(NOT DEFINED ENV{NOSV_HOME})
+  message(STATUS "NOSV_HOME not set, refusing to search Nodes")
+  set(can_search_nodes FALSE)
+endif()
+
+if(can_search_nodes)
+  set(NODES_HOME "$ENV{NODES_HOME}")
+
+  # Ensure the compiler supports libnodes
+  include(CheckCCompilerFlag)
+
+  # Also set the linker flags, as otherwise the check will fail due to undefined
+  # symbols in the final program.
+  set(CMAKE_REQUIRED_LINK_OPTIONS "${NODES_FLAG}")
+  check_c_compiler_flag("${NODES_FLAG}" NODES_FLAG_SUPPORTED)
+
+  if(NOT NODES_FLAG_SUPPORTED)
+    message(STATUS "Compiler doesn't support ${NODES_FLAG} flag")
+  endif()
+
+  find_library(NODES_LIBRARY NAMES nodes PATHS "${NODES_HOME}/lib" NO_DEFAULT_PATH)
+  find_path(NODES_INCLUDE_DIR nodes.h PATHS "${NODES_HOME}/include" NO_DEFAULT_PATH)
+endif()
 
 include(FindPackageHandleStandardArgs)
 
 find_package_handle_standard_args(Nodes DEFAULT_MSG
-  NODES_LIBRARY NODES_INCLUDE_DIR)
+	NODES_HOME NODES_LIBRARY NODES_INCLUDE_DIR NODES_FLAG_SUPPORTED)
 
 if(NOT NODES_FOUND)
   message(STATUS "Cannot find NODES library")
-  return()
-endif()
-
-# Also ensure the compiler supports libnodes
-include(CheckCCompilerFlag)
-
-set(NODES_FLAG "-fompss-2=libnodes")
-# Also set the linker flags, as otherwise the check will fail due to undefined
-# symbols in the final program.
-set(CMAKE_REQUIRED_LINK_OPTIONS "${NODES_FLAG}")
-check_c_compiler_flag("${NODES_FLAG}" NODES_FLAG_SUPPORTED)
-
-if(NOT NODES_FLAG_SUPPORTED)
-  message(STATUS "Compiler doesn't support ${NODES_FLAG} flag")
   return()
 endif()
 
