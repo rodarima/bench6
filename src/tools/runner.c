@@ -1,3 +1,4 @@
+#include "bench6.h"
 #include "common.h"
 #include "config.h"
 #include <limits.h>
@@ -12,12 +13,17 @@
 static char *progname = "bench6";
 
 struct sampling {
-	int nmax;
-	int nmin;
-	int n;
+	long nmax;
+	long nmin;
+	long n;
 	double *samples;
-	double rse;
+	double rsem;
 	double last;
+	double wall;
+	double min_rsem;
+	const char *name;
+	double t0;
+	double min_time;
 };
 
 static int
@@ -43,7 +49,7 @@ do_run(char *argv[], double *ptime)
 		*nl = '\0';
 
 	/* Clean status line */
-	fprintf(stderr, "%s\n", line);
+	//fprintf(stderr, "%s\n", line);
 
 	double time;
 	sscanf(line, "%le", &time);
@@ -52,7 +58,7 @@ do_run(char *argv[], double *ptime)
 
 	/* Drain the rest of the stdout */
 	while (fgets(line, 4096, p) != NULL) {
-		fprintf(stderr, "%s", line);
+		//fprintf(stderr, "%s", line);
 	}
 
 bad_close:
@@ -75,41 +81,191 @@ cmp_double(const void *pa, const void *pb)
 		return 0;
 }
 
+//static void
+//resample(double *values, long n, double *out)
+//{
+//	for (long i = 0; i < n; i++) {
+//		/* FIXME: Not really uniform */
+//		out[i] = values[rand() % n];
+//		//printf("out[%ld] = %e\n", i, out[i]);
+//	}
+//}
+//
+//static double
+//mad_bootstrap(double *values, long n)
+//{
+//	long m = 1000;
+//
+//	double *r = calloc(n, sizeof(double));
+//	if (r == NULL) {
+//		perror("calloc failed");
+//		exit(1);
+//	}
+//
+//	double *absdev = calloc(n, sizeof(double));
+//	if (absdev == NULL) {
+//		perror("calloc failed");
+//		exit(1);
+//	}
+//
+//	double *mad = calloc(m, sizeof(double));
+//	if (mad == NULL) {
+//		perror("calloc failed");
+//		exit(1);
+//	}
+//
+//	for (long sample = 0; sample < m; sample++) {
+//		resample(values, n, r);
+//
+//		qsort(r, n, sizeof(double), cmp_double);
+//		double median = r[n / 2];
+//
+//		for (long i = 0; i < n; i++) {
+//			absdev[i] = fabs(r[i] - median);
+//		}
+//
+//		qsort(absdev, n, sizeof(double), cmp_double);
+//		mad[sample] = absdev[n / 2];
+//		//printf("mad[%ld] = %e\n", sample, mad[sample]);
+//	}
+//
+//	double sum = 0.0;
+//	for (long i = 0; i < m; i++)
+//		sum += mad[i];
+//
+//	double mean = sum / (double) m;
+//	double sumsqr = 0.0;
+//	for (long i = 0; i < m; i++) {
+//		double dev = mad[i] - mean;
+//		sumsqr += dev * dev;
+//	}
+//
+//	double var = sumsqr / m;
+//	double stdev = sqrt(var);
+//	double sem = stdev / sqrt(m);
+//	double rsem = 100.0 * sem * 1.96 / mean;
+//
+//	free(mad);
+//	free(absdev);
+//	free(r);
+//
+//	return rsem;
+//}
+
 static void
 stats(struct sampling *s)
 {
-	if (s->n < 2)
+	if (s->n < 1)
 		return;
 
-	double n = s->n;
-	//double last = s->samples[s->n - 1];
+	long outliers = 0;
+	double last = s->samples[s->n - 1];
+	double median = last;
+	double mean = last;
+	double var = NAN;
+	double stdev = NAN;
+	double rstdev = NAN;
+	double sem = NAN;
+	double rsem = NAN;
+	double mad = NAN;
+	//double mad_se = NAN;
+	double q1 = NAN;
+	double q3 = NAN;
+	double iqr = NAN;
+	double pol = NAN;
+	double smin = s->samples[s->n - 1];
+	double smax = s->samples[s->n - 1];
 
-	/* Sort samples to take the median */
-	qsort(s->samples, s->n, sizeof(double), cmp_double);
+	/* Need at least two samples */
+	if (s->n >= 2) {
+		/* Sort samples to take the median */
+		qsort(s->samples, s->n, sizeof(double), cmp_double);
 
-	double median = s->samples[s->n / 2];
+		double *absdev = calloc(s->n, sizeof(double));
+		if (absdev == NULL) {
+			perror("calloc failed");
+			exit(1);
+		}
 
-	double sum = 0.0;
-	for (int i = 0; i < s->n; i++)
-		sum += s->samples[i];
+		smin   = s->samples[0];
+		q1     = s->samples[s->n / 4];
+		median = s->samples[s->n / 2];
+		q3     = s->samples[(s->n * 3) / 4];
+		smax   = s->samples[s->n - 1];
 
-	double mean = sum / n;
-	double sumsqr = 0.0;
-	for (int i = 0; i < s->n; i++) {
-		double dev = s->samples[i] - mean;
-		sumsqr += dev * dev;
+		//qcd = (q3 - q1) / (q3 + q1);
+		iqr = q3 - q1;
+
+		double sum = 0.0;
+		for (long i = 0; i < s->n; i++)
+			sum += s->samples[i];
+
+		double n = s->n;
+		mean = sum / n;
+		double sumsqr = 0.0;
+		for (long i = 0; i < s->n; i++) {
+			double x = s->samples[i];
+			double dev = x - mean;
+			sumsqr += dev * dev;
+			absdev[i] = fabs(s->samples[i] - median);
+			//printf("absdev[%3ld] = %e\n", i, absdev[i]);
+			if (x < q1 - 1.5 * iqr || x > q3 + iqr * 1.5)
+				outliers++;
+		}
+		qsort(absdev, s->n, sizeof(double), cmp_double);
+		mad = absdev[s->n / 2] * 1.4826;
+		//mad_se = mad_bootstrap(s->samples, s->n);
+		pol = (double) outliers * 100.0 / n;
+
+		var = sumsqr / n;
+		stdev = sqrt(var);
+		rstdev = 100.0 * stdev / mean;
+		sem = stdev / sqrt(n);
+		rsem = 100.0 * sem * 1.96 / mean;
+		s->rsem = rsem;
+		free(absdev);
 	}
 
-	double var = sumsqr / n;
-	double stdev = sqrt(var);
-	double rstdev = 100.0 * stdev / mean;
-	double se = stdev / sqrt(n);
-	double rse = 100.0 * se * 1.96 / mean;
-
-	fprintf(stderr, "%s: n=%03d  median=%.3e  mean=%.3e  SD=%.3e  RSD=%.2f%%  RSE=%.2f%%\n",
-			progname, s->n, median, mean, stdev, rstdev, rse);
-
-	s->rse = rse;
+	/* Print the header at the beginning only */
+	if (s->n == 1) {
+		//printf("# --- bench6 ---\n");
+		//printf("# Min %ld runs, max %ld\n", s->nmin, s->nmax);
+		//printf("# Cutoff %%RSEM value set to %f\n", s->min_rsem);
+		//printf("# RUN    Number of run\n");
+		//printf("# LAST   Value of last run\n");
+		//printf("# MEDIAN Median of values until now\n");
+		//printf("# AVG    Mean of values until now\n");
+		//printf("# SD     Standard deviation\n");
+		//printf("# %%RSD   Relative standard deviation to the mean\n");
+		//printf("# %%RSEM  Relative standard error of the mean\n");
+		printf("%4s  %5s"
+				"  %8s  %8s  %8s  %8s  %8s"
+				"  %8s  %8s  %8s"
+				"  %5s  %5s"
+				"  %5s\n",
+				"RUN", "WALL",
+				"MIN", "Q1", "MEDIAN", "Q3", "MAX",
+				"MAD", "IQR", "SD",
+				"%RSD", "%RSEM",
+				"%OUTLIERS");
+	}
+//RUN   WALL       LAST     MEDIAN        AVG         SD   %RSD   %RSEM
+// 89  125.5  5.085e-03  5.075e-03  5.303e-03  3.500e-03  66.00   7.611
+//RUN    WALL       LAST     MEDIAN        AVG         SD   %RSD  %RSEM
+//  34    3.0  5.110e-03  5.097e-03  5.121e-03  1.327e-04   2.59   0.87
+	printf(
+			"\r%4ld  %5.1f"
+			"  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e"
+			"  %8.2e  %8.2e  %8.2e"
+			"  %5.2f  %5.2f"
+			"  %5.1f ",
+			s->n, s->wall,			/* progress */
+			smin, q1, median, q3, smax,	/* centrality */
+			mad, iqr, stdev,		/* dispersion */
+			rstdev, rsem,			/* rel. dispersion */
+			pol				/* outliers */
+		);
+	fflush(stdout);
 }
 
 static int
@@ -120,21 +276,26 @@ should_continue(struct sampling *s)
 	if (s->n < s->nmin)
 		return 1;
 
-	if (s->rse > 1.0 /* % */)
+	if (s->rsem > s->min_rsem)
+		return 1;
+
+	double dt = bench6_time() - s->t0;
+	if (dt < s->min_time)
 		return 1;
 
 	return 0;
 }
 
 static void
-add_sample(struct sampling *s, double time)
+add_sample(struct sampling *s, double metric, double walltime)
 {
 	if (s->n >= s->nmax) {
 		die("overflowing samples");
 	} else {
-		s->samples[s->n] = time;
+		s->samples[s->n] = metric;
 		s->n++;
-		s->last = time;
+		s->last = metric;
+		s->wall += walltime;
 	}
 }
 
@@ -143,21 +304,28 @@ sample(char *argv[])
 {
 	struct sampling s = { 0 };
 	s.nmax = 4000;
-	s.nmin = 30;
+	s.nmin = 50;
+	s.min_rsem = 0.5;
+	s.min_time = 60.0; /* At least one minute */
 	s.samples = calloc(s.nmax, sizeof(double));
 	s.n = 0;
+	s.name = argv[0];
+	s.t0 = bench6_time();
 
 	while (should_continue(&s)) {
-		double time;
-		if (do_run(argv, &time) != 0) {
+		double t0 = bench6_time();
+		double metric;
+		if (do_run(argv, &metric) != 0) {
 			err("failed to run benchmark");
 			return 1;
 		}
+		double t1 = bench6_time();
+		double walltime = t1 - t0;
 
-		add_sample(&s, time);
+		add_sample(&s, metric, walltime);
 	}
 
-	fprintf(stderr, "\n");
+	fprintf(stdout, "\n");
 
 	free(s.samples);
 
@@ -169,6 +337,11 @@ main(int argc, char *argv[])
 {
 	progname_set(progname);
 	(void) argc;
+
+	//while (argc && argv && strcmp(argv, "--") != 0) {
+	//	argv++;
+	//	argc--;
+	//}
 
 	if (sample(argv+1) != 0) {
 		err("failed to sample the benchmark");

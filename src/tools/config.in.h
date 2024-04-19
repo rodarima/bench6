@@ -4,8 +4,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#define BENCH6_PREFIX "@CMAKE_INSTALL_PREFIX@"
-#define BENCH6_BIN (BENCH6_PREFIX "/bin")
-#define BENCH6_LIST "@BENCH6_LIST@"
+/* Where the benchmark binaries are located */
+#define BENCH6_BENCHDIR "@CMAKE_INSTALL_LIBEXECDIR@"
 
 #endif /* CONFIG_H */
