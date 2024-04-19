@@ -80,12 +80,12 @@ int main(int argc, char **argv)
 #endif
 
 		fprintf(stderr, "%14s %14s %14s %8s %8s %8s %8s %8s %8s\n",
-				"throughput", "time", "error", 
+				"time", "throughput", "error", 
 				"rows", "cols",
 				"rbs", "cbs", "threads",
 				"steps");
 		fprintf(stdout, "%14e %14e %14e %8ld %8ld %8d %8d %8d %8d\n", 
-				throughput, end-start, residual,
+				end-start, throughput, residual,
 				conf.rows, conf.cols, 
 				conf.rbs, conf.cbs, threads,
 				conf.convergenceTimesteps);

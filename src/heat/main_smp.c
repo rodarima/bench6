@@ -32,10 +32,10 @@ int main(int argc, char **argv)
 	long total_elem = iter_elem * niter;
 	double throughput = total_elem / delta_time;
 
-	fprintf(stderr, "%14s %14s %14s %8s %8s %8s %8s %8s\n",
-			"time", "updates/s", "rel. error", 
-			"rows", "cols",
-			"rbs", "cbs", "iters");
+//	fprintf(stderr, "%14s %14s %14s %8s %8s %8s %8s %8s\n",
+//			"time", "updates/s", "rel. error", 
+//			"rows", "cols",
+//			"rbs", "cbs", "iters");
 	fprintf(stdout, "%14e %14e %14e %8ld %8ld %8d %8d %8ld\n", 
 			delta_time, throughput, residual,
 			conf.rows, conf.cols, 
