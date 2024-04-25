@@ -32,10 +32,13 @@
         ]
       },
       "locked": {
-        "lastModified": 1713974498,
-        "narHash": "sha256-e+II9sPaaiaX7uGcQHSK8I028CDm3yuvu6AVPlJDS6A=",
-        "path": "/home/Computational/rarias/bscpkgs",
-        "type": "path"
+        "lastModified": 1713974364,
+        "narHash": "sha256-ilZTVWSaNP1ibhQIIRXE+q9Lj2XOH+F9W3Co4QyY1eU=",
+        "ref": "refs/heads/master",
+        "rev": "de89197a4a7b162db7df9d41c9d07759d87c5709",
+        "revCount": 937,
+        "type": "git",
+        "url": "https://git.sr.ht/~rodarima/bscpkgs"
       },
       "original": {
         "type": "git",
@@ -94,14 +97,17 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1714044572,
-        "narHash": "sha256-9Y9g3o/sZMtLSR4/mYvkxIIvNwPy6xBomzFi8PANZhI=",
-        "path": "/home/Computational/rarias/jungle",
-        "type": "path"
+        "lastModified": 1714044311,
+        "narHash": "sha256-mEMtClaRZE45THl0Ukdhj5SVQzYSvRCRAdPshSlvkCQ=",
+        "ref": "refs/heads/master",
+        "rev": "d2adc3a6d3ab6a42cc0a1c99c2ff8681667409e0",
+        "revCount": 235,
+        "type": "git",
+        "url": "https://git.sr.ht/~rodarima/jungle"
       },
       "original": {
-        "path": "/home/Computational/rarias/jungle",
-        "type": "path"
+        "type": "git",
+        "url": "https://git.sr.ht/~rodarima/jungle"
       }
     },
     "nixpkgs": {
