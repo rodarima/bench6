@@ -32,6 +32,13 @@
         hardeningDisable = [ "all" ];
         dontStrip = true;
       };
+
+      bench6Master = bench6.overrideAttrs (old: {
+        src = builtins.fetchGit {
+          url = "https://pm.bsc.es/gitlab/rarias/bench6.git";
+          ref = "master";
+        };
+      });
     };
   };
 }
