@@ -1,0 +1,6 @@
+build:ci:
+  stage: build
+  tags:
+    - nix
+  script:
+    - nix shell '.#bench6' 'jungle#bigotes' --command sh -c "test/run.sh"

@@ -9,25 +9,29 @@
     targetMachine = jungle.outputs.nixosConfigurations.hut;
     pkgs = targetMachine.pkgs;
   in {
-    packages.x86_64-linux.default = pkgs.stdenv.mkDerivation rec {
-      pname = "bench6";
-      version = if self ? shortRev then self.shortRev else "dirty";
+    packages.x86_64-linux = rec {
+      default = bench6;
+      bench6 = pkgs.stdenv.mkDerivation rec {
+        pname = "bench6";
+        version = if self ? shortRev then self.shortRev else "dirty";
 
-      src = self.outPath;
+        src = self.outPath;
 
-      buildInputs = with pkgs; [
-        cmake
-        clangOmpss2
-        nanos6
-        nodes
-        nosv
-        mpi
-        tampi
-      ];
+        buildInputs = with pkgs; [
+          bigotes
+          cmake
+          clangOmpss2
+          nanos6
+          nodes
+          nosv
+          mpi
+          tampi
+        ];
 
-      enableParallelBuilding = false;
-      hardeningDisable = [ "all" ];
-      dontStrip = true;
+        enableParallelBuilding = false;
+        hardeningDisable = [ "all" ];
+        dontStrip = true;
+      };
     };
   };
 }
