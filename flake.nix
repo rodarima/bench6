@@ -2,8 +2,7 @@
   description = "bench6";
   nixConfig.bash-prompt = "\[nix-develop\]$ ";
 
-  inputs.jungle.url = "path:/home/Computational/rarias/jungle";
-  inputs.jungle.inputs.bscpkgs.url = "path:/home/Computational/rarias/bscpkgs";
+  inputs.jungle.url = "git+https://git.sr.ht/~rodarima/jungle";
 
   outputs = { self, jungle, ... }:
   let
