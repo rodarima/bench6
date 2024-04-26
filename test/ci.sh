@@ -4,8 +4,8 @@ set -e
 set -x
 
 # Allow impure evaluation so we fetch the latest commit from the repo
-bench6_ref=$(nix build --print-out-paths --impure ".#bench6Master")
-bench6_cur=$(nix build --print-out-paths ".#bench6")
+bench6_ref=$(nix build -L --print-out-paths --impure ".#bench6Master")
+bench6_cur=$(nix build -L --print-out-paths ".#bench6")
 
 # Add bigotes to the path
 bigotes=$(nix build --print-out-paths 'jungle#bigotes')
