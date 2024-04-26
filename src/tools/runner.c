@@ -15,9 +15,6 @@
 //	exit(1);
 //}
 
-static const char *cleanup_cmd = NULL;
-static char **bench_argv = NULL;
-
 struct sampling {
 	int nmax;
 	int nmin;
@@ -92,9 +89,6 @@ do_run(char *argv[], double *ptime)
 		close(pipefd[0]);
 	}
 
-	if (cleanup_cmd != NULL)
-		system(cleanup_cmd);
-
 	return 0;
 }
 
@@ -121,24 +115,24 @@ stats(struct sampling *s)
 	double se = stdev / sqrt(n);
 	double rse = se * 1.96 / mean;
 
-	fprintf(stderr, "n=%d last=%e mean=%e stdev=%e se=%e rse=%e\n",
+	fprintf(stderr, "\rn=%d last=%e mean=%e stdev=%e se=%e rse=%e",
 			s->n, s->last, mean, stdev, se, rse);
 
 	s->rse = rse;
 }
 
 static int
-should_stop(struct sampling *s)
+should_continue(struct sampling *s)
 {
 	stats(s);
 
 	if (s->n < s->nmin)
-		return 0;
+		return 1;
 
-	if (s->rse * 100.0 < 1.0 /* % */)
-		return 0;
+	if (s->rse * 100.0 > 1.0 /* % */)
+		return 1;
 
-	return 1;
+	return 0;
 }
 
 static void
@@ -176,7 +170,7 @@ sample(char *argv[])
 	s.samples = calloc(s.nmax, sizeof(double));
 	s.n = 0;
 
-	while (!should_stop(&s)) {
+	while (should_continue(&s)) {
 		double time;
 		if (do_run(argv, &time) != 0) {
 			err("failed to run benchmark");
@@ -191,45 +185,12 @@ sample(char *argv[])
 	return 0;
 }
 
-static void
-usage(void)
-{
-	fprintf(stderr, "c:h\n");
-	exit(1);
-}
-
-static void
-parse_args(int argc, char *argv[])
-{
-	int opt;
-
-	while ((opt = getopt(argc, argv, "c:h")) != -1) {
-		switch (opt) {
-			case 'c':
-				cleanup_cmd = optarg;
-				break;
-			case 'h':
-			default: /* '?' */
-				usage();
-		}
-	}
-
-	if (optind >= argc) {
-		err("bad usage: program");
-		usage();
-	}
-
-	bench_argv = &argv[optind];
-}
-
 int
 main(int argc, char *argv[])
 {
 	(void) argc;
 
-	parse_args(argc, argv);
-
-	if (sample(bench_argv) != 0) {
+	if (sample(argv+1) != 0) {
 		err("failed to sample the benchmark");
 		return 1;
 	}
