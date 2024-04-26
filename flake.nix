@@ -36,7 +36,10 @@
       bench6Master = bench6.overrideAttrs (old: {
         src = builtins.fetchGit {
           url = "https://pm.bsc.es/gitlab/rarias/bench6.git";
-          ref = "master";
+          #ref = "master";
+          # FIXME: Just for testing
+          ref = "heat";
+          rev = "466e50e511e11087f6e9298b3ac851fcab7d459c";
         };
       });
     };
