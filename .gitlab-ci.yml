@@ -3,13 +3,6 @@ build:ci:
   tags:
     - nix
   script:
-    - env
-    - rm -rf bench6-master
-    - git clone --depth=1 https://pm.bsc.es/gitlab/rarias/bench6.git bench6-master
-    - cd bench6-master
-    - git rev-parse HEAD
-    - cd ..
-    - git rev-parse HEAD
-    - nix shell '.#bench6' 'jungle#bigotes' --command sh -c "test/run.sh"
+    - test/ci.sh
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
