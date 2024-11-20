@@ -19,10 +19,10 @@
 void nbody_particle_init(const nbody_conf_t *conf, particles_block_t *part)
 {
 	for (int i = 0; i < BLOCK_SIZE; i++){
-		part->position_x[i] = conf->domain_size_x * ((float)random() / ((float)RAND_MAX + 1.0));
-		part->position_y[i] = conf->domain_size_y * ((float)random() / ((float)RAND_MAX + 1.0));
-		part->position_z[i] = conf->domain_size_z * ((float)random() / ((float)RAND_MAX + 1.0));
-		part->mass[i] = conf->mass_maximum * ((float)random() / ((float)RAND_MAX + 1.0));
+		part->position_x[i] = conf->domain_size_x * ((float)rand() / ((float)RAND_MAX + 1.0));
+		part->position_y[i] = conf->domain_size_y * ((float)rand() / ((float)RAND_MAX + 1.0));
+		part->position_z[i] = conf->domain_size_z * ((float)rand() / ((float)RAND_MAX + 1.0));
+		part->mass[i] = conf->mass_maximum * ((float)rand() / ((float)RAND_MAX + 1.0));
 		part->weight[i] = gravitational_constant * part->mass[i];
 	}
 }

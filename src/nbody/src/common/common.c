@@ -26,17 +26,17 @@ void * nbody_alloc(size_t size)
 static void nbody_print_usage(int argc, char **argv)
 {
 	(void) argc;
-	fprintf(stderr, "Usage: %s <-p particles> <-t timesteps> [OPTION]...\n", argv[0]);
-	fprintf(stderr, "Parameters:\n");
-	fprintf(stderr, "  -p, --particles=PARTICLES\t\tuse PARTICLES as the total number of particles (default: 16384)\n");
-	fprintf(stderr, "  -t, --timesteps=TIMESTEPS\t\tuse TIMESTEPS as the number of timesteps (default: 10)\n\n");
-	fprintf(stderr, "Optional parameters:\n");
-	fprintf(stderr, "  -f, --force-generation\t\t\t\talways force the generation of particles without the usage of files(disabled by default)\n");
-	fprintf(stderr, "  -c, --check\t\t\t\tcheck the correctness of the result (disabled by default)\n");
-	fprintf(stderr, "  -C, --no-check\t\t\tdo not check the correctness of the result\n");
-	fprintf(stderr, "  -o, --output\t\t\t\tsave the computed particles to the default output file (disabled by default)\n");
-	fprintf(stderr, "  -O, --no-output\t\t\tdo not save the computed particles to the default output file\n");
-	fprintf(stderr, "  -h, --help\t\t\t\tdisplay this help and exit\n\n");
+	fprintf(stderr, "Usage: %s [OPTIONS]...\n", argv[0]);
+	fprintf(stderr, "Options:\n");
+	fprintf(stderr, "  -p, --particles=PARTICLES   use PARTICLES as the total number of particles (default: %d)\n", default_num_particles);
+	fprintf(stderr, "  -t, --timesteps=TIMESTEPS   use TIMESTEPS as the number of timesteps (default: %d)\n\n", default_timesteps);
+	fprintf(stderr, "  -b, --blocksize=BLOCKSIZE   use BLOCKSIZE as the block size (default: %d)\n", default_blocksize);
+	fprintf(stderr, "  -f, --force-generation      always force the generation of particles without the usage of files (disabled by default)\n");
+	fprintf(stderr, "  -c, --check                 check the correctness of the result (disabled by default)\n");
+	fprintf(stderr, "  -C, --no-check              do not check the correctness of the result\n");
+	fprintf(stderr, "  -o, --output                save the computed particles to the default output file (disabled by default)\n");
+	fprintf(stderr, "  -O, --no-output             do not save the computed particles to the default output file\n");
+	fprintf(stderr, "  -h, --help                  display this help and exit\n\n");
 }
 
 nbody_conf_t nbody_get_conf(int argc, char **argv)
@@ -50,27 +50,29 @@ nbody_conf_t nbody_get_conf(int argc, char **argv)
 	conf.seed             = default_seed;
 	conf.name             = default_name;
 	conf.num_particles    = default_num_particles;
-	conf.num_blocks       = conf.num_particles / BLOCK_SIZE;
+	conf.blocksize        = default_blocksize;
+	conf.num_blocks       = conf.num_particles / conf.blocksize;
 	conf.timesteps        = default_timesteps;
 	conf.save_result      = default_save_result;
 	conf.check_result     = default_check_result;
 	conf.force_generation = default_force_generation;
 	
 	static struct option long_options[] = {
-		{"particles",	required_argument,	0, 'p'},
-		{"timesteps",	required_argument,	0, 't'},
-		{"force-generation",		no_argument,		0, 'f'},
-		{"check",		no_argument,		0, 'c'},
-		{"no-check",	no_argument,		0, 'C'},
-		{"output",		no_argument,		0, 'o'},
-		{"no-output",	no_argument,		0, 'O'},
-		{"help",		no_argument,		0, 'h'},
+		{"particles",        required_argument, 0, 'p'},
+		{"timesteps",        required_argument, 0, 't'},
+		{"blocksize",        required_argument, 0, 'b'},
+		{"force-generation", no_argument,       0, 'f'},
+		{"check",            no_argument,       0, 'c'},
+		{"no-check",         no_argument,       0, 'C'},
+		{"output",           no_argument,       0, 'o'},
+		{"no-output",        no_argument,       0, 'O'},
+		{"help",             no_argument,       0, 'h'},
 		{0, 0, 0, 0}
 	};
 	
 	int c;
 	int index;
-	while ((c = getopt_long(argc, argv, "hfoOcCp:t:", long_options, &index)) != -1) {
+	while ((c = getopt_long(argc, argv, "hfoOcCp:t:b:", long_options, &index)) != -1) {
 		switch (c) {
 			case 'h':
 				nbody_print_usage(argc, argv);
@@ -93,6 +95,9 @@ nbody_conf_t nbody_get_conf(int argc, char **argv)
 			case 'p':
 				conf.num_particles = atoi(optarg);
 				break;
+			case 'b':
+				conf.blocksize = atoi(optarg);
+				break;
 			case 't':
 				conf.timesteps = atoi(optarg);
 				break;
@@ -101,11 +106,6 @@ nbody_conf_t nbody_get_conf(int argc, char **argv)
 			default:
 				abort();
 		}
-	}
-	
-	if (!conf.num_particles || !conf.timesteps) {
-		nbody_print_usage(argc, argv);
-		exit(1);
 	}
 	
 	return conf;

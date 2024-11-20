@@ -14,6 +14,9 @@ set(SMP_SOURCES
 mk_bench(b6_nbody_seq_plain)
 target_sources(b6_nbody_seq_plain PRIVATE ${PLAIN_SOURCES} src/plain/solver_seq.c)
 
+mk_bench(b6_nbody_seq)
+target_sources(b6_nbody_seq PRIVATE ${SMP_SOURCES} src/blocking/smp/solver_seq.c)
+
 find_package(OpenMP)
 if (OPENMP_FOUND)
   mk_bench(b6_nbody_omp_plain)

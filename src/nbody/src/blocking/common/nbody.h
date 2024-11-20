@@ -44,7 +44,7 @@ typedef struct nbody_file_t nbody_file_t;
 typedef struct nbody_t nbody_t;
 
 // Solver function
-void nbody_solve(nbody_t *nbody, const int num_blocks, const int timesteps, const float time_interval);
+void nbody_solve(nbody_t *nbody, const int blocksize, const int num_blocks, const int timesteps, const float time_interval);
 
 // Auxiliary functions
 nbody_t nbody_setup(const nbody_conf_t *conf);

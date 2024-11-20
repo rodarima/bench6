@@ -28,7 +28,7 @@ int main(int argc, char** argv)
 	nbody_t nbody = nbody_setup(&conf);
 	
 	double start = get_time();
-	nbody_solve(&nbody, conf.num_blocks, conf.timesteps, conf.time_interval);
+	nbody_solve(&nbody, conf.blocksize, conf.num_blocks, conf.timesteps, conf.time_interval);
 	double end = get_time();
 	
 	nbody_stats(&nbody, &conf, end - start);

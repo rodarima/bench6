@@ -7,6 +7,7 @@
 
 #include "blocking/smp/nbody.h"
 
+#undef NDEBUG
 #include <assert.h>
 #include <ctype.h>
 #include <fcntl.h>
@@ -23,7 +24,7 @@
 #include <unistd.h>
 
 
-void nbody_generate_particles(const nbody_conf_t *conf, const nbody_file_t *file)
+static void nbody_generate_particles(const nbody_conf_t *conf, const nbody_file_t *file)
 {
 	char fname[1024];
 	sprintf(fname, "%s.in", file->name);
@@ -87,7 +88,7 @@ void nbody_check(const nbody_t *nbody)
 	assert(!err);
 }
 
-nbody_file_t nbody_setup_file(const nbody_conf_t *conf)
+static nbody_file_t nbody_setup_file(const nbody_conf_t *conf)
 {
 	nbody_file_t file;
 	file.size = conf->num_blocks * sizeof(particles_block_t);
@@ -96,8 +97,10 @@ nbody_file_t nbody_setup_file(const nbody_conf_t *conf)
 	return file;
 }
 
-particles_block_t * nbody_load_particles(const nbody_conf_t *conf, const nbody_file_t *file)
+static particles_block_t *nbody_load_particles(const nbody_conf_t *conf, const nbody_file_t *file)
 {
+	(void) conf;
+
 	char fname[1024];
 	sprintf(fname, "%s.in", file->name);
 	

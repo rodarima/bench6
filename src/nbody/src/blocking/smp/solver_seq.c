@@ -13,12 +13,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-static void calculate_forces(forces_block_t *forces, const particles_block_t *particles, const int num_blocks);
-static void update_particles(particles_block_t *particles, forces_block_t *forces, const int num_blocks, const float time_interval);
-static void calculate_forces_block(forces_block_t *forces, const particles_block_t *block1, const particles_block_t *block2);
-static void update_particles_block(particles_block_t *particles, forces_block_t *forces, const float time_interval);
+static void calculate_forces(forces_block_t *forces, const particles_block_t *particles, const int blocksize, const int num_blocks);
+static void update_particles(particles_block_t *particles, forces_block_t *forces, const int blocksize, const int num_blocks, const float time_interval);
+static void calculate_forces_block(forces_block_t *forces, const int blocksize, const particles_block_t *block1, const particles_block_t *block2);
+static void update_particles_block(particles_block_t *particles, forces_block_t *forces, const float time_interval, const int blocksize);
 
-void nbody_solve(nbody_t *nbody, const int num_blocks, const int timesteps, const float time_interval)
+void nbody_solve(nbody_t *nbody, const int blocksize, const int num_blocks, const int timesteps, const float time_interval)
 {
 	assert(nbody != NULL);
 	
@@ -26,21 +26,22 @@ void nbody_solve(nbody_t *nbody, const int num_blocks, const int timesteps, cons
 	forces_block_t *forces = nbody->forces;
 	
 	for (int t = 0; t < timesteps; t++) {
-		calculate_forces(forces, particles, num_blocks);
-		update_particles(particles, forces, num_blocks, time_interval);
+		calculate_forces(forces, particles, blocksize, num_blocks);
+		update_particles(particles, forces, blocksize, num_blocks, time_interval);
 	}
 }
 
-void calculate_forces_N2(forces_block_t *forces, const particles_block_t *particles, const int num_blocks)
+void calculate_forces_N2(forces_block_t *forces, const particles_block_t *particles, const int blocksize, const int num_blocks)
 {
 	for (int i = 0; i < num_blocks; i++) {
 		for (int j = 0; j < num_blocks; j++) {
-			calculate_forces_block(forces+i, particles+i, particles+j);
+			calculate_forces_block(forces+i, blocksize, particles+i, particles+j);
 		}
 	}
 }
 
-void calculate_forces_NlogN(forces_block_t *forces, const particles_block_t *particles, const int num_blocks)
+#if 0
+static void calculate_forces_NlogN(forces_block_t *forces, const particles_block_t *particles, const int num_blocks)
 {
 	for (int i = 0; i < num_blocks; i++) {
 		for (int j = 0; j < LOG2(num_blocks); j++) {
@@ -49,21 +50,22 @@ void calculate_forces_NlogN(forces_block_t *forces, const particles_block_t *par
 	}
 }
 
-void calculate_forces_N(forces_block_t *forces, const particles_block_t *particles, const int num_blocks)
+static void calculate_forces_N(forces_block_t *forces, const particles_block_t *particles, const int num_blocks)
 {
 	for (int i = 0; i < num_blocks - 1; i++) {
 		calculate_forces_block(forces+i, particles+i, particles+i+1);
 	}
 }
+#endif
 
-void update_particles(particles_block_t *particles, forces_block_t *forces, const int num_blocks, const float time_interval)
+void update_particles(particles_block_t *particles, forces_block_t *forces, const int blocksize, const int num_blocks, const float time_interval)
 {
 	for (int i = 0; i < num_blocks; i++) {
-		update_particles_block(particles+i, forces+i, time_interval);
+		update_particles_block(particles+i, forces+i, time_interval, blocksize);
 	}
 }
 
-static void calculate_forces_block(forces_block_t *forces, const particles_block_t *block1, const particles_block_t *block2)
+static void calculate_forces_block(forces_block_t *forces, const int blocksize, const particles_block_t *block1, const particles_block_t *block2)
 {
 	float *x = forces->x;
 	float *y = forces->y;
@@ -80,9 +82,9 @@ static void calculate_forces_block(forces_block_t *forces, const particles_block
 	const float *pos_z2 = block2->position_z;
 	const float *mass2  = block2->mass;
 	
-	for (int i = 0; i < BLOCK_SIZE; i++) {
+	for (int i = 0; i < blocksize; i++) {
 		float fx = x[i], fy = y[i], fz = z[i];
-		for (int j = 0; j < BLOCK_SIZE; j++) {
+		for (int j = 0; j < blocksize; j++) {
 			const float diff_x = pos_x2[j] - pos_x1[i];
 			const float diff_y = pos_y2[j] - pos_y1[i];
 			const float diff_z = pos_z2[j] - pos_z1[i];
@@ -104,9 +106,9 @@ static void calculate_forces_block(forces_block_t *forces, const particles_block
 	}
 }
 
-void update_particles_block(particles_block_t *particles, forces_block_t *forces, const float time_interval)
+void update_particles_block(particles_block_t *particles, forces_block_t *forces, const float time_interval, const int blocksize)
 {
-	for (int e = 0; e < BLOCK_SIZE; e++){
+	for (int e = 0; e < blocksize; e++){
 		const float mass       = particles->mass[e];
 		const float velocity_x = particles->velocity_x[e];
 		const float velocity_y = particles->velocity_y[e];
@@ -138,9 +140,11 @@ void update_particles_block(particles_block_t *particles, forces_block_t *forces
 
 void nbody_stats(const nbody_t *nbody, const nbody_conf_t *conf, double time)
 {
-	int particles = nbody->num_blocks * BLOCK_SIZE;
+	(void) conf;
+
+	int particles = nbody->num_blocks * conf->blocksize;
 	printf("bigo, %s, timesteps, %d, total_particles, %d, block_size, %d, blocks, %d, time, %.2f, performance, %.2f\n",
-			TOSTRING(BIGO), nbody->timesteps, particles, BLOCK_SIZE, nbody->num_blocks,
+			TOSTRING(BIGO), nbody->timesteps, particles, conf->blocksize, nbody->num_blocks,
 			time, nbody_compute_throughput(particles, nbody->timesteps, time)
 	);
 }

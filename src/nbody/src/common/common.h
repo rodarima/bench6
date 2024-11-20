@@ -10,10 +10,6 @@
 
 #include <stddef.h>
 
-#ifndef BLOCK_SIZE
-#define BLOCK_SIZE 2048
-#endif
-
 // BIGO definition
 #ifndef BIGO
 #define BIGO N2
@@ -44,8 +40,9 @@ static const float default_mass_maximum     = 1.0e+28; /* kg */
 static const float default_time_interval    = 1.0e+0;  /* s  */
 static const int   default_seed             = 12345;
 static const char* default_name             = "data/nbody";
-static const int   default_num_particles    = 0;
-static const int   default_timesteps        = 0;
+static const int   default_blocksize        = 2048;
+static const int   default_num_particles    = 16384;
+static const int   default_timesteps        = 10;
 static const int   default_save_result      = 0;
 static const int   default_check_result     = 0;
 static const int   default_force_generation = 0;
@@ -59,6 +56,7 @@ typedef struct {
 	int seed;
 	const char* name;
 	int num_particles;
+	int blocksize;
 	int num_blocks;
 	int timesteps;
 	int save_result;
