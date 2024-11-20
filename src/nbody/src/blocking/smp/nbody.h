@@ -17,8 +17,11 @@ struct nbody_file_t {
 };
 
 struct nbody_t {
+	float *particles_map;
 	particles_block_t *particles;
+	float *forces_map;
 	forces_block_t *forces;
+	int blocksize;
 	int num_blocks;
 	int timesteps;
 	nbody_file_t file;

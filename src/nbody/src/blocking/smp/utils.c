@@ -23,7 +23,7 @@
 #include <time.h>
 #include <unistd.h>
 
-
+/*
 static void nbody_generate_particles(const nbody_conf_t *conf, const nbody_file_t *file)
 {
 	char fname[1024];
@@ -59,6 +59,7 @@ static void nbody_generate_particles(const nbody_conf_t *conf, const nbody_file_
 	err = close(fd);
 	assert(!err);
 }
+*/
 
 void nbody_check(const nbody_t *nbody)
 {
@@ -75,7 +76,7 @@ void nbody_check(const nbody_t *nbody)
 	particles_block_t *reference = mmap(NULL, nbody->file.size, PROT_READ, MAP_SHARED, fd, 0);
 	assert(reference != MAP_FAILED);
 	
-	if (nbody_compare_particles(nbody->particles, reference, nbody->num_blocks)) {
+	if (nbody_compare_particles(nbody->particles, reference, nbody->blocksize, nbody->num_blocks)) {
 		printf("Result validation: OK\n");
 	} else {
 		printf("Result validation: ERROR\n");
@@ -93,10 +94,10 @@ static nbody_file_t nbody_setup_file(const nbody_conf_t *conf)
 	nbody_file_t file;
 	file.size = conf->num_blocks * sizeof(particles_block_t);
 	
-	sprintf(file.name, "%s-%s-%d-%d-%d", conf->name, TOSTRING(BIGO), conf->num_blocks * BLOCK_SIZE, BLOCK_SIZE, conf->timesteps);
+	sprintf(file.name, "%s-%s-%d-%d-%d", conf->name, TOSTRING(BIGO), conf->num_blocks * conf->blocksize, conf->blocksize, conf->timesteps);
 	return file;
 }
-
+/*
 static particles_block_t *nbody_load_particles(const nbody_conf_t *conf, const nbody_file_t *file)
 {
 	(void) conf;
@@ -115,36 +116,107 @@ static particles_block_t *nbody_load_particles(const nbody_conf_t *conf, const n
 	
 	return ptr;
 }
+*/
+
+static void alloc_particles(const nbody_conf_t *conf, nbody_t *nbody)
+{
+	size_t bs = (size_t) conf->blocksize;
+	size_t n = (size_t) conf->num_blocks;
+	size_t block_floats = bs * (3 + 3 + 2);
+	size_t block_bytes = block_floats * sizeof(float);
+	size_t alloc_bytes = n * block_bytes;
+
+	nbody->particles_map = nbody_alloc(alloc_bytes);
+	nbody->particles = nbody_alloc(n * sizeof(particles_block_t));
+
+	float *m = nbody->particles_map;
+
+	/* Setup the particles_block_t pointers, so they point to the big chunk
+	 * in particle_map:
+	 *
+	 *     [      particles[0]     ] [    particles[1]    ] ...                
+	 *     [ px ][ py ][ pz ] [... ]
+	 *       |     \_________________
+	 *       |                       \
+	 *       v                       v
+	 *     [ px0 ] [ px1 ] [ ... ] [ py0 ] [ ... ] ...    
+	 *     [             particles_map                    ]
+	 */
+
+	for (int i = 0; i < conf->num_blocks; i++) {
+		particles_block_t *p = &nbody->particles[i];
+		float *b = &m[block_floats * i];
+		p->position_x = &b[bs * 0];
+		p->position_y = &b[bs * 1];
+		p->position_z = &b[bs * 2];
+		p->velocity_x = &b[bs * 3];
+		p->velocity_y = &b[bs * 4];
+		p->velocity_z = &b[bs * 5];
+		p->mass       = &b[bs * 6];
+		p->weight     = &b[bs * 7];
+	}
+}
+
+static void alloc_forces(const nbody_conf_t *conf, nbody_t *nbody)
+{
+	size_t bs = (size_t) conf->blocksize;
+	size_t n = (size_t) conf->num_blocks;
+	size_t block_floats = bs * 3;
+	size_t block_bytes = block_floats * sizeof(float);
+	size_t alloc_bytes = n * block_bytes;
+
+	nbody->forces_map = nbody_alloc(alloc_bytes);
+	nbody->forces = nbody_alloc(n * sizeof(forces_block_t));
+
+	float *m = nbody->forces_map;
+
+	/* Setup the forces_block_t pointers, so they point to the big chunk
+	 * in forces_map:
+	 *
+	 *     [  forces[0]  ] [  forces[1]  ] ...                
+	 *     [ x ][ y ][ z ]
+	 *       |     \________________
+	 *       |                      \
+	 *       v                      v
+	 *     [ x0 ] [ x1 ] [ ... ] [ y0 ] [ y1 ]  [ ... ]
+	 *     [             forces_map                   ]
+	 */
+
+	for (int i = 0; i < conf->num_blocks; i++) {
+		forces_block_t *f = &nbody->forces[i];
+		float *b = &m[block_floats * i];
+		f->x = &b[bs * 0];
+		f->y = &b[bs * 1];
+		f->z = &b[bs * 2];
+	}
+}
 
 nbody_t nbody_setup(const nbody_conf_t *conf)
 {
 	nbody_t nbody;
 	nbody.timesteps = conf->timesteps;
+	nbody.blocksize = conf->blocksize;
 	nbody.num_blocks = conf->num_blocks;
 	
 	nbody_file_t file = nbody_setup_file(conf);
 	nbody.file = file;
 	
 	if (conf->force_generation) {
-		nbody.particles = nbody_alloc(conf->num_blocks * sizeof(particles_block_t));
-		assert(nbody.particles != NULL);
+		alloc_particles(conf, &nbody);
 		
-		for (int i = 0; i < conf->num_blocks; i++) {
+		for (int i = 0; i < conf->num_blocks; i++)
 			nbody_particle_init(conf, nbody.particles+i);
-		}
-		
-		nbody.forces = nbody_alloc(conf->num_blocks * sizeof(forces_block_t));
-		assert(nbody.forces != NULL);
-	}
-	else {
+	} else {
+		fprintf(stderr, "not implemented\n");
+		exit(1);
+		/*
 		nbody_generate_particles(conf, &file);
-		
 		nbody.particles = nbody_load_particles(conf, &file);
 		assert(nbody.particles != NULL);
-		
-		nbody.forces = nbody_alloc(conf->num_blocks * sizeof(forces_block_t));
-		assert(nbody.forces != NULL);
+		*/
 	}
+
+	alloc_forces(conf, &nbody);
 	
 	return nbody;
 }

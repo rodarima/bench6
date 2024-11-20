@@ -14,29 +14,24 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-// Block size definition
-#ifndef BLOCK_SIZE
-#define BLOCK_SIZE 2048
-#endif
-
-#define MIN_PARTICLES (4096 * BLOCK_SIZE / sizeof(particles_block_t))
+//#define MIN_PARTICLES (4096 * BLOCK_SIZE / sizeof(particles_block_t))
 
 // Solver structures
 typedef struct {
-	float position_x[BLOCK_SIZE]; /* m   */
-	float position_y[BLOCK_SIZE]; /* m   */
-	float position_z[BLOCK_SIZE]; /* m   */
-	float velocity_x[BLOCK_SIZE]; /* m/s */
-	float velocity_y[BLOCK_SIZE]; /* m/s */
-	float velocity_z[BLOCK_SIZE]; /* m/s */
-	float mass[BLOCK_SIZE];       /* kg  */
-	float weight[BLOCK_SIZE];
+	float *position_x; /* m   */
+	float *position_y; /* m   */
+	float *position_z; /* m   */
+	float *velocity_x; /* m/s */
+	float *velocity_y; /* m/s */
+	float *velocity_z; /* m/s */
+	float *mass;       /* kg  */
+	float *weight;
 } particles_block_t;
 
 typedef struct {
-	float x[BLOCK_SIZE]; /* x   */
-	float y[BLOCK_SIZE]; /* y   */
-	float z[BLOCK_SIZE]; /* z   */
+	float *x; /* x   */
+	float *y; /* y   */
+	float *z; /* z   */
 } forces_block_t;
 
 // Forward declaration
@@ -53,7 +48,7 @@ void nbody_stats(const nbody_t *nbody, const nbody_conf_t *conf, double time);
 void nbody_save_particles(const nbody_t *nbody);
 void nbody_free(nbody_t *nbody);
 void nbody_check(const nbody_t *nbody);
-int nbody_compare_particles(const particles_block_t *local, const particles_block_t *reference, int num_blocks);
+int nbody_compare_particles(const particles_block_t *local, const particles_block_t *reference, int blocksize, int num_blocks);
 
 #endif // NBODY_H
 

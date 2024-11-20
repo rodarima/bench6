@@ -19,7 +19,8 @@
 void * nbody_alloc(size_t size)
 {
 	void *addr = mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
-	assert(addr != MAP_FAILED);
+	if (addr == MAP_FAILED)
+		abort();
 	return addr;
 }
 

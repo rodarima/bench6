@@ -18,7 +18,7 @@
 
 void nbody_particle_init(const nbody_conf_t *conf, particles_block_t *part)
 {
-	for (int i = 0; i < BLOCK_SIZE; i++){
+	for (int i = 0; i < conf->blocksize; i++) {
 		part->position_x[i] = conf->domain_size_x * ((float)rand() / ((float)RAND_MAX + 1.0));
 		part->position_y[i] = conf->domain_size_y * ((float)rand() / ((float)RAND_MAX + 1.0));
 		part->position_z[i] = conf->domain_size_z * ((float)rand() / ((float)RAND_MAX + 1.0));
@@ -27,12 +27,12 @@ void nbody_particle_init(const nbody_conf_t *conf, particles_block_t *part)
 	}
 }
 
-int nbody_compare_particles(const particles_block_t *local, const particles_block_t *reference, int num_blocks)
+int nbody_compare_particles(const particles_block_t *local, const particles_block_t *reference, int blocksize, int num_blocks)
 {
 	double error = 0.0;
 	int count = 0;
 	for (int i = 0; i < num_blocks; i++) {
-		for (int e = 0; e < BLOCK_SIZE; e++) {
+		for (int e = 0; e < blocksize; e++) {
 			if ((local[i].position_x[e] != reference[i].position_x[e]) ||
 			    (local[i].position_y[e] != reference[i].position_y[e]) ||
 			    (local[i].position_z[e] != reference[i].position_z[e])) {
@@ -45,7 +45,7 @@ int nbody_compare_particles(const particles_block_t *local, const particles_bloc
 	}
 	
 	double relative_error = (count != 0) ? error / (3.0 * count) : 0.0;
-	if ((count * 100.0) / (num_blocks * BLOCK_SIZE) > 0.6 || relative_error > TOLERATED_ERROR) {
+	if ((count * 100.0) / (num_blocks * blocksize) > 0.6 || relative_error > TOLERATED_ERROR) {
 		return 0;
 	}
 	return 1;
