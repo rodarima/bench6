@@ -13,13 +13,19 @@ set(SMP_SOURCES
 
 mk_bench(b6_nbody_seq_plain)
 target_sources(b6_nbody_seq_plain PRIVATE ${PLAIN_SOURCES} src/plain/solver_seq.c)
+target_link_libraries(b6_nbody_seq_plain PRIVATE m)
 
 mk_bench(b6_nbody_seq)
 target_sources(b6_nbody_seq PRIVATE ${SMP_SOURCES} src/blocking/smp/solver_seq.c)
+target_link_libraries(b6_nbody_seq PRIVATE m)
 
 find_package(OpenMP)
 if (OPENMP_FOUND)
   mk_bench(b6_nbody_omp_plain)
   target_sources(b6_nbody_omp_plain PRIVATE ${PLAIN_SOURCES} src/plain/solver_omp.c)
-  target_link_libraries(b6_nbody_omp_plain PRIVATE OpenMP::OpenMP_C)
+  target_link_libraries(b6_nbody_omp_plain PRIVATE m OpenMP::OpenMP_C)
+
+  mk_bench(b6_nbody_omp)
+  target_sources(b6_nbody_omp PRIVATE ${SMP_SOURCES} src/blocking/smp/solver_omp.c)
+  target_link_libraries(b6_nbody_omp PRIVATE m OpenMP::OpenMP_C)
 endif()

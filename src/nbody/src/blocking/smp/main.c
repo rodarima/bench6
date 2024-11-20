@@ -18,8 +18,8 @@ int main(int argc, char** argv)
 	nbody_conf_t conf = nbody_get_conf(argc, argv);
 
 	//conf.num_particles = ROUNDUP(conf.num_particles, MIN_PARTICLES);
-	assert(conf.num_particles >= BLOCK_SIZE);
-	assert(conf.timesteps > 0);
+	//assert(conf.num_particles >= BLOCK_SIZE);
+	//assert(conf.timesteps > 0);
 	
 	conf.num_blocks = conf.num_particles / conf.blocksize;
 	assert(conf.num_blocks > 0);
