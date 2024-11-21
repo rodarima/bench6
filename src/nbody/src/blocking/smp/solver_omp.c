@@ -42,7 +42,7 @@ void calculate_forces_N2(forces_block_t *forces, const particles_block_t *partic
 {
 	for (int i = 0; i < num_blocks; i++) {
 		for (int j = 0; j < num_blocks; j++) {
-			#pragma omp task depend(in: particles[i], particles[j]) depend(inout: forces[i])
+			#pragma omp task depend(in: particles[i], particles[j]) depend(inout: forces[i]) label("calculate_forces_N2")
 			calculate_forces_block(forces+i, particles+i, particles+j, blocksize);
 		}
 	}
@@ -51,7 +51,7 @@ void calculate_forces_N2(forces_block_t *forces, const particles_block_t *partic
 void update_particles(particles_block_t *particles, forces_block_t *forces, const int blocksize, const int num_blocks, const float time_interval)
 {
 	for (int i = 0; i < num_blocks; i++) {
-		#pragma omp task depend(inout: particles[i], forces[i])
+		#pragma omp task depend(inout: particles[i], forces[i]) label("update_particles")
 		update_particles_block(particles+i, forces+i, time_interval, blocksize);
 	}
 }
