@@ -3,5 +3,5 @@
 
 include(CheckCCompilerFlag)
 
-#set(CMAKE_REQUIRED_LINK_OPTIONS "-fompss-2")
+set(CMAKE_REQUIRED_LINK_OPTIONS "-fopenmp=libompv")
 check_c_compiler_flag("-fopenmp=libompv" OPENMPV_COMPILER_FOUND)
