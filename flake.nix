@@ -34,7 +34,9 @@
         buildInputs = with pkgs; [
           bigotes
           cmake
-          clangOmpss2NodesOmpv
+          clangOmpss2
+          openmp
+          openmpv
           nanos6
           nodes
           nosv
