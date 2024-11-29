@@ -13,3 +13,6 @@ export PATH="$bigotes/bin:$PATH"
 
 bigotes "${bench6_ref}/bin/b6_heat_nanos6" -s 2048 -t 10 -b 64
 bigotes "${bench6_cur}/bin/b6_heat_nanos6" -s 2048 -t 10 -b 64
+
+bigotes "${bench6_cur}/bin/b6_nbody_omp" -f -b 512
+bigotes "${bench6_cur}/bin/b6_nbody_ompv" -f -b 512
