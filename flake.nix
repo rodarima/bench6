@@ -16,6 +16,13 @@
       overlays = [ bscpkgs.bscOverlay ];
     };
   in {
+    devShells.x86_64-linux.default = self.outputs.devShells.x86_64-linux.run;
+    devShells.x86_64-linux.run = pkgs.mkShell {
+      buildInputs = [
+        self.outputs.packages.x86_64-linux.bench6
+        pkgs.bigotes
+      ];
+    };
     packages.x86_64-linux = rec {
       default = bench6;
       bench6 = pkgs.stdenv.mkDerivation rec {
