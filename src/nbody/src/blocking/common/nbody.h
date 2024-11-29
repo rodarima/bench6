@@ -44,7 +44,6 @@ void nbody_solve(nbody_t *nbody, const int blocksize, const int num_blocks, cons
 // Auxiliary functions
 nbody_t nbody_setup(const nbody_conf_t *conf);
 void nbody_particle_init(const nbody_conf_t *conf, particles_block_t *part);
-void nbody_stats(const nbody_t *nbody, const nbody_conf_t *conf, double time);
 void nbody_save_particles(const nbody_t *nbody);
 void nbody_free(nbody_t *nbody);
 void nbody_check(const nbody_t *nbody);

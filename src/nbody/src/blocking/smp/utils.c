@@ -201,7 +201,6 @@ nbody_t nbody_setup(const nbody_conf_t *conf)
 	nbody_file_t file = nbody_setup_file(conf);
 	nbody.file = file;
 	
-	printf("force gen=%d\n", conf->force_generation);
 	if (conf->force_generation) {
 		alloc_particles(conf, &nbody);
 		

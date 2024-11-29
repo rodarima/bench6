@@ -131,3 +131,12 @@ double get_time(void)
 	clock_gettime(CLOCK_MONOTONIC, &ts);
 	return (double)(ts.tv_sec) + (double)ts.tv_nsec * 1.0e-9;
 }
+
+void nbody_stats(const nbody_conf_t *conf, double time)
+{
+	double throughput = nbody_compute_throughput(conf->num_particles, conf->timesteps, time);
+
+	fprintf(stdout, "%14e %14e %8d %8d %8d\n", 
+			time, throughput,
+			conf->num_particles, conf->blocksize, conf->timesteps);
+}

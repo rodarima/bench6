@@ -63,7 +63,6 @@ void nbody_setup_particles(nbody_t *nbody, const nbody_conf_t *conf);
 void nbody_setup_forces(nbody_t *nbody, const nbody_conf_t *conf);
 void nbody_link_particles(particles_t *reference, int num_particles, float *addr);
 void nbody_particle_init(const nbody_conf_t *conf, particles_t *part);
-void nbody_stats(const nbody_t *nbody, const nbody_conf_t *conf, double time);
 void nbody_save_particles(const nbody_t *nbody);
 void nbody_free(nbody_t *nbody);
 void nbody_check(const nbody_t *nbody);

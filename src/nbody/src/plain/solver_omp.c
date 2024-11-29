@@ -102,13 +102,3 @@ void update_particles(particles_t *particles, forces_t *forces, const int num_pa
 	#pragma omp single
 	memset(forces->_ptr, 0, forces->_size);
 }
-
-void nbody_stats(const nbody_t *nbody, const nbody_conf_t *conf, double time)
-{
-	(void) conf;
-
-	printf("bigo, %s, threads, %d, timesteps, %d, total_particles, %d, time, %.2f, performance, %.2f\n",
-		TOSTRING(BIGO), omp_get_max_threads(), nbody->timesteps, nbody->num_particles,
-		time, nbody_compute_throughput(nbody->num_particles, nbody->timesteps, time)
-	);
-}

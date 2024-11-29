@@ -145,13 +145,3 @@ void update_particles_block(particles_block_t *particles, forces_block_t *forces
 	
 	memset(forces, 0, sizeof(forces_block_t));
 }
-
-void nbody_stats(const nbody_t *nbody, const nbody_conf_t *conf, double time)
-{
-	int particles = nbody->num_blocks * BLOCK_SIZE;
-	printf("bigo, %s, threads, %d, timesteps, %d, total_particles, %d, block_size, %d, blocks, %d, time, %.2f, performance, %.2f\n",
-			TOSTRING(BIGO), nanos6_get_num_cpus(), nbody->timesteps, particles, BLOCK_SIZE,
-			nbody->num_blocks, time, nbody_compute_throughput(particles, nbody->timesteps, time)
-	);
-}
-

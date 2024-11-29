@@ -144,15 +144,3 @@ void update_particles_block(particles_block_t *particles, forces_block_t *forces
 	for (int e = 0; e < blocksize; e++)
 		forces->z[e] = 0;
 }
-
-void nbody_stats(const nbody_t *nbody, const nbody_conf_t *conf, double time)
-{
-	(void) conf;
-
-	int particles = nbody->num_blocks * conf->blocksize;
-	printf("bigo, %s, timesteps, %d, total_particles, %d, block_size, %d, blocks, %d, time, %.2f, performance, %.2f\n",
-			TOSTRING(BIGO), nbody->timesteps, particles, conf->blocksize, nbody->num_blocks,
-			time, nbody_compute_throughput(particles, nbody->timesteps, time)
-	);
-}
-

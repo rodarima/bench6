@@ -68,5 +68,6 @@ nbody_conf_t nbody_get_conf(int argc, char **argv);
 double nbody_compute_throughput(int num_particles, int timesteps, double elapsed_time);
 void * nbody_alloc(size_t size);
 double get_time(void);
+void nbody_stats(const nbody_conf_t *conf, double time);
 
 #endif // COMMON_H

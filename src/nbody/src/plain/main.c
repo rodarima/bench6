@@ -29,7 +29,7 @@ int main(int argc, char** argv)
 	nbody_solve(&nbody, conf.timesteps, conf.time_interval);
 	double end = get_time();
 	
-	nbody_stats(&nbody, &conf, end - start);
+	nbody_stats(&conf, end - start);
 	
 	if (conf.save_result && !conf.force_generation) nbody_save_particles(&nbody);
 	if (conf.check_result) nbody_check(&nbody);
