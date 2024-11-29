@@ -2,12 +2,19 @@
   description = "bench6";
   nixConfig.bash-prompt = "\[nix-develop\]$ ";
 
-  inputs.jungle.url = "git+https://git.sr.ht/~rodarima/jungle";
+  inputs.bscpkgs.url = "git+https://git.sr.ht/~rodarima/bscpkgs";
+  #inputs.jungle.url = "git+https://git.sr.ht/~rodarima/jungle";
+  #inputs.jungle.inputs.bscpkgs.follow = "bscpkgs";
 
-  outputs = { self, jungle, ... }:
+  outputs = { self, bscpkgs, ... }:
   let
-    targetMachine = jungle.outputs.nixosConfigurations.hut;
-    pkgs = targetMachine.pkgs;
+    #targetMachine = jungle.outputs.nixosConfigurations.hut;
+    #pkgs = targetMachine.pkgs;
+
+    pkgs = import bscpkgs.inputs.nixpkgs {
+      system = "x86_64-linux";
+      overlays = [ bscpkgs.bscOverlay ];
+    };
   in {
     packages.x86_64-linux = rec {
       default = bench6;
@@ -20,14 +27,15 @@
         buildInputs = with pkgs; [
           bigotes
           cmake
-          clangOmpss2
+          clangOmpss2NodesOmpv
           nanos6
           nodes
           nosv
-          mpi
-          tampi
+          #mpi
+          #tampi
         ];
 
+        buildFlags = [ "VERBOSE=1" ];
         enableParallelBuilding = false;
         hardeningDisable = [ "all" ];
         dontStrip = true;
