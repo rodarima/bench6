@@ -1,6 +1,6 @@
 # Bench6 - A benchmark suite
 
-This benchmark suite is a mono-repository that contains set of micro-benchmarks
+This benchmark suite is a monorepo that contains a set of micro-benchmarks
 for OmpSs-2 and several mini-apps.
 
 Each mini-app is available in different variants that include multiple

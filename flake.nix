@@ -52,8 +52,8 @@
         NODES_HOME = pkgs.nodes;
         NOSV_HOME = pkgs.nosv;
 
-        buildFlags = [ "VERBOSE=1" ];
-        enableParallelBuilding = false;
+        #buildFlags = [ "VERBOSE=1" ];
+        #enableParallelBuilding = false;
         hardeningDisable = [ "all" ];
         dontStrip = true;
       };
