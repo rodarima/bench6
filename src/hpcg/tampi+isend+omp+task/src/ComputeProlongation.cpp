@@ -1,0 +1,44 @@
+
+//@HEADER
+// ***************************************************
+//
+// HPCG: High Performance Conjugate Gradient Benchmark
+//
+// Contact:
+// Michael A. Heroux ( maherou@sandia.gov)
+// Jack Dongarra     (dongarra@eecs.utk.edu)
+// Piotr Luszczek    (luszczek@eecs.utk.edu)
+//
+// ***************************************************
+//@HEADER
+
+/*!
+ @file ComputeProlongation.cpp
+
+ HPCG routine
+ */
+
+#include "ComputeProlongation.hpp"
+#include "ComputeProlongation_ref.hpp"
+
+/*!
+  Routine to compute the coarse residual vector.
+
+  @param[in]  Af - Fine grid sparse matrix object containing pointers to current coarse grid correction and the f2c operator.
+  @param[inout] xf - Fine grid solution vector, update with coarse grid correction.
+
+  Note that the fine grid residual is never explicitly constructed.
+  We only compute it for the fine grid points that will be injected into corresponding coarse grid points.
+
+  @return Returns zero on success and a non-zero value otherwise.
+*/
+int ComputeProlongation(const SparseMatrix & Af, local_int_t start, local_int_t end, Vector & xf) {
+
+  double * xfv = xf.values;
+  double * xcv = Af.mgData->xc->values;
+  local_int_t * f2c = Af.mgData->f2cOperator;
+
+  for (local_int_t i=start; i<end; ++i) xfv[f2c[i]] += xcv[i]; // This loop is safe to vectorize
+
+  return 0;
+}
