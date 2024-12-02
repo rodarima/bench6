@@ -45,7 +45,7 @@
 // Main driver for program.
 void driver(void)
 {
-   int ts, var, start, number, stage, comm_stage, calc_stage, checksum, done;
+   int ts, start, number, stage, comm_stage, calc_stage, checksum, done;
    int before_refine, after_refine;
    double t1, t2, t3, t4;
    double delta = 1.0, sim_time;

@@ -388,6 +388,7 @@ void add_par_list(par_comm *pc, num_sz parent, num_sz block, int child, int pe,
 
 void del_par_list(par_comm *pc, num_sz parent, num_sz block, int child, int pe)
 {
+   (void) block;
    int i, j, k;
 
    // find core number in index list and use i below

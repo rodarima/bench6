@@ -307,8 +307,8 @@ void refine(int ts)
 
 int refine_level(void)
 {
-   int level, nei, i, j, b, c, c1, change, lchange, unrefine, sib, p, in;
-   block *bp, *bp1;
+   int level, nei, i, j, b, c, c1, change, lchange, p, in;
+   block *bp;
    parent *pp;
 
    /* block states:

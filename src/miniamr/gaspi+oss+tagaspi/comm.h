@@ -38,7 +38,7 @@
 #include <stdlib.h>
 
 
-#define CHECK(f...)                                                       \
+#define CHECK(f)                                                       \
     {                                                                     \
         const gaspi_return_t __r = f;                                     \
         if (__r != GASPI_SUCCESS) {                                       \

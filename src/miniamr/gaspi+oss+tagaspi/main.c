@@ -47,20 +47,20 @@
 
 int main(int argc, char** argv)
 {
-   int i, ierr, provided, object_num;
+   int i, provided, object_num;
    int params[42];
    double *objs;
 #include "param.h"
 
-   ierr = MPI_Init_thread(&argc, &argv, MPI_THREAD_MULTIPLE, &provided);
+   MPI_Init_thread(&argc, &argv, MPI_THREAD_MULTIPLE, &provided);
    if (provided != MPI_THREAD_MULTIPLE) {
       fprintf(stdout, "Error - MPI threading level not supported\n");
       MPI_Abort(MPI_COMM_WORLD, -1);
    }
 
-   ierr = MPI_Comm_set_errhandler(MPI_COMM_WORLD, MPI_ERRORS_ARE_FATAL);
-   ierr = MPI_Comm_rank(MPI_COMM_WORLD, &my_pe);
-   ierr = MPI_Comm_size(MPI_COMM_WORLD, &num_pes);
+   MPI_Comm_set_errhandler(MPI_COMM_WORLD, MPI_ERRORS_ARE_FATAL);
+   MPI_Comm_rank(MPI_COMM_WORLD, &my_pe);
+   MPI_Comm_size(MPI_COMM_WORLD, &num_pes);
 
    gaspi_number_t max_queues = 2;
 
@@ -441,7 +441,7 @@ void print_help_message(void)
 
 void allocate(void)
 {
-   int i, j, k, m, n;
+   int i, j, k, n;
    uint64_t buff_exchange_size;
 
    block3d_size = (x_block_size+2)*(y_block_size+2)*(z_block_size+2);
@@ -663,7 +663,7 @@ void allocate(void)
 
 void deallocate(void)
 {
-   int i, j, m, n, dir;
+   int i, n, dir;
 
    for (n = 0; n < max_num_blocks; n++)
       free(blocks[n].array);

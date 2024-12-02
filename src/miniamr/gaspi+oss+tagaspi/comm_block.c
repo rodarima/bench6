@@ -43,7 +43,7 @@
 // used to communicate ghost values.
 void comm_proc(void)
 {
-   int i, j, k, n, offset, dir, which, face, face_case, err, type;
+   int i, j, k, n, offset, dir, which, face, face_case, type;
    int *send_int = (int *) send_buff;
    int *recv_int = (int *) recv_buff;
    block *bp;
@@ -74,7 +74,7 @@ void comm_proc(void)
       }
 
       for (i = 0; i < num_comm_partners[dir]; i++) {
-         err = MPI_Waitany(num_comm_partners[dir], request, &which, &status);
+         MPI_Waitany(num_comm_partners[dir], request, &which, &status);
          for (n = 0; n < comm_num[dir][which]; n++) {
             face = dir*2+(comm_face_case[dir][comm_index[dir][which]+n] >= 10);
             bp = &blocks[comm_block[dir][comm_index[dir][which]+n]];
@@ -90,6 +90,6 @@ void comm_proc(void)
 
       if (nonblocking)
          for (i = 0; i < num_comm_partners[dir]; i++)
-            err = MPI_Waitany(num_comm_partners[dir], s_req, &which, &status);
+            MPI_Waitany(num_comm_partners[dir], s_req, &which, &status);
    }
 }

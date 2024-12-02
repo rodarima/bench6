@@ -30,9 +30,9 @@
 // Copyright (C) 2020-2021 Barcelona Supercomputing Center (BSC)
 //
 
-#include <block.h>
-#include <comm.h>
-#include <timer.h>
+#include "block.h"
+#include "comm.h"
+#include "timer.h"
 
 // block.h
 block *blocks;

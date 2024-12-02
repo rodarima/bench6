@@ -45,8 +45,7 @@
 void profile(void)
 {
    int i, num_cpus;
-   double total_gflops, gflops_rank, total_fp_ops, total_fp_adds,
-          total_fp_divs;
+   double total_gflops, gflops_rank, total_fp_ops;
    object *op;
    char *version = "1.5.0";
    FILE *fp;

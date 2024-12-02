@@ -43,11 +43,13 @@ void stencil_calc(int, int, int);
 // This routine does the stencil calculations.
 void stencil_driver(int var, int num, int cacl_stage)
 {
+   (void) cacl_stage;
    stencil_calc(var, num, stencil);
 }
 
 void stencil_calc(int var, int num, int stencil_in)
 {
+   (void) stencil_in;
    for (int in = 0; in < sorted_index[num_refine+1]; in++) {
       double *barray = blocks[sorted_list[in].n].array;
 

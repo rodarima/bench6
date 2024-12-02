@@ -45,7 +45,7 @@
 // The routines in this file are used in the communication of ghost values
 // between blocks, both on processor and off processor.
 
-void ack_remote(gaspi_segment_id_t segid, gaspi_notification_id_t notid)
+static void ack_remote(gaspi_segment_id_t segid, gaspi_notification_id_t notid)
 {
     CHECK(tagaspi_notify_async_wait(segid, notid, GASPI_NOTIFICATION_IGNORE));
 }
@@ -56,7 +56,7 @@ void ack_remote(gaspi_segment_id_t segid, gaspi_notification_id_t notid)
 void comm(int start, int num_comm, int stage, int initial, int final)
 {
    int i, j, k, l, m, n, dir, o, in, num, target, rem, g;
-   int which, index, type, size, msize;
+   int index, /* type, */ size, msize;
    int permutations[6][3] = { {0, 1, 2}, {1, 2, 0}, {2, 0, 1},
                               {0, 2, 1}, {1, 0, 2}, {2, 1, 0} };
    uint64_t offset, moffset, roffset;
@@ -76,7 +76,7 @@ void comm(int start, int num_comm, int stage, int initial, int final)
          dir = permutations[stage%6][o];
       else
          dir = o;
-      type = dir;
+      // type = dir;
 
       // The default mode is to use a single send/recv buffer for sending/receiving
       // in all directions. In this case, all send_buffers pointers point to send_buff,

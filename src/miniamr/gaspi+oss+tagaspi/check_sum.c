@@ -46,7 +46,7 @@
 // the atomic statement to fail. That error is still under investigation
 // but seems that keeping the body of the task inside a function prevents
 // the compiler from applying that aggresive optimization
-void check_sum_local_internal(int var, int num, double *barray, double *sum)
+static void check_sum_local_internal(int var, int num, double *barray, double *sum)
 {
    for (int v = var; v < var+num; v++) {
       typedef double (*block3d_t)[y_block_size+2][z_block_size+2];

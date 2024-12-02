@@ -349,8 +349,11 @@ void exchange(double *tp, double *tm, double *tu)
 }
 #endif
 
-void exchange_taskified(double *tp, double *tm, double *tu)
+static void exchange_taskified(double *tp, double *tm, double *tu)
 {
+   (void) tp;
+   (void) tm;
+   (void) tu;
    int f, s, sp, fp, j[25], l, rb, lev, block_size, par[25], start[25];
    int ack, ctag1, ctag2, dtagbase, dtag, nsends, nrecvs, dst, src;
    double *send_buffer, *recv_buffer;
@@ -403,7 +406,7 @@ void exchange_taskified(double *tp, double *tm, double *tu)
                if (ack) {
                   // The receiver accepted the new block so we
                   // should find the first block to exchange
-                  while (sp < max_active_block && blocks[sp].number < 0 ||
+                  while ((sp < max_active_block && blocks[sp].number < 0) ||
                          (blocks[sp].number >= 0 &&
                             (blocks[sp].new_proc != start[l] ||
                              blocks[sp].new_proc == my_pe)))
@@ -789,7 +792,7 @@ int find_dir(int fact, int npx1, int npy1, int npz1)
 
 void move_dots(int div, int fact)
 {
-   int i, j, d, sg, mg, partner, type, off[fact+1], which, err, nr;
+   int i, j, d, sg, mg, partner, type, off[fact+1], which, nr;
    int *send_int = (int *) send_buff;
    int *recv_int = (int *) recv_buff;
    long long *send_ll, *recv_ll;
@@ -824,7 +827,7 @@ void move_dots(int div, int fact)
    off[0] = 0;
    for (nr = i = 0; i < fact; i++)
       if (i != mg) {
-         err = MPI_Wait(&request[i], &status);
+         MPI_Wait(&request[i], &status);
          if (gbin[i] > 0) {
             partner = me[div]%sg + i*sg;
             MPI_Irecv(&recv_int[off[i]], 8*gbin[i], MPI_INT, partner,
@@ -862,7 +865,7 @@ void move_dots(int div, int fact)
       }
 
    for (d = i = 0; i < nr; i++) {
-      err = MPI_Waitany(fact, request, &which, &status);
+      MPI_Waitany(fact, request, &which, &status);
       for (j = off[which]; j < off[which+1]; ) {
          for ( ; d < max_num_dots; d++)
             if (dots[d].number < 0)
@@ -888,9 +891,9 @@ void move_dots(int div, int fact)
    }
 }
 
-void move_dots_back()
+void move_dots_back(void)
 {
-   int i, j, d, nr, err, which;
+   int i, j, d, nr, which;
    int *send_int = (int *) send_buff;
    int *recv_int = (int *) recv_buff;
    MPI_Status status;
@@ -918,7 +921,7 @@ void move_dots_back()
       }
 
    for (i = 0; i < nr; i++) {
-      err = MPI_Waitany(num_pes, request, &which, &status);
+      MPI_Waitany(num_pes, request, &which, &status);
       for (j = 0; j < from[which]; j++)
          blocks[recv_int[gbin[which]+2*j]].new_proc =
                recv_int[gbin[which]+2*j+1];

@@ -337,7 +337,7 @@ void check_buff_size(void)
             max_send = s_buf_num[i];
       } else
          for (j = 0; j < num_comm_partners[i]; j++)
-            if (send_size[i][j] > max_send)
+            if ((uint64_t) send_size[i][j] > max_send)
                max_send = send_size[i][j];
       if (send_faces) {
          if (num_cases[i] > max_comm)
