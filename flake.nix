@@ -42,8 +42,8 @@
           nanos6
           nodes
           nosv
-          #mpi
-          #tampi
+          mpi
+          tampi
         ];
 
         buildFlags = [ "VERBOSE=1" ];
