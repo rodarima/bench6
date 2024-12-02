@@ -76,6 +76,9 @@ find_package(MPI)
 find_package(Nanos6)
 find_package(Nodes)
 find_package(Tampi)
+find_package(OpenMP)
+
+include(CheckOpenmpv)
 
 set_property(GLOBAL PROPERTY bench6_list "")
 
