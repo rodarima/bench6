@@ -45,7 +45,7 @@ static const int   default_num_particles    = 16384;
 static const int   default_timesteps        = 10;
 static const int   default_save_result      = 0;
 static const int   default_check_result     = 0;
-static const int   default_force_generation = 0;
+static const int   default_force_generation = 1;
 
 typedef struct {
 	float domain_size_x;
