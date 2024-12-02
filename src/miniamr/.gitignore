@@ -1,0 +1,5 @@
+*/miniAMR.x
+*/*.o
+*/*.err*
+*/*.out*
+*/mcc_*
