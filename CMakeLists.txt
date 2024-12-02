@@ -79,8 +79,7 @@ find_package(OpenMP)
 find_package(Tampi)
 find_package(Gaspi)
 find_package(Tagaspi)
-
-include(CheckOpenmpv)
+find_package(OpenMPV)
 
 set_property(GLOBAL PROPERTY bench6_list "")
 
