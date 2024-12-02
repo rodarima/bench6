@@ -7,4 +7,4 @@
 #url="$repo?ref=$branch&rev=$commit"
 #srun --exclusive nix develop "$url" -c '$bench6src/test/bench.sh'
 
-nix develop -c test/bench.sh
+nix develop -L -c test/bench.sh
