@@ -44,6 +44,8 @@
           nosv
           mpi
           tampi
+          tagaspi
+          gpi-2
         ];
 
         NANOS6_HOME = pkgs.nanos6;

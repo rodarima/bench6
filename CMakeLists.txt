@@ -75,8 +75,10 @@ endif()
 find_package(MPI)
 find_package(Nanos6)
 find_package(Nodes)
-find_package(Tampi)
 find_package(OpenMP)
+find_package(Tampi)
+find_package(Gaspi)
+find_package(Tagaspi)
 
 include(CheckOpenmpv)
 
