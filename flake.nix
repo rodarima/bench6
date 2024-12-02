@@ -46,6 +46,10 @@
           tampi
         ];
 
+        NANOS6_HOME = pkgs.nanos6;
+        NODES_HOME = pkgs.nodes;
+        NOSV_HOME = pkgs.nosv;
+
         buildFlags = [ "VERBOSE=1" ];
         enableParallelBuilding = false;
         hardeningDisable = [ "all" ];
