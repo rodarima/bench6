@@ -1,149 +1,39 @@
 {
   "nodes": {
-    "agenix": {
-      "inputs": {
-        "darwin": "darwin",
-        "home-manager": "home-manager",
-        "nixpkgs": [
-          "jungle",
-          "nixpkgs"
-        ],
-        "systems": "systems"
-      },
-      "locked": {
-        "lastModified": 1712079060,
-        "narHash": "sha256-/JdiT9t+zzjChc5qQiF+jhrVhRt8figYH29rZO7pFe4=",
-        "owner": "ryantm",
-        "repo": "agenix",
-        "rev": "1381a759b205dff7a6818733118d02253340fd5e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "ryantm",
-        "repo": "agenix",
-        "type": "github"
-      }
-    },
     "bscpkgs": {
       "inputs": {
-        "nixpkgs": [
-          "jungle",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1713974364,
-        "narHash": "sha256-ilZTVWSaNP1ibhQIIRXE+q9Lj2XOH+F9W3Co4QyY1eU=",
-        "ref": "refs/heads/master",
-        "rev": "de89197a4a7b162db7df9d41c9d07759d87c5709",
-        "revCount": 937,
-        "type": "git",
-        "url": "https://git.sr.ht/~rodarima/bscpkgs"
-      },
-      "original": {
-        "type": "git",
-        "url": "https://git.sr.ht/~rodarima/bscpkgs"
-      }
-    },
-    "darwin": {
-      "inputs": {
-        "nixpkgs": [
-          "jungle",
-          "agenix",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1700795494,
-        "narHash": "sha256-gzGLZSiOhf155FW7262kdHo2YDeugp3VuIFb4/GGng0=",
-        "owner": "lnl7",
-        "repo": "nix-darwin",
-        "rev": "4b9b83d5a92e8c1fbfd8eb27eda375908c11ec4d",
-        "type": "github"
-      },
-      "original": {
-        "owner": "lnl7",
-        "ref": "master",
-        "repo": "nix-darwin",
-        "type": "github"
-      }
-    },
-    "home-manager": {
-      "inputs": {
-        "nixpkgs": [
-          "jungle",
-          "agenix",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1703113217,
-        "narHash": "sha256-7ulcXOk63TIT2lVDSExj7XzFx09LpdSAPtvgtM7yQPE=",
-        "owner": "nix-community",
-        "repo": "home-manager",
-        "rev": "3bfaacf46133c037bb356193bd2f1765d9dc82c1",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-community",
-        "repo": "home-manager",
-        "type": "github"
-      }
-    },
-    "jungle": {
-      "inputs": {
-        "agenix": "agenix",
-        "bscpkgs": "bscpkgs",
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1714044311,
-        "narHash": "sha256-mEMtClaRZE45THl0Ukdhj5SVQzYSvRCRAdPshSlvkCQ=",
+        "lastModified": 1732868163,
+        "narHash": "sha256-qck4h298AgcNI6BnGhEwl26MTLXjumuJVr+9kak7uPo=",
         "ref": "refs/heads/master",
-        "rev": "d2adc3a6d3ab6a42cc0a1c99c2ff8681667409e0",
-        "revCount": 235,
+        "rev": "6782fc6c5b5a29e84a7f2c2d1064f4bcb1288c0f",
+        "revCount": 952,
         "type": "git",
-        "url": "https://git.sr.ht/~rodarima/jungle"
+        "url": "https://git.sr.ht/~rodarima/bscpkgs"
       },
       "original": {
         "type": "git",
-        "url": "https://git.sr.ht/~rodarima/jungle"
+        "url": "https://git.sr.ht/~rodarima/bscpkgs"
       }
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1713714899,
-        "narHash": "sha256-+z/XjO3QJs5rLE5UOf015gdVauVRQd2vZtsFkaXBq2Y=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "6143fc5eeb9c4f00163267708e26191d1e918932",
-        "type": "github"
+        "lastModified": 1700390070,
+        "narHash": "sha256-de9KYi8rSJpqvBfNwscWdalIJXPo8NjdIZcEJum1mH0=",
+        "path": "/nix/store/z7y28qzhk7driiwcw78k0mb24laknm0f-source",
+        "rev": "e4ad989506ec7d71f7302cc3067abd82730a4beb",
+        "type": "path"
       },
       "original": {
-        "owner": "NixOS",
-        "ref": "nixos-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
+        "id": "nixpkgs",
+        "type": "indirect"
       }
     },
     "root": {
       "inputs": {
-        "jungle": "jungle"
-      }
-    },
-    "systems": {
-      "locked": {
-        "lastModified": 1681028828,
-        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
-        "owner": "nix-systems",
-        "repo": "default",
-        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-systems",
-        "repo": "default",
-        "type": "github"
+        "bscpkgs": "bscpkgs"
       }
     }
   },
