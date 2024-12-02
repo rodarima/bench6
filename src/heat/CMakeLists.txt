@@ -35,7 +35,6 @@ if(NANOS6_FOUND)
   mk_heat_nanos6(b6_heat_nanos6_residual  solver_ompss2_residual.c)
 endif()
 
-message(STATUS "NODES FOUND = ${NODES_FOUND}")
 if(NODES_FOUND)
   macro(mk_heat_nodes NAME SOURCE)
     mk_heat_smp(${NAME} ${SOURCE})
