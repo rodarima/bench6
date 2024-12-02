@@ -1,7 +1,7 @@
 macro(mk_nanos6 NAME SOURCE)
   mk_bench(${NAME})
   target_sources(${NAME} PRIVATE ${SOURCE})
-  target_link_libraries(${NAME} PRIVATE bench6_lib Nanos6::wrapper)
+  target_link_libraries(${NAME} PRIVATE bench6_lib Nanos6::nanos6)
 endmacro()
 
 if(NANOS6_FOUND)
