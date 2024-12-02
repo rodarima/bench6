@@ -49,6 +49,8 @@ void profile(void)
    total_gflops = total_fp_ops/(average[38]*1024.0*1024.0*1024.0);
    gflops_rank = total_gflops/((double) num_pes);
 
+   printf("%14e %14e\n", average[0], gflops_rank);
+
    if (!my_pe) {
       if (report_perf & 1) {
          fp = fopen("results.yaml", "w");
