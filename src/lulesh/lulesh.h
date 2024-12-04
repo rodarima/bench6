@@ -23,6 +23,7 @@
 
 #include <math.h>
 #include <vector>
+#undef NDEBUG
 #include <cassert>
 #include <stddef.h>
 

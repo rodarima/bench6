@@ -692,7 +692,7 @@ void IntegrateStressForElems( Domain &domain,
     int blocksEBS = std::ceil((double) numElem/(double) EBS); 
     const int numTasks = NUM_TASKS_BS;
     int bs = std::ceil((double) numNode/(double) numTasks);
-    int blocks = std::ceil((double) numNode/(double) bs);
+    //int blocks = std::ceil((double) numNode/(double) bs);
     int BS_FACTOR=2;
     // If threaded, then we need to copy the data out of the temporary
     // arrays used above into the final forces field
@@ -1023,7 +1023,7 @@ void CalcFBHourglassForceForElems( Domain &domain,
     // Collect the data from the local arrays into the final force arrays
     int blocksEBS = std::ceil((double) numElem/(double) EBS); 
     int bs = std::ceil((double) numNode/(double) numTasks);
-    int blocks = std::ceil((double) numNode/(double) bs);
+    //int blocks = std::ceil((double) numNode/(double) bs);
     int BS_FACTOR=2;
 #pragma oss taskloop grainsize(bs*BS_FACTOR) shared(domain) firstprivate(numNode) \
     in({fx_elem_FBH[8*b*EBS], b=0;blocksEBS}, {fy_elem_FBH[8*b*EBS], b=0;blocksEBS}, {fz_elem_FBH[8*b*EBS], b=0;blocksEBS}) \
@@ -1052,7 +1052,7 @@ void CalcFBHourglassForceForElems( Domain &domain,
 
     static inline
 void CalcHourglassControlForElems(Domain& domain,
-        Real_t hgcoef, int it)
+        Real_t hgcoef, int)
 {
     Index_t numElem = domain.numElem() ;
 
@@ -1106,8 +1106,8 @@ void CalcHourglassControlForElems(Domain& domain,
 #endif
         }
     }
-    int blocksEBS = std::ceil((double) numElem/(double) EBS);
-    int elemBlocks = std::ceil((double) numElem/(double) elemBS);
+    //int blocksEBS = std::ceil((double) numElem/(double) EBS);
+    //int elemBlocks = std::ceil((double) numElem/(double) elemBS);
 
     if ( hgcoef > Real_t(0.) ) {
         CalcFBHourglassForceForElems( domain,
@@ -1140,7 +1140,7 @@ void CalcVolumeForceForElems(Domain& domain, int it)
 
 static inline void CalcForceForNodes(Domain& domain, int it)
 {
-    Index_t numNode = domain.numNode() ;
+    //Index_t numNode = domain.numNode() ;
 
 #if USE_MPI  
 #if USE_SIMPLE
@@ -1153,12 +1153,12 @@ static inline void CalcForceForNodes(Domain& domain, int it)
 #endif  
 
     //const int numTasks = nanos6_get_num_cpus();
-    const int numTasks = NUM_TASKS_BS;
-    int bs = std::ceil((double) numNode/(double) numTasks);
-    int blocks = std::ceil((double) numNode/(double) bs);
-    Real_t *domain_fx = domain.m_fx.data();  /* forces */
-    Real_t *domain_fy = domain.m_fy.data();
-    Real_t *domain_fz = domain.m_fz.data();
+    //const int numTasks = NUM_TASKS_BS;
+    //int bs = std::ceil((double) numNode/(double) numTasks);
+    //int blocks = std::ceil((double) numNode/(double) bs);
+    //Real_t *domain_fx = domain.m_fx.data();  /* forces */
+    //Real_t *domain_fy = domain.m_fy.data();
+    //Real_t *domain_fz = domain.m_fz.data();
 
     /* Calcforce calls partial, force, hourq */
     CalcVolumeForceForElems(domain, it) ;
@@ -1197,7 +1197,7 @@ void CalcAccelerationForNodes(Domain &domain, Index_t numNode)
     //const int numTasks = nanos6_get_num_cpus();
     const int numTasks = NUM_TASKS_BS;
     int bs = std::ceil((double) numNode/(double) numTasks);
-    int blocks = std::ceil((double) numNode/(double) bs);
+    //int blocks = std::ceil((double) numNode/(double) bs);
     int BS_FACTOR=16;
     Real_t *domain_fx = domain.m_fx.data();  /* forces */
     Real_t *domain_fy = domain.m_fy.data();
@@ -1378,15 +1378,15 @@ void LagrangeNodal(Domain& domain, int it)
 #if USE_MPI
 #ifdef SEDOV_SYNC_POS_VEL_EARLY
     //const int numTasks = nanos6_get_num_cpus();
-    const int numTasks = NUM_TASKS_BS;
-    int bs = std::ceil((double) domain.numNode()/(double) numTasks);
-    int blocks = std::ceil((double) domain.numNode()/(double) bs);
-    Real_t *domain_x = domain.m_x.data(); /* velocities */
-    Real_t *domain_y = domain.m_y.data(); /* velocities */
-    Real_t *domain_z = domain.m_z.data(); /* velocities */
-    Real_t *domain_xd = domain.m_xd.data(); /* velocities */
-    Real_t *domain_yd = domain.m_yd.data(); /* velocities */
-    Real_t *domain_zd = domain.m_zd.data(); /* velocities */
+    //const int numTasks = NUM_TASKS_BS;
+    //int bs = std::ceil((double) domain.numNode()/(double) numTasks);
+    //int blocks = std::ceil((double) domain.numNode()/(double) bs);
+    //Real_t *domain_x = domain.m_x.data(); /* velocities */
+    //Real_t *domain_y = domain.m_y.data(); /* velocities */
+    //Real_t *domain_z = domain.m_z.data(); /* velocities */
+    //Real_t *domain_xd = domain.m_xd.data(); /* velocities */
+    //Real_t *domain_yd = domain.m_yd.data(); /* velocities */
+    //Real_t *domain_zd = domain.m_zd.data(); /* velocities */
 #if USE_SIMPLE
     if (domain.numRanks() > 1)
     #pragma oss task shared(domain) \
@@ -1653,7 +1653,7 @@ void CalcElemVelocityGradient( const Real_t* const xvel,
 
 /******************************************/
 
-void CalcKinematicsForElems( Domain &domain, Real_t *vnew, Index_t numElem )
+static void CalcKinematicsForElems( Domain &domain, Real_t *vnew, Index_t numElem )
 {
 
     //const int numTasks = nanos6_get_num_cpus();
@@ -1744,7 +1744,7 @@ void CalcKinematicsForElems( Domain &domain, Real_t *vnew, Index_t numElem )
 /******************************************/
 
     static inline
-void CalcLagrangeElements(Domain& domain, Real_t* vnew, int it)
+void CalcLagrangeElements(Domain& domain, Real_t* vnew, int)
 {
     Index_t numElem = domain.numElem() ;
     if (numElem > 0) {
@@ -1979,8 +1979,8 @@ void CalcMonotonicQRegionForElems(Domain &domain, Int_t r,
     const int numTasks = NUM_TASKS_BS;
     int bs = std::ceil((double) domain.regElemSize(r)/(double) numTasks);
     int BS_FACTOR=48;
-    int elemBS = std::ceil((double) domain.numElem()/(double) numTasks);
-    int blocks = std::ceil((double) domain.numElem()/(double) elemBS);
+    //int elemBS = std::ceil((double) domain.numElem()/(double) numTasks);
+    //int blocks = std::ceil((double) domain.numElem()/(double) elemBS);
     Real_t *domain_volo = domain.m_volo.data();  /* reference volume */
     Real_t *domain_vdov = domain.m_vdov.data();  /* reference volume */
     Real_t *domain_qq = domain.m_qq.data();
@@ -2187,7 +2187,7 @@ void CalcMonotonicQForElems(Domain& domain, Real_t vnew[])
 //Index_t idx = -1;
 
     static inline
-void CalcQForElems(Domain& domain, Real_t vnew[], int it)
+void CalcQForElems(Domain& domain, Real_t vnew[], int)
 {
     //
     // MONOTONIC Q option
@@ -2196,10 +2196,10 @@ void CalcQForElems(Domain& domain, Real_t vnew[], int it)
     Index_t numElem = domain.numElem() ;
 
     if (numElem != 0) {
-        Int_t allElem = numElem +  /* local elem */
-            2*domain.sizeX()*domain.sizeY() + /* plane ghosts */
-            2*domain.sizeX()*domain.sizeZ() + /* row ghosts */
-            2*domain.sizeY()*domain.sizeZ() ; /* col ghosts */
+//        Int_t allElem = numElem +  /* local elem */
+//            2*domain.sizeX()*domain.sizeY() + /* plane ghosts */
+//            2*domain.sizeX()*domain.sizeZ() + /* row ghosts */
+//            2*domain.sizeY()*domain.sizeZ() ; /* col ghosts */
 
 #if USE_MPI      
 #if USE_SIMPLE
@@ -2300,11 +2300,11 @@ void CalcQForElems(Domain& domain, Real_t vnew[], int it)
 
     static inline
 void EvalEOSForElems(Domain& domain, Real_t *vnewc,
-        Int_t numElemReg, Index_t *regElemList, Int_t rep, int r, int it)
+        Int_t numElemReg, Index_t *regElemList, Int_t rep, int r, int)
 {
     Real_t  e_cut = domain.e_cut() ;
     Real_t  p_cut = domain.p_cut() ;
-    Real_t  ss4o3 = domain.ss4o3() ;
+    //Real_t  ss4o3 = domain.ss4o3() ;
     Real_t  q_cut = domain.q_cut() ;
 
     Real_t eosvmax = domain.eosvmax() ;
@@ -2551,7 +2551,7 @@ void ApplyMaterialPropertiesForElems(Domain& domain, Real_t vnew[], int it)
         //const int numTasks = nanos6_get_num_cpus();
         const int numTasks = NUM_TASKS_BS;
         int bs = std::ceil((double) numElem/(double) numTasks);
-        int blocks = std::ceil((double) numElem/(double) bs);
+        //int blocks = std::ceil((double) numElem/(double) bs);
         int BS_FACTOR=16;
         Real_t *domain_v = domain.m_v.data();     /* relative volume */
 #pragma oss taskloop grainsize(bs*BS_FACTOR) firstprivate(eosvmin, eosvmax) shared(domain) \
@@ -2587,10 +2587,11 @@ void ApplyMaterialPropertiesForElems(Domain& domain, Real_t vnew[], int it)
         }
 
 
-        //#pragma oss taskloop num_tasks(nths) \
+        /*#pragma oss taskloop num_tasks(nths) \
         concurrent(domain.m_p, domain.m_e, domain.m_q, domain.m_ss) \
         in(*vnew) \
         nogroup label (EvalEOSForElems) final(domain.regElemSize(r)>30000)
+		*/
         for (Int_t r=0 ; r<domain.numReg() ; r++) {
             Index_t numElemReg = domain.regElemSize(r);
             if (numElemReg > 0) {
@@ -2608,12 +2609,13 @@ void ApplyMaterialPropertiesForElems(Domain& domain, Real_t vnew[], int it)
                 else
                     rep = 10 * (1+ domain.cost());
 
-
+#if 0
                 //       printf("Region %d, ElemSize %d, Cost %d, Rep %d\n", r, numElemReg, domain.cost(), rep);
-                //  #pragma oss task /*in(domain.m_p, domain.m_e, domain.m_q, domain.m_ss)*/ \
+                #pragma oss task /*in(domain.m_p, domain.m_e, domain.m_q, domain.m_ss)*/ \
                 concurrent(domain.m_p, domain.m_e, domain.m_q, domain.m_ss) \
                     concurrent(*vnew) \
                     label (EvalEOSForElems) final(numElemReg>30000) 
+#endif
                     EvalEOSForElems(domain, vnew, numElemReg, regElemList, rep, r, it);
             }
         }
@@ -2624,14 +2626,14 @@ void ApplyMaterialPropertiesForElems(Domain& domain, Real_t vnew[], int it)
 
     static inline
 void UpdateVolumesForElems(Domain &domain, Real_t *vnew,
-        Real_t v_cut, Index_t length, int it)
+        Real_t v_cut, Index_t length, int)
 {
     if (length != 0) {
         //const int numTasks = nanos6_get_num_cpus();
         const int numTasks = NUM_TASKS_BS;
         int bs = std::ceil((double) length/(double) numTasks);
         int BS_FACTOR=48;
-        int blocks = std::ceil((double) length/(double) bs);
+        //int blocks = std::ceil((double) length/(double) bs);
         Real_t *domain_v = domain.m_v.data();     /* relative volume */
 #pragma oss taskloop grainsize(bs*BS_FACTOR) in({vnew[i+bs*f], f=0;BS_FACTOR}) out({domain_v[i+bs*f], f=0;BS_FACTOR}) \
         firstprivate(length, v_cut) shared(domain) \
@@ -2759,8 +2761,8 @@ void CalcTimeConstraintsForElems(Domain& domain) {
     //const int numTasks = nanos6_get_num_cpus();
     const int numTasks = NUM_TASKS_BS;
     int bs = std::ceil((double)domain.numReg()/(double)numTasks);
-    int elemBS = std::ceil((double) domain.numElem()/(double) numTasks);
-    int elemBlocks = std::ceil((double) domain.numElem()/(double) elemBS);
+    //int elemBS = std::ceil((double) domain.numElem()/(double) numTasks);
+    //int elemBlocks = std::ceil((double) domain.numElem()/(double) elemBS);
     Real_t *domain_vdov = domain.m_vdov.data();
     Real_t *domain_ss = domain.m_ss.data();
     Real_t *domain_arealg = domain.m_arealg.data();
@@ -2959,7 +2961,7 @@ numThreads = 1;
                 for (int i =  start; i < end; i++) {
                     int block_start = (locDom->regElemlist(r)[i]/elemBS)*elemBS;
                     bool found = false;
-                    for (int k = 0; k < reg_dep_indexes[r][t].size(); k++) {
+                    for (size_t k = 0; k < reg_dep_indexes[r][t].size(); k++) {
                         if (reg_dep_indexes[r][t][k] == block_start) {
                             found = true;
                             break;
@@ -2990,7 +2992,7 @@ numThreads = 1;
             int blockId = i/bs;
             int block_start = (locDom->symmX(i)/nodeBS)*nodeBS;
             bool found = false;
-            for (int k = 0; k < aabcfn_X_dep_indexes[blockId].size(); k++) {
+            for (size_t k = 0; k < aabcfn_X_dep_indexes[blockId].size(); k++) {
                 if (aabcfn_X_dep_indexes[blockId][k] == block_start) {
                     found = true;
                     break;
@@ -3009,7 +3011,7 @@ numThreads = 1;
             int blockId = i/bs;
             int block_start = (locDom->symmY(i)/nodeBS)*nodeBS;
             bool found = false;
-            for (int k = 0; k < aabcfn_Y_dep_indexes[blockId].size(); k++) {
+            for (size_t k = 0; k < aabcfn_Y_dep_indexes[blockId].size(); k++) {
                 if (aabcfn_Y_dep_indexes[blockId][k] == block_start) {
                     found = true;
                     break;
@@ -3028,7 +3030,7 @@ numThreads = 1;
             int blockId = i/bs;
             int block_start = (locDom->symmZ(i)/nodeBS)*nodeBS;
             bool found = false;
-            for (int k = 0; k < aabcfn_Z_dep_indexes[blockId].size(); k++) {
+            for (size_t k = 0; k < aabcfn_Z_dep_indexes[blockId].size(); k++) {
                 if (aabcfn_Z_dep_indexes[blockId][k] == block_start) {
                     found = true;
                     break;
@@ -3052,7 +3054,7 @@ numThreads = 1;
             for (int j = 0; j < 8; j++) {
                 int block_start = (elemToNode[j]/nodeBS)*nodeBS;
                 bool found = false;
-                for (int k = 0; k < nodelist_dep_indexes_bs[b].size(); k++) {
+                for (size_t k = 0; k < nodelist_dep_indexes_bs[b].size(); k++) {
                     if (nodelist_dep_indexes_bs[b][k] == block_start) {
                         found = true;
                         break;
@@ -3077,7 +3079,7 @@ numThreads = 1;
             for (int j = 0; j < 8; j++) {
                 int block_start = (elemToNode[j]/nodeBS)*nodeBS;
                 bool found = false;
-                for (int k = 0; k < nodelist_dep_indexes_ebs[b].size(); k++) {
+                for (size_t k = 0; k < nodelist_dep_indexes_ebs[b].size(); k++) {
                     if (nodelist_dep_indexes_ebs[b][k] == block_start) {
                         found = true;
                         break;
@@ -3261,7 +3263,7 @@ numThreads = 1;
         LagrangeLeapFrog(*locDom, it);
 
         if ((opts.showProg != 0) && (opts.quiet == 0) && (myRank == 0)) {
-            #pragma oss task in(locDom->m_deltatime, locDom->m_dtcourant, locDom->m_dthydro) label (Print_Times)
+            #pragma oss task in(locDom->m_deltatime, locDom->m_dtcourant, locDom->m_dthydro) label ("Print_Times")
             printf("cycle = %d, time = %e, dt=%e\n",
                     locDom->cycle(), double(locDom->time()), double(locDom->deltatime()) ) ;
         }

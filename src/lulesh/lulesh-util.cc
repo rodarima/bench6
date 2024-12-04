@@ -8,7 +8,7 @@
 #include "lulesh.h"
 
 /* Helper function for converting strings to ints, with error checking */
-int StrToInt(const char *token, int *retVal)
+static int StrToInt(const char *token, int *retVal)
 {
    const char *c ;
    char *endptr ;
