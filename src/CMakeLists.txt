@@ -1,4 +1,5 @@
 add_subdirectory(bench6)
+add_subdirectory(cholesky)
 add_subdirectory(heat)
 add_subdirectory(hpcg)
 add_subdirectory(lulesh)

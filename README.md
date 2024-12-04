@@ -24,6 +24,8 @@ To install all the variants, you will need:
 - TAMPI
 - GPI-2
 - Tagaspi
+- BLAS
+- LAPACK
 
 A Nix package is available that includes all the variants. Use `nix develop` to
 build the benchmarks and enter a shell where you can run them.

@@ -46,6 +46,7 @@
           tampi
           tagaspi
           gpi-2
+          openblas
         ];
 
         NANOS6_HOME = pkgs.nanos6;
