@@ -11,3 +11,4 @@ $B b6_nbody_ompv -f -b 512
 $B b6_miniamr_mpi_omp
 $B b6_nqueens_nanos6
 $B b6_strassen_nanos6
+$B b6_cholesky_nanos6
