@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
 #include <cblas.h>
@@ -50,17 +51,23 @@ static void initialize(long N, long TS, double (*a)[N/TS][TS][TS])
 
 int main(int argc, char **argv)
 {
-	if (argc != 3) {
+	long n = 4L * 1024L;
+	long ts = 1024L;
+
+	if (argc > 3 || (argc >= 2 && strcmp(argv[1], "-h") == 0)) {
 		fprintf(stderr, "[USAGE] %s N tasksize\n", argv[0]);
 		fprintf(stderr, "  tasksize must divide N\n");
 		return 1;
 	}
 
-	const long n = atoi(argv[1]);
-	const long ts = atoi(argv[2]);
+	if (argc >= 2)
+		n = atol(argv[1]);
+
+	if (argc >= 3)
+		ts = atol(argv[2]);
 
 	if (n % ts != 0) {
-		fprintf(stderr, "[USAGE] %s N tasksize\n", argv[0]);
+		fprintf(stderr, "[USAGE] %s [-h] N tasksize\n", argv[0]);
 		fprintf(stderr, "  tasksize must divide N\n");
 		return 1;
 	}
