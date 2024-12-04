@@ -1,0 +1,11 @@
+if(NANOS6_FOUND)
+  mk_bench(b6_nqueens_nanos6)
+  target_sources(b6_nqueens_nanos6 PRIVATE nqueens.cpp)
+  target_link_libraries(b6_nqueens_nanos6 PRIVATE Nanos6::nanos6)
+endif()
+
+if(NODES_FOUND)
+  mk_bench(b6_nqueens_nodes)
+  target_sources(b6_nqueens_nodes PRIVATE nqueens.cpp)
+  target_link_libraries(b6_nqueens_nodes PRIVATE Nodes::nodes)
+endif()
