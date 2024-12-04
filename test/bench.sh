@@ -8,3 +8,4 @@ bigotes b6_nbody_omp -f -b 512
 bigotes b6_nbody_ompv -f -b 512
 bigotes b6_miniamr_mpi_omp
 bigotes b6_nqueens_nanos6
+bigotes b6_strassen_nanos6
