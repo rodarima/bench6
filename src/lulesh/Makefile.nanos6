@@ -1,0 +1,171 @@
+#default build suggestion of MPI + OPENMP with gcc on Livermore machines you might have to change the compiler name
+
+SHELL = /bin/sh
+.SUFFIXES: .cc .o
+
+# Compilers
+MCC=clang
+MCXX=clang++
+
+MPIICPC=clang
+MPIIMCXX=clang++
+
+# Use the Intel MPI compiler if possible
+ifdef I_MPI_ROOT
+MPIIMCC=clang
+MPIIMCXX=clang++
+endif
+
+# MPI Wrappers
+I_MPI_CC=$(MCC)
+I_MPI_CXX=$(MCXX)
+MPICH_CC=$(MCC)
+MPICH_CXX=$(MCXX)
+OMPI_CC=$(MCC)
+OMPI_CXX=$(MCXX)
+
+USE_MPI?=1
+USE_TAMPI?=1
+USE_SIMPLE?=1
+
+TAMPI_DIR=$(TAMPI_HOME)
+#TAMPI_LIB=$(TAMPI_DIR)/lib/libtampi.so
+TAMPI_LIB=$(TAMPI_DIR)/lib/libtampi.a
+TAMPI_INC=-I$(TAMPI_DIR)/include
+TAMPI_FLAGS=-DUSE_TAMPI=$(USE_TAMPI) $(TAMPI_INC) $(TAMPI_LIB)
+SIMPLE_FLAGS=-DUSE_SIMPLE=$(USE_SIMPLE) --gcc-toolchain=/home/Computational/anavarro/installation/gcc-9.2.0/ -DNANOS6_RUNTIME
+
+LULESH_EXEC = lulesh_omp lulesh_t lulesh_tf lulesh_oss_tl
+
+#Compiler/linker. Enable/disable MPI through USE_MPI define.
+
+SOURCES_COMMON = \
+	lulesh-viz.cc \
+	lulesh-util.cc
+SOURCE_INIT = \
+	lulesh-init.cc
+SOURCE_COMM = \
+	lulesh-comm.cc
+SOURCE_OMP = \
+	lulesh_omp.cc
+SOURCE_T = \
+	lulesh_t.cc
+SOURCE_TF = \
+	lulesh_tf.cc
+SOURCE_TL = \
+	lulesh_oss_tl.cc
+
+OBJECTS_COMMON = $(SOURCES_COMMON:.cc=.o)
+OBJECT_OMP = $(SOURCE_OMP:.cc=.o)
+OBJECT_T = $(SOURCE_T:.cc=.o)
+OBJECT_TF = $(SOURCE_TF:.cc=.o)
+OBJECT_TL = $(SOURCE_TL:.cc=.o)
+OBJECT_INIT_OMP = lulesh-init_omp.o
+OBJECT_INIT_OSS = lulesh-init_oss.o
+OBJECT_COMM_OMP = lulesh-comm_omp.o
+OBJECT_COMM_OSS = lulesh-comm_oss.o
+
+#Default build suggestions with OmpSs for g++
+MPIICPC_CXXFLAGS = --gcc-toolchain=/home/Computational/anavarro/installation/gcc-9.2.0/ -O3 -fopenmp -I. -Wall -DUSE_MPI=$(USE_MPI) -DNANOS6_RUNTIME
+MPIICPC_LDFLAGS = --gcc-toolchain=/home/Computational/anavarro/installation/gcc-9.2.0/ -O3 -fopenmp -lstdc++ -DNANOS6_RUNTIME
+MPIICPCNOOMP_CXXFLAGS = --gcc-toolchain=/home/Computational/anavarro/installation/gcc-9.2.0/ -O3 -I. -Wall -DUSE_MPI=$(USE_MPI) -DNANOS6_RUNTIME
+MPIICPCNOOMP_LDFLAGS = --gcc-toolchain=/home/Computational/anavarro/installation/gcc-9.2.0/ -O3 -lstdc++ -DNANOS6_RUNTIME
+MPIIMCXX_CXXFLAGS = --gcc-toolchain=/home/Computational/anavarro/installation/gcc-9.2.0/ -O3 -fompss-2=libnanos6 -I. -Wall -Wno-comment -Wno-maybe-uninitialized -DUSE_MPI=$(USE_MPI) -DUSE_TAMPI=$(USE_TAMPI) $(TAMPI_INC) -DNANOS6_RUNTIME
+MPIIMCXX_LDFLAGS = --gcc-toolchain=/home/Computational/anavarro/installation/gcc-9.2.0/ -O3 -fompss-2=libnanos6 -lstdc++ $(TAMPI_LIB) -DNANOS6_RUNTIME
+MPIIMCXX_CXXFLAGS = --gcc-toolchain=/home/Computational/anavarro/installation/gcc-9.2.0/ -O3 -fompss-2=libnanos6 -I. -Wall -Wno-comment -Wno-maybe-uninitialized -DUSE_MPI=$(USE_MPI) -DNANOS6_RUNTIME #--pass-through
+MPIIMCXX_LDFLAGS = --gcc-toolchain=/home/Computational/anavarro/installation/gcc-9.2.0/ -O3 -ffast-math -fompss-2=libnanos6 -lstdc++ -lm -DNANOS6_RUNTIME
+OSS_TL_CXXFLAGS = --gcc-toolchain=/home/Computational/anavarro/installation/gcc-9.2.0/ -O3 -fompss-2=libnanos6 -I. -Wall -Wno-comment -Wno-maybe-uninitialized -Wno-unused-local-typedefs -DUSE_MPI=$(USE_MPI) -DNANOS6_RUNTIME
+OSS_TL_LDFLAGS = --gcc-toolchain=/home/Computational/anavarro/installation/gcc-9.2.0/ -O3 -fompss-2=libnanos6 -lstdc++ -DNANOS6_RUNTIME
+
+all: $(LULESH_EXEC)
+
+.cc.o: lulesh.h
+	@echo "Building $<"
+	$(MPIICPC) -c $(MPIICPC_CXXFLAGS) -o $@  $<
+lulesh_omp.o: $(SOURCE_OMP) lulesh.h
+	@echo "Building $<"
+	$(MPIICPC) -c $(MPIICPC_CXXFLAGS) -o $@  $<
+lulesh_t.o: $(SOURCE_T) lulesh.h
+	@echo "Building $<"
+	$(MPIIMCXX) -c $(MPIIMCXX_CXXFLAGS) -o $@  $<
+lulesh_tf.o: $(SOURCE_TF) lulesh.h
+	@echo "Building $<"
+	$(MPIIMCXX) -c $(MPIIMCXX_CXXFLAGS) -o $@  $<
+lulesh_oss_tl.o: $(SOURCE_TL) lulesh.h
+	@echo "Building $<"
+	$(MPIIMCXX) -c $(OSS_TL_CXXFLAGS) -o $@  $<
+lulesh-init_omp.o: $(SOURCE_INIT) lulesh.h
+	@echo "Building $<"
+	$(MPIICPC) -c $(MPIICPC_CXXFLAGS) -o $@  $<
+lulesh-init_oss.o: $(SOURCE_INIT) lulesh.h
+	@echo "Building $<"
+	$(MPIIMCXX) -c $(MPIIMCXX_CXXFLAGS) -o $@  $<
+lulesh-comm_omp.o: $(SOURCE_COMM) lulesh.h
+	@echo "Building $<"
+	$(MPIICPC) -c $(MPIICPC_CXXFLAGS) -o $@  $<
+lulesh-comm_oss.o: $(SOURCE_COMM) lulesh.h
+	@echo "Building $<"
+	$(MPIIMCXX) -c $(MPIIMCXX_CXXFLAGS) -o $@  $<
+
+lulesh_omp: $(OBJECTS_COMMON) $(OBJECT_INIT_OMP) $(OBJECT_COMM_OMP) $(OBJECT_OMP)
+	@echo "Linking"
+	$(MPIICPC) $(OBJECTS_COMMON) $(OBJECT_INIT_OMP) $(OBJECT_COMM_OMP) $(OBJECT_OMP) $(MPIICPC_LDFLAGS) -lm -o $@
+lulesh_omp_simple: lulesh_omp.cc lulesh-comm_simple.cc lulesh-init.cc lulesh-util.cc lulesh-viz.cc 
+	$(MPIICPC) $^ $(MPIICPC_CXXFLAGS) $(MPIICPC_LDFLAGS) $(SIMPLE_FLAGS) -lm -o $@
+lulesh_mpi_simple: lulesh_omp.cc lulesh-comm_simple.cc lulesh-init.cc lulesh-util.cc lulesh-viz.cc 
+	$(MPIICPC) $^ $(MPIICPCNOOMP_CXXFLAGS) $(MPIICPCNOOMP_LDFLAGS) $(SIMPLE_FLAGS) -lm -o $@
+
+lulesh_t: $(OBJECTS_COMMON) $(OBJECT_INIT_OSS) $(OBJECT_COMM_OSS) $(OBJECT_T)
+	@echo "Linking"
+	$(MPIIMCXX) --gcc-toolchain=/home/Computational/anavarro/installation/gcc-9.2.0/ $(OBJECTS_COMMON) $(OBJECT_INIT_OSS) $(OBJECT_COMM_OSS) $(OBJECT_T) $(MPIIMCXX_LDFLAGS) -lm -o $@
+lulesh_t_simple: lulesh_t.cc lulesh-comm_simple.cc lulesh-init.cc lulesh-util.cc lulesh-viz.cc
+	@echo "Linking"
+	$(MPIIMCXX) --gcc-toolchain=/home/Computational/anavarro/installation/gcc-9.2.0/ $^ $(MPIIMCXX_CXXFLAGS) $(MPIIMCXX_LDFLAGS) -DUSE_SIMPLE=1 -lm -o $@
+lulesh_t_tampi: lulesh_t.cc lulesh-comm_tampi.cc lulesh-init.cc lulesh-util.cc lulesh-viz.cc
+	@echo "Linking"
+	$(MPIIMCXX) --gcc-toolchain=/home/Computational/anavarro/installation/gcc-9.2.0/ $^ $(MPIIMCXX_CXXFLAGS) $(MPIIMCXX_LDFLAGS) $(TAMPI_FLAGS) -lm -o $@
+
+lulesh_tf: $(OBJECTS_COMMON) $(OBJECT_INIT_OSS) $(OBJECT_COMM_OSS) $(OBJECT_TF)
+	@echo "Linking"
+	$(MPIIMCXX) --gcc-toolchain=/home/Computational/anavarro/installation/gcc-9.2.0/ $(OBJECTS_COMMON) $(OBJECT_INIT_OSS) $(OBJECT_COMM_OSS) $(OBJECT_TF) $(MPIIMCXX_LDFLAGS) -lm -o $@
+lulesh_tf_tampi: lulesh_tf.cc lulesh-comm_tampi.cc lulesh-init.cc lulesh-util.cc lulesh-viz.cc
+	@echo "Linking"
+	$(MPIIMCXX) --gcc-toolchain=/home/Computational/anavarro/installation/gcc-9.2.0/ $^ $(MPIIMCXX_CXXFLAGS) $(MPIIMCXX_LDFLAGS) $(TAMPI_FLAGS) -lm -o $@
+lulesh_tf_simple: lulesh_tf.cc lulesh-comm_simple.cc lulesh-init.cc lulesh-util.cc lulesh-viz.cc
+	@echo "Linking"
+	$(MPIIMCXX) --gcc-toolchain=/home/Computational/anavarro/installation/gcc-9.2.0/ $^ $(MPIIMCXX_CXXFLAGS) $(MPIIMCXX_LDFLAGS) -DUSE_SIMPLE=1 -lm -o $@
+
+lulesh_full_tf_simple: lulesh_full_tf.cc lulesh-comm_simple.cc lulesh-init.cc lulesh-util.cc lulesh-viz.cc
+	@echo "Linking"
+	$(MPIIMCXX) --gcc-toolchain=/home/Computational/anavarro/installation/gcc-9.2.0/ $^ $(MPIIMCXX_CXXFLAGS) $(MPIIMCXX_LDFLAGS) -DUSE_SIMPLE=1 -lm -o $@
+lulesh_full_tf_tampi: lulesh_full_tf.cc lulesh-comm_tampi.cc lulesh-init.cc lulesh-util.cc lulesh-viz.cc
+	@echo "Linking"
+	$(MPIIMCXX) --gcc-toolchain=/home/Computational/anavarro/installation/gcc-9.2.0/ $^ $(MPIIMCXX_CXXFLAGS) $(MPIIMCXX_LDFLAGS) $(TAMPI_FLAGS) -lm -o $@
+
+lulesh_oss_tl: $(OBJECTS_COMMON) $(OBJECT_INIT_OSS) $(OBJECT_COMM_OSS) $(OBJECT_TL)
+	@echo "Linking"
+	$(MPIIMCXX) --gcc-toolchain=/home/Computational/anavarro/installation/gcc-9.2.0/ $(OBJECTS_COMMON) $(OBJECT_INIT_OSS) $(OBJECT_COMM_OSS) $(OBJECT_TL) $(OSS_TL_LDFLAGS) -lm -o $@
+lulesh_oss_tl_simple: lulesh_oss_tl.cc lulesh-comm_simple.cc lulesh-init.cc lulesh-util.cc lulesh-viz.cc
+	@echo "Linking"
+	$(MPIIMCXX) --gcc-toolchain=/home/Computational/anavarro/installation/gcc-9.2.0/ $^ $(MPIIMCXX_CXXFLAGS) $(MPIIMCXX_LDFLAGS) -DUSE_SIMPLE=1 -lm -o $@
+
+lulesh_oss_tlf_simple: lulesh_oss_tlf.cc lulesh-comm_simple.cc lulesh-init.cc lulesh-util.cc lulesh-viz.cc
+	@echo "Linking"
+	$(MPIIMCXX) --gcc-toolchain=/home/Computational/anavarro/installation/gcc-9.2.0/ $^ $(MPIIMCXX_CXXFLAGS) $(MPIIMCXX_LDFLAGS) -DUSE_SIMPLE=1 -lm -o $@
+
+test_tampi: test.cc lulesh-comm_tampi.cc lulesh-init.cc lulesh-util.cc 
+	@echo "Linking"
+	$(MPIIMCXX) $^ $(MPIIMCXX_CXXFLAGS) $(MPIIMCXX_LDFLAGS) $(TAMPI_FLAGS) -lm -o $@
+test_notampi: test.cc lulesh-comm.cc lulesh-init.cc lulesh-util.cc 
+	$(MPIICPC) $^ $(MPIICPC_CXXFLAGS) $(MPIICPC_LDFLAGS) -lm -o $@
+test_notampi_simple: test.cc lulesh-comm_simple.cc lulesh-init.cc lulesh-util.cc 
+	$(MPIICPC) $^ $(MPIICPC_CXXFLAGS) $(MPIICPC_LDFLAGS) $(SIMPLE_FLAGS) -lm -o $@
+
+clean:
+	/bin/rm -f *.o *~ $(OBJECTS) $(LULESH_EXEC) mcc_* mcxx_*
+	/bin/rm -rf *.dSYM
+
+tar: clean
+	cd .. ; tar cvf lulesh-.tar LULESH- ; mv lulesh-.tar LULESH-
+
+
