@@ -1,0 +1,11 @@
+if(NANOS6_FOUND)
+  mk_bench(b6_strassen_nanos6)
+  target_sources(b6_strassen_nanos6 PRIVATE strassen.c)
+  target_link_libraries(b6_strassen_nanos6 PRIVATE m Nanos6::nanos6)
+endif()
+
+if(NODES_FOUND)
+  mk_bench(b6_strassen_nodes)
+  target_sources(b6_strassen_nodes PRIVATE strassen.c)
+  target_link_libraries(b6_strassen_nodes PRIVATE m Nodes::nodes)
+endif()
