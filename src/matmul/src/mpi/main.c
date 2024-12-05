@@ -75,8 +75,10 @@ int main(int argc, char **argv)
 	if (!rank && errors > 0)
 		fprintf(stderr, "Results checked: WRONG, mismatches: %d\n", errors);
 	else if (!rank) {
-		fprintf(stdout, "Results checked: CORRECT\n");
-		fprintf(stdout, "n: %zu, ts: %zu, timesteps: %zu, time(s): %f\n", n, ts, conf.timesteps, end-start);
+		//fprintf(stdout, "Results checked: CORRECT\n");
+		//fprintf(stdout, "n: %zu, ts: %zu, timesteps: %zu, time(s): %f\n", n, ts, conf.timesteps, end-start);
+		double t = end - start;
+		printf("%14e %zu %zu %zu\n", t, n, conf.timesteps, ts);
 	}
 
 	// Free memory
