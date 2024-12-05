@@ -13,3 +13,7 @@ $B b6_nqueens_nanos6
 $B b6_strassen_nanos6
 $B b6_cholesky_nanos6
 $B b6_multisaxpy_nanos6
+$B b6_streaming_tampi_nanos6 -s 8096 -b 1024 -t 2000
+
+# Output not compatible with bigotes
+b6_tsunampi_tampi -r 10
