@@ -1,0 +1,25 @@
+include_directories(src)
+set(COMMON_SRC src/common/matmul.c src/mpi/main.c)
+set(COMMON_LIBS MPI::MPI_C Tampi::tampi-c BLAS::BLAS)
+
+if(BLAS_FOUND)
+  if(NANOS6_FOUND)
+    mk_bench(b6_matmul_tampi_nanos6)
+    target_sources(b6_matmul_tampi_nanos6 PRIVATE ${COMMON_SRC} src/mpi/01.matmul_ompss2_tampi.c)
+    target_link_libraries(b6_matmul_tampi_nanos6 PRIVATE ${COMMON_LIBS} Nanos6::nanos6)
+
+    mk_bench(b6_matmul_itampi_nanos6)
+    target_sources(b6_matmul_itampi_nanos6 PRIVATE ${COMMON_SRC} src/mpi/01.matmul_ompss2_tampi.c)
+    target_link_libraries(b6_matmul_itampi_nanos6 PRIVATE ${COMMON_LIBS} Nanos6::nanos6)
+  endif()
+
+  if(NODES_FOUND)
+    mk_bench(b6_matmul_tampi_nodes)
+    target_sources(b6_matmul_tampi_nodes PRIVATE ${COMMON_SRC} src/mpi/01.matmul_ompss2_tampi.c)
+    target_link_libraries(b6_matmul_tampi_nodes PRIVATE ${COMMON_LIBS} Nodes::nodes)
+
+    mk_bench(b6_matmul_itampi_nodes)
+    target_sources(b6_matmul_itampi_nodes PRIVATE ${COMMON_SRC} src/mpi/02.matmul_ompss2_itampi.c)
+    target_link_libraries(b6_matmul_itampi_nodes PRIVATE ${COMMON_LIBS} Nodes::nodes)
+  endif()
+endif()
