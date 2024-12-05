@@ -12,7 +12,7 @@ if(NOT GASPI_FOUND)
   return()
 endif()
 
-if(TARGET Gaspi::Gaspi)
+if(TARGET Gaspi::gaspi)
   return()
 endif()
 
