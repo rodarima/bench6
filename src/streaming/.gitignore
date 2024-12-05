@@ -1,0 +1,5 @@
+*.o
+*.bin
+*.pcf
+*.prv
+*.row

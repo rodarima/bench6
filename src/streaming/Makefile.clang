@@ -1,0 +1,77 @@
+BUILDDIR?=.
+
+# Compilers
+CC=clang
+MPICC=mpicc
+WRAPPERS=I_MPI_CC=$(CC) MPICH_CC=$(CC) OMPI_CC=$(CC)
+
+# Directory of GASPI with lowlevel extensions
+GASPI_EXT_HOME?=$(GASPI_HOME)
+
+ifdef I_MPI_ROOT
+MPICC=mpiicc
+endif
+
+# Preprocessor flags
+CPPFLAGS=-Isrc
+
+# Compiler flags
+CFLAGS=-Ofast -march=native -ffast-math -std=gnu99
+OSS_CFLAGS=-fompss-2
+
+# Linker flags
+LDFLAGS=-lm
+
+# TAMPI flags
+TAMPI_CPPFLAGS=-I$(TAMPI_HOME)/include -DTAMPI
+TAMPI_LDFLAGS=-L$(TAMPI_HOME)/lib -L$(TAMPI_HOME)/lib64 -ltampi-c
+
+# GASPI flags
+GASPI_EXT_CPPFLAGS=-I$(GASPI_EXT_HOME)/include
+GASPI_EXT_LDFLAGS=-L$(GASPI_EXT_HOME)/lib -L$(GASPI_EXT_HOME)/lib64 -l:libGPI2.a -lpthread -lrt -libverbs
+
+# TAGASPI flags
+TAGASPI_CPPFLAGS=-I$(TAGASPI_HOME)/include -DTAGASPI
+TAGASPI_LDFLAGS=-L$(TAGASPI_HOME)/lib -L$(TAGASPI_HOME)/lib64 -l:libtagaspi.a -lnuma -lstdc++
+
+# List of programs
+BIN=$(BUILDDIR)/05.streaming_mpi.bin
+
+ifdef TAMPI_HOME
+BIN+=$(BUILDDIR)/01.streaming_tampi_ompss2_tasks.bin
+BIN+=$(BUILDDIR)/02.streaming_itampi_ompss2_tasks.bin
+endif
+
+ifdef TAGASPI_HOME
+BIN+=$(BUILDDIR)/03.streaming_tagaspi_ompss2_tasks.bin
+BIN+=$(BUILDDIR)/04.streaming_tagaspi_ompss2_tasks_onready.bin
+endif
+
+MPI_SRC=src/common/misc.c src/mpi/main.c $(BUILDDIR)/kernel.o
+GASPI_SRC=src/common/misc.c src/gaspi/utils.c src/gaspi/main.c $(BUILDDIR)/kernel.o
+
+all: $(BUILDDIR) $(BIN)
+
+$(BUILDDIR)/01.streaming_tampi_ompss2_tasks.bin: $(MPI_SRC) src/mpi/01.solver_tampi_ompss2_tasks.c
+	$(WRAPPERS) $(MPICC) $(CPPFLAGS) $(TAMPI_CPPFLAGS) -DTAMPI_BLOCKING $(CFLAGS) $(OSS_CFLAGS) -o $@ $^ $(LDFLAGS) $(TAMPI_LDFLAGS)
+
+$(BUILDDIR)/02.streaming_itampi_ompss2_tasks.bin: $(MPI_SRC) src/mpi/02.solver_itampi_ompss2_tasks.c
+	$(WRAPPERS) $(MPICC) $(CPPFLAGS) $(TAMPI_CPPFLAGS) $(CFLAGS) $(OSS_CFLAGS) -o $@ $^ $(LDFLAGS) $(TAMPI_LDFLAGS)
+
+$(BUILDDIR)/03.streaming_tagaspi_ompss2_tasks.bin: $(GASPI_SRC) src/gaspi/03.solver_tagaspi_ompss2_tasks.c
+	$(WRAPPERS) $(MPICC) $(CPPFLAGS) $(TAGASPI_CPPFLAGS) $(GASPI_EXT_CPPFLAGS) $(CFLAGS) $(OSS_CFLAGS) -o $@ $^ $(LDFLAGS) $(TAGASPI_LDFLAGS) $(GASPI_EXT_LDFLAGS)
+
+$(BUILDDIR)/04.streaming_tagaspi_ompss2_tasks_onready.bin: $(GASPI_SRC) src/gaspi/04.solver_tagaspi_ompss2_tasks_onready.c
+	$(WRAPPERS) $(MPICC) $(CPPFLAGS) $(TAGASPI_CPPFLAGS) $(GASPI_EXT_CPPFLAGS) $(CFLAGS) $(OSS_CFLAGS) -o $@ $^ $(LDFLAGS) $(TAGASPI_LDFLAGS) $(GASPI_EXT_LDFLAGS)
+
+$(BUILDDIR)/05.streaming_mpi.bin: $(MPI_SRC) src/mpi/05.solver_mpi.c
+	$(WRAPPERS) $(MPICC) $(CPPFLAGS) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+
+$(BUILDDIR)/kernel.o: src/common/kernel.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $^
+
+$(BUILDDIR):
+	mkdir $(BUILDDIR)
+
+clean:
+	rm -f $(BUILDDIR)/*.o $(BUILDDIR)/*.bin
