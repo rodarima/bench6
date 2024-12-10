@@ -1,0 +1,21 @@
+if(NANOS6_FOUND)
+  mk_bench(b6_fibonacci_nanos6)
+  target_sources(b6_fibonacci_nanos6 PRIVATE fibonacci.c)
+  target_link_libraries(b6_fibonacci_nanos6 PRIVATE Nanos6::nanos6)
+
+  mk_bench(b6_fibonacci_nanos6_notaskwait)
+  target_sources(b6_fibonacci_nanos6_notaskwait PRIVATE fibonacci.c)
+  target_link_libraries(b6_fibonacci_nanos6_notaskwait PRIVATE Nanos6::nanos6)
+  target_compile_definitions(b6_fibonacci_nanos6_notaskwait PRIVATE "NO_TASKWAIT")
+endif()
+
+if(NODES_FOUND)
+  mk_bench(b6_fibonacci_nodes)
+  target_sources(b6_fibonacci_nodes PRIVATE fibonacci.c)
+  target_link_libraries(b6_fibonacci_nodes PRIVATE Nodes::nodes)
+
+  mk_bench(b6_fibonacci_nodes_notaskwait)
+  target_sources(b6_fibonacci_nodes_notaskwait PRIVATE fibonacci.c)
+  target_link_libraries(b6_fibonacci_nodes_notaskwait PRIVATE Nodes::nodes)
+  target_compile_definitions(b6_fibonacci_nodes_notaskwait PRIVATE "NO_TASKWAIT")
+endif()
