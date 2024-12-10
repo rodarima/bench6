@@ -1,5 +1,8 @@
 #include "stream.h"
 
+#include <string.h>
+#include <stdlib.h>
+
 long BS = DEFAULT_BLOCKSIZE;
 long SIZE = STREAM_ARRAY_SIZE;
 
@@ -10,6 +13,12 @@ main(int argc, char **argv)
 	ssize_t j;
 	double t;
 	long block;
+
+	if (argc >= 4 || (argc == 2 && strcmp(argv[1], "-h") == 0)) {
+		fprintf(stderr, "Usage: %s [-h] [blocksize] [arraysize]\n",
+				argv[0]);
+		exit(1);
+	}
 
 	if (argc >= 2)
 		BS = atol(argv[1]);
