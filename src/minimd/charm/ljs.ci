@@ -1,0 +1,409 @@
+mainmodule miniMD {
+  extern module block;
+  include "types.h";
+
+  readonly CProxy_Main main_proxy;
+  readonly CProxy_KokkosManager kokkos_proxy;
+  readonly CProxy_Block block_proxy;
+  readonly CProxy_Comm comm_proxy;
+  readonly int num_chares;
+
+  readonly std::string input_file;
+  readonly int num_threads;
+  readonly int teams;
+  readonly int num_steps;
+  readonly int system_size;
+  readonly int nx;
+  readonly int ny;
+  readonly int nz;
+  readonly int ntypes;
+  readonly int neighbor_size;
+  readonly int halfneigh;
+  readonly int team_neigh;
+  readonly int use_sse;
+  readonly int check_safeexchange;
+  readonly int do_safeexchange;
+  readonly int sort;
+  readonly int yaml_output;
+  readonly int yaml_screen;
+  readonly int ghost_newton;
+  readonly int in_nx;
+  readonly int in_ny;
+  readonly int in_nz;
+  readonly MMD_float in_t_request;
+  readonly MMD_float in_rho;
+  readonly int in_units;
+  readonly ForceStyle in_forcetype;
+  readonly MMD_float in_epsilon;
+  readonly MMD_float in_sigma;
+  readonly std::string in_datafile;
+  readonly int in_ntimes;
+  readonly MMD_float in_dt;
+  readonly int in_neigh_every;
+  readonly MMD_float in_force_cut;
+  readonly MMD_float in_neigh_cut;
+  readonly int in_thermo_nstat;
+
+  mainchare Main {
+    entry Main(CkArgMsg* m);
+    entry [reductiontarget] void kokkosInitialized();
+    entry [reductiontarget] void reduceVelocity(CkReductionMsg* msg);
+    entry [reductiontarget] void blockInitialized();
+    entry [reductiontarget] void blockDone();
+    entry [reductiontarget] void kokkosFinalized();
+
+    entry void run() {
+      when kokkosInitialized() serial {
+        CkPrintf("[Main] Kokkos initialized\n");
+        block_proxy.init();
+      }
+
+      when reduceVelocity(CkReductionMsg* msg) serial {
+        CkPrintf("[Main] Reducing velocities...\n");
+        double vxtot = 0;
+        double vytot = 0;
+        double vztot = 0;
+
+        CkReduction::setElement* current = (CkReduction::setElement*)msg->getData();
+        while (current != NULL) {
+          double* result = (double*)&current->data;
+          vxtot += result[0];
+          vytot += result[1];
+          vztot += result[2];
+          current = current->next();
+        }
+
+        block_proxy.contCreateVelocity(vxtot, vytot, vztot);
+      }
+
+      when blockInitialized() serial {
+        CkPrintf("[Main] Blocks initialized\n");
+        block_proxy.run();
+      }
+
+      when blockDone() serial {
+        CkPrintf("[Main] Blocks complete\n");
+        kokkos_proxy.finalize();
+      }
+
+      when kokkosFinalized() serial {
+        CkPrintf("[Main] Kokkos finalized\n");
+        CkExit();
+      }
+    }
+  };
+
+  nodegroup KokkosManager {
+    entry KokkosManager();
+    entry void finalize();
+  };
+};
+
+module block {
+  include "types.h";
+
+  array [1d] Block {
+    entry Block();
+    entry void init();
+    entry [threaded] void contCreateVelocity(double vxtot, double vytot, double vztot);
+
+    // Main code flow
+    entry [threaded] void run() {
+      serial "preprocess" {
+        comm->exchange(atom, true);
+        if (sort > 0)
+          atom.sort(neighbor);
+        comm->borders(atom, true);
+
+        force->evflag = 1;
+        neighbor.build(atom);
+
+        force->compute(atom, neighbor, comm, thisIndex);
+
+        if (neighbor.halfneigh && neighbor.ghost_newton)
+          comm->reverse_communicate(atom, true);
+
+        thermo.compute(0, atom, neighbor, force, comm);
+      }
+
+      serial "integrate" {
+        // Main iteration loop
+        integrate.run(atom, force, neighbor, comm, thermo, thisIndex);
+      }
+
+      serial "postprocess" {
+        force->evflag = 1;
+        force->compute(atom, neighbor, comm, thisIndex);
+
+        if (neighbor.halfneigh && neighbor.ghost_newton)
+          comm->reverse_communicate(atom, false);
+
+        thermo.compute(-1, atom, neighbor, force, comm);
+
+        // XXX: Missing performance summary and yaml output
+
+        neighbor.dealloc();
+        delete force;
+      }
+
+      serial {
+        contribute(CkCallback(CkReductionTarget(Main, blockDone), main_proxy));
+      }
+    }
+
+    // Allreduce routines for Thermo
+    entry void temperature_allreduce(CkCallback cb) {
+      serial {
+        int tag = comm->iter;
+        CkCallback allreduce_cb = CkCallback(CkIndex_Block::temperature_recv(NULL), thisProxy);
+        allreduce_cb.setRefnum(tag);
+        contribute(sizeof(MMD_float), &(thermo.t_act), (sizeof(MMD_float) == sizeof(float)) ? CkReduction::sum_float : CkReduction::sum_double, allreduce_cb);
+      }
+
+      when temperature_recv[comm->iter](CkReductionMsg* msg) serial {
+        thermo.t1 = *(MMD_float*)msg->getData();
+      }
+
+      serial {
+        cb.send();
+      }
+    }
+    entry void temperature_recv(CkReductionMsg* msg);
+
+    entry void energy_allreduce(CkCallback cb) {
+      serial {
+        int tag = comm->iter;
+        CkCallback allreduce_cb = CkCallback(CkIndex_Block::energy_recv(NULL), thisProxy);
+        allreduce_cb.setRefnum(tag);
+        contribute(sizeof(MMD_float), &(thermo.e_act), (sizeof(MMD_float) == sizeof(float)) ? CkReduction::sum_float : CkReduction::sum_double, allreduce_cb);
+      }
+
+      when energy_recv[comm->iter](CkReductionMsg* msg) serial {
+        thermo.eng = *(MMD_float*)msg->getData();
+      }
+
+      serial {
+        cb.send();
+      }
+    }
+    entry void energy_recv(CkReductionMsg* msg);
+
+    entry void pressure_allreduce(CkCallback cb) {
+      serial {
+        int tag = comm->iter;
+        CkCallback allreduce_cb = CkCallback(CkIndex_Block::pressure_recv(NULL), thisProxy);
+        allreduce_cb.setRefnum(tag);
+        contribute(sizeof(MMD_float), &(thermo.p_act), (sizeof(MMD_float) == sizeof(float)) ? CkReduction::sum_float : CkReduction::sum_double, allreduce_cb);
+      }
+
+      when pressure_recv[comm->iter](CkReductionMsg* msg) serial {
+        thermo.virial = *(MMD_float*)msg->getData();
+      }
+
+      serial {
+        cb.send();
+      }
+    }
+    entry void pressure_recv(CkReductionMsg* msg);
+
+
+    // Non-blocking communication routines for Comm:exchange
+    entry void exchange_1(int idim, CkCallback cb) {
+      serial {
+        int tag = 3*comm->iter + idim;
+        thisProxy[comm->send1_chare].exchange_1_recv_1(tag, (char*)comm->send1, comm->send1_size);
+        if (comm->charegrid[idim] > 2) {
+          thisProxy[comm->send2_chare].exchange_1_recv_2(tag, (char*)comm->send2, comm->send2_size);
+        }
+      }
+
+      when exchange_1_recv_1[3*comm->iter+idim](int ref, char data[size], size_t size) serial {
+        memcpy(comm->recv1, data, size);
+        comm->nrecv = comm->nrecv1;
+      }
+      if (comm->charegrid[idim] > 2) {
+        when exchange_1_recv_2[3*comm->iter+idim](int ref, char data[size], size_t size) serial {
+          memcpy(comm->recv2, data, size);
+          comm->nrecv += comm->nrecv2;
+        }
+      }
+
+      serial {
+        cb.send();
+      }
+    }
+
+    entry void exchange_2(int idim, CkCallback cb) {
+      serial {
+        int tag = 3*comm->iter + idim;
+        thisProxy[comm->send1_chare].exchange_2_recv_1(tag, (char*)comm->send1, comm->send1_size);
+        if (comm->charegrid[idim] > 2) {
+          thisProxy[comm->send2_chare].exchange_2_recv_2(tag, (char*)comm->send2, comm->send2_size);
+        }
+      }
+
+      when exchange_2_recv_1[3*comm->iter+idim](int ref, char data[size], size_t size) serial {
+        memcpy(comm->recv1, data, size);
+      }
+      if (comm->charegrid[idim] > 2) {
+        when exchange_2_recv_2[3*comm->iter+idim](int ref, char data[size], size_t size) serial {
+          memcpy(comm->recv2, data, size);
+        }
+      }
+
+      serial {
+        cb.send();
+      }
+    }
+
+    entry void exchange_1_recv_1(int ref, char data[size], size_t size);
+    entry void exchange_1_recv_2(int ref, char data[size], size_t size);
+    entry void exchange_2_recv_1(int ref, char data[size], size_t size);
+    entry void exchange_2_recv_2(int ref, char data[size], size_t size);
+
+    // Non-blocking communication routines for Comm:borders
+    entry void borders_1(int iswap, CkCallback cb) {
+      serial {
+        int tag = comm->maxswap_static*comm->iter + iswap;
+        thisProxy[comm->send1_chare].borders_recv_1(tag, (char*)comm->send1, comm->send1_size);
+      }
+
+      when borders_recv_1[comm->maxswap_static*comm->iter+iswap](int ref, char data[size], size_t size) serial {
+        memcpy(comm->recv1, data, size);
+        cb.send();
+      }
+    }
+
+    entry void borders_2(int iswap, CkCallback cb) {
+      serial {
+        int tag = comm->maxswap_static*comm->iter + iswap;
+        thisProxy[comm->send1_chare].borders_recv_2(tag, (char*)comm->send1, comm->send1_size);
+      }
+
+      when borders_recv_2[comm->maxswap_static*comm->iter+iswap](int ref, char data[size], size_t size) serial {
+        memcpy(comm->recv1, data, size);
+        cb.send();
+      }
+    }
+
+    entry void borders_recv_1(int ref, char data[size], size_t size);
+    entry void borders_recv_2(int ref, char data[size], size_t size);
+
+    // Non-blocking communication routines for Comm::communicate and Comm::reverse_communicate
+    entry void comms(int iswap, CkCallback cb) {
+      serial {
+        int tag = comm->nswap*comm->iter + iswap;
+        thisProxy[comm->send1_chare].comms_recv(tag, (char*)comm->send1, comm->send1_size);
+      }
+
+      when comms_recv[comm->nswap*comm->iter+iswap](int ref, char data[size], size_t size) serial {
+        memcpy(comm->recv1, data, size);
+        cb.send();
+      }
+    }
+
+    entry void comms_recv(int ref, char data[size], size_t size);
+
+    // Non-blocking communication routines for Comm::communicate
+    entry void comm_all(CkCallback cb) {
+      serial {
+        my_iswap = comm->iswap;
+        my_nswap = comm->nswap;
+        for (my_iswap = 0; my_iswap < my_nswap; my_iswap++) {
+          int tag = my_nswap*comm->iter + my_iswap;
+          if (comm->sendchare[my_iswap] != comm->index) {
+            thisProxy[comm->sendchare[my_iswap]].comm_all_recv(tag,
+                (char*)comm->h_buf_comms_send[my_iswap].data(),
+                comm->comm_send_size[my_iswap] * sizeof(MMD_float));
+          }
+        }
+      }
+
+      forall [my_iswap] (0:my_nswap-1,1) {
+        if (comm->sendchare[my_iswap] != comm->index) {
+          when comm_all_recv[my_nswap*comm->iter+my_iswap](int ref, char data[size], size_t size) serial {
+            memcpy(comm->h_buf_comms_recv[my_iswap].data(), data, size);
+
+            // Invoke H2D transfer
+            Kokkos::deep_copy(comm->h2d_instance, comm->buf_comms_recv[my_iswap], comm->h_buf_comms_recv[my_iswap]);
+
+#ifdef PACK_UNPACK_COMPUTE
+            // Enforce h2d -> compute dependency
+            cudaEvent_t dep_event;
+            hapiCheck(cudaEventCreateWithFlags(&dep_event, cudaEventDisableTiming));
+            hapiCheck(cudaEventRecord(dep_event, comm->h2d_instance.cuda_stream()));
+            hapiCheck(cudaStreamWaitEvent(comm->compute_instance.cuda_stream(), dep_event, 0));
+#else
+            // Enforce h2d -> unpack dependency
+            cudaEvent_t dep_event;
+            hapiCheck(cudaEventCreateWithFlags(&dep_event, cudaEventDisableTiming));
+            hapiCheck(cudaEventRecord(dep_event, comm->h2d_instance.cuda_stream()));
+            hapiCheck(cudaStreamWaitEvent(comm->unpack_instance.cuda_stream(), dep_event, 0));
+#endif
+
+            // Invoke unpacking kernel
+            comm->atom_p->unpack_comm(comm->recvnum[my_iswap], comm->firstrecv[my_iswap], comm->buf_comms_recv[my_iswap]);
+          }
+        }
+      }
+
+      serial { cb.send(); }
+    }
+
+    entry void comm_all_recv(int ref, char data[size], size_t size);
+
+    // Non-blocking communication routines for Comm::reverse_communicate
+    entry void comm_rev_all(CkCallback cb) {
+      serial {
+        my_iswap = comm->iswap;
+        my_nswap = comm->nswap;
+        for (my_iswap = my_nswap-1; my_iswap >= 0; my_iswap--) {
+          int tag = my_nswap*comm->iter + my_iswap;
+          if (comm->sendchare[my_iswap] != comm->index) {
+            thisProxy[comm->sendchare[my_iswap]].comm_rev_all_recv(tag,
+                (char*)comm->h_buf_comms_send[my_iswap].data(),
+                comm->comm_send_size[my_iswap] * sizeof(MMD_float));
+          }
+        }
+      }
+
+      forall [my_iswap] (0:my_nswap-1,1) {
+        if (comm->sendchare[my_iswap] != comm->index) {
+          when comm_rev_all_recv[my_nswap*comm->iter+my_iswap](int ref, char data[size], size_t size) serial {
+            memcpy(comm->h_buf_comms_recv[my_iswap].data(), data, size);
+
+            // Invoke H2D transfer
+            Kokkos::deep_copy(comm->h2d_instance, comm->buf_comms_recv[my_iswap], comm->h_buf_comms_recv[my_iswap]);
+
+#ifdef PACK_UNPACK_COMPUTE
+            // Enforce h2d -> compute dependency
+            cudaEvent_t dep_event;
+            hapiCheck(cudaEventCreateWithFlags(&dep_event, cudaEventDisableTiming));
+            hapiCheck(cudaEventRecord(dep_event, comm->h2d_instance.cuda_stream()));
+            hapiCheck(cudaStreamWaitEvent(comm->compute_instance.cuda_stream(), dep_event, 0));
+#else
+            // Enforce h2d -> unpack dependency
+            cudaEvent_t dep_event;
+            hapiCheck(cudaEventCreateWithFlags(&dep_event, cudaEventDisableTiming));
+            hapiCheck(cudaEventRecord(dep_event, comm->h2d_instance.cuda_stream()));
+            hapiCheck(cudaStreamWaitEvent(comm->unpack_instance.cuda_stream(), dep_event, 0));
+#endif
+
+            // Invoke unpacking kernel
+            int_1d_view_type list = Kokkos::subview(comm->sendlist,my_iswap,Kokkos::ALL());
+            comm->atom_p->unpack_reverse(comm->sendnum[my_iswap], list, comm->buf_comms_recv[my_iswap]);
+          }
+        }
+      }
+
+      serial { cb.send(); }
+    }
+
+    entry void comm_rev_all_recv(int ref, char data[size], size_t size);
+  };
+
+  // Bound array to Block
+  array [1d] Comm {
+    entry Comm();
+  };
+};
