@@ -15,6 +15,7 @@ $B b6_cholesky_nanos6
 $B b6_multisaxpy_nanos6
 $B b6_streaming_tampi_nanos6 -s 8096 -b 1024 -t 2000
 $B b6_matmul_itampi_nanos6 1024 2 512 0
+$B b6_fibonacci_nanos6_notaskwait
 
 # Output not compatible with bigotes
 # b6_tsunampi_tampi -r 10 # Disabled for now
