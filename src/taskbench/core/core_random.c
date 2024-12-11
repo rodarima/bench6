@@ -29,7 +29,7 @@
 #include <stdio.h>
 #endif
 
-void gen_bits(const void *input, size_t input_bytes, void *output)
+static void gen_bits(const void *input, size_t input_bytes, void *output)
 {
   // To generate deterministic uniformly distributed bits, run a hash
   // function on the seed and use the hash value as the output.

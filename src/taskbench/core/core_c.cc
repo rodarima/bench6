@@ -16,7 +16,7 @@
 #include "core.h"
 #include "core_c.h"
 
-interval_list_t wrap_consume(std::vector<std::pair<long, long> > &&d) {
+static interval_list_t wrap_consume(std::vector<std::pair<long, long> > &&d) {
   std::vector<std::pair<long, long> > *d_ptr = new std::vector<std::pair<long, long> >;
   d_ptr->swap(d);
   interval_list_t result;
@@ -24,35 +24,35 @@ interval_list_t wrap_consume(std::vector<std::pair<long, long> > &&d) {
   return result;
 }
 
-std::vector<std::pair<long, long> > * unwrap(interval_list_t d) {
+static std::vector<std::pair<long, long> > * unwrap(interval_list_t d) {
   return reinterpret_cast<std::vector<std::pair<long, long> > *>(d.impl);
 }
 
-interval_t wrap(const std::pair<long, long> &p) {
+static interval_t wrap(const std::pair<long, long> &p) {
   interval_t result;
   result.start = p.first;
   result.end = p.second;
   return result;
 }
 
-task_graph_list_t wrap(const std::vector<TaskGraph> &g) {
+static task_graph_list_t wrap(const std::vector<TaskGraph> &g) {
   std::vector<TaskGraph> *g_ptr = new std::vector<TaskGraph>(g);
   task_graph_list_t result;
   result.impl = reinterpret_cast<void *>(g_ptr);
   return result;
 }
 
-std::vector<TaskGraph> * unwrap(task_graph_list_t a) {
+static std::vector<TaskGraph> * unwrap(task_graph_list_t a) {
   return reinterpret_cast<std::vector<TaskGraph> *>(a.impl);
 }
 
-app_t wrap(App *a_ptr) {
+static app_t wrap(App *a_ptr) {
   app_t result;
   result.impl = reinterpret_cast<void *>(a_ptr);
   return result;
 }
 
-App * unwrap(app_t a) {
+static App * unwrap(app_t a) {
   return reinterpret_cast<App *>(a.impl);
 }
 

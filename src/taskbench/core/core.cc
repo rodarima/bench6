@@ -373,6 +373,8 @@ size_t TaskGraph::reverse_dependencies(long dset, long point, std::pair<long, lo
 
 size_t TaskGraph::num_reverse_dependencies(long dset, long point) const
 {
+  (void) dset;
+  (void) point;
   switch (dependence) {
   case DependenceType::TRIVIAL:
     return 0;
@@ -514,6 +516,8 @@ size_t TaskGraph::dependencies(long dset, long point, std::pair<long, long> *dep
 
 size_t TaskGraph::num_dependencies(long dset, long point) const
 {
+  (void) dset;
+  (void) point;
   switch (dependence) {
   case DependenceType::TRIVIAL:
     return 0;
@@ -549,6 +553,7 @@ void TaskGraph::execute_point(long timestep, long point,
                               size_t n_inputs,
                               char *scratch_ptr, size_t scratch_bytes) const
 {
+  (void) n_inputs;
 #ifdef DEBUG_CORE
   // Validate graph_index
   assert(graph_index >= 0 && graph_index < sizeof(TaskGraphMask)*8);
@@ -560,6 +565,8 @@ void TaskGraph::execute_point(long timestep, long point,
 
   long offset = offset_at_timestep(timestep);
   long width = width_at_timestep(timestep);
+  (void) offset;
+  (void) width;
   assert(offset <= point && point < offset+width);
 
   long last_offset = offset_at_timestep(timestep-1);
@@ -581,6 +588,7 @@ void TaskGraph::execute_point(long timestep, long point,
           assert(input_bytes[idx] >= sizeof(std::pair<long, long>));
 
           const std::pair<long, long> *input = reinterpret_cast<const std::pair<long, long> *>(input_ptr[idx]);
+		  (void) input;
           for (size_t i = 0; i < input_bytes[idx]/sizeof(std::pair<long, long>); ++i) {
 #ifdef DEBUG_CORE
             if (input[i].first != timestep - 1 || input[i].second != dep) {
@@ -617,6 +625,7 @@ void TaskGraph::execute_point(long timestep, long point,
   assert(scratch_bytes == scratch_bytes_per_task);
   if (scratch_bytes > 0) {
     uint64_t *scratch = reinterpret_cast<uint64_t *>(scratch_ptr);
+	(void) scratch;
     assert(*scratch == MAGIC_VALUE);
   }
 
@@ -629,7 +638,7 @@ void TaskGraph::prepare_scratch(char *scratch_ptr, size_t scratch_bytes)
 {
   assert(scratch_bytes % sizeof(uint64_t) == 0);
   uint64_t *base_ptr = reinterpret_cast<uint64_t *>(scratch_ptr);
-  for (long i = 0; i < scratch_bytes/sizeof(uint64_t); ++i) {
+  for (size_t i = 0; i < scratch_bytes/sizeof(uint64_t); ++i) {
     base_ptr[i] = MAGIC_VALUE;
   }
 }
@@ -841,7 +850,7 @@ App::App(int argc, char **argv)
     if (!strcmp(argv[i], OUTPUT_FLAG)) {
       needs_argument(i, argc, OUTPUT_FLAG);
       long value  = atol(argv[++i]);
-      if (value < sizeof(std::pair<long, long>)) {
+      if (value < (long) sizeof(std::pair<long, long>)) {
         fprintf(stderr, "error: Invalid flag \"" OUTPUT_FLAG " %ld\" must be >= %lu\n",
                 value, sizeof(std::pair<long, long>));
         abort();
@@ -906,7 +915,7 @@ App::App(int argc, char **argv)
   graphs.push_back(graph);
 
   // check nb_fields, if not set by user, set it to timesteps
-  for (int j = 0; j < graphs.size(); j++) {
+  for (size_t j = 0; j < graphs.size(); j++) {
     TaskGraph &g = graphs[j];
     if (g.nb_fields == 0) {
       g.nb_fields = g.timesteps;
@@ -948,11 +957,14 @@ void App::check() const
     for (long t = 0; t < g.timesteps; ++t) {
       long offset = g.offset_at_timestep(t);
       long width = g.width_at_timestep(t);
+	  (void) offset;
+	  (void) width;
       assert(offset >= 0);
       assert(width >= 0);
       assert(offset + width <= g.max_width);
 
       long dset = g.dependence_set_at_timestep(t);
+	  (void) dset;
       assert(dset >= 0 && dset <= g.max_dependence_sets());
     }
     for (long dset = 0; dset < g.max_dependence_sets(); ++dset) {
@@ -1095,6 +1107,8 @@ long long count_flops_per_task(const TaskGraph &g, long timestep, long point)
 // IMPORTANT: Keep this up-to-date with kernel implementations
 long long count_bytes_per_task(const TaskGraph &g, long timestep, long point)
 {
+  (void) timestep;
+  (void) point;
   switch(g.kernel.type) {
   case KernelType::EMPTY:
   case KernelType::BUSY_WAIT:

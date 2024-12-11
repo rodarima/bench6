@@ -32,6 +32,7 @@
 
 void execute_kernel_empty(const Kernel &kernel)
 {
+  (void) kernel;
   // Do nothing...
 }
 
@@ -44,7 +45,7 @@ long long execute_kernel_busy_wait(const Kernel &kernel)
   return acc;
 }
 
-void copy(char *scratch_ptr, size_t scratch_bytes)
+static void copy(char *scratch_ptr, size_t scratch_bytes)
 {
   assert(scratch_bytes % 2 == 0);
 
@@ -54,7 +55,6 @@ void copy(char *scratch_ptr, size_t scratch_bytes)
   char *aligned_ptr = base_ptr;
   char *prolog_ptr = base_ptr;
   char *epilog_ptr = base_ptr;
-  int i;
   
   assert(base_ptr_addr % 2 == 0);
   
@@ -76,8 +76,6 @@ void copy(char *scratch_ptr, size_t scratch_bytes)
   char *prolog_dst = prolog_ptr + prolog_padding / 2;
   size_t prolog_cp_size = prolog_padding / 2;
   
-  size_t nb_m256 = nbytes_aligned / 64;
-  
   char *epilog_src = epilog_ptr;
   char *epilog_dst = epilog_ptr + epilog_padding / 2;
   size_t epilog_cp_size = epilog_padding / 2;
@@ -93,7 +91,8 @@ void copy(char *scratch_ptr, size_t scratch_bytes)
   assert ((intptr_t)aligned_src % 32 == 0);
   assert ((intptr_t)aligned_dst % 32 == 0);
 #if (__AVX2__ == 1) || (__AVX__ == 1)
-  for (i = 0; i < nb_m256; i++) {
+  size_t nb_m256 = nbytes_aligned / 64;
+  for (int i = 0; i < nb_m256; i++) {
     __m256d *dst_m256 = reinterpret_cast<__m256d *>(aligned_dst);
     *dst_m256 = _mm256_load_pd(reinterpret_cast<double *>(aligned_src));
     aligned_src += 32;
@@ -170,6 +169,9 @@ void execute_kernel_memory(const Kernel &kernel,
 void execute_kernel_dgemm(const Kernel &kernel,
                            char *scratch_ptr, size_t scratch_bytes)
 {
+  (void) kernel;
+  (void) scratch_ptr;
+  (void) scratch_bytes;
 #ifdef USE_BLAS_KERNEL
   long long N = scratch_bytes / (3 * sizeof(double));
   int m, n, p;
@@ -197,6 +199,10 @@ void execute_kernel_daxpy(const Kernel &kernel,
                           char *scratch_large_ptr, size_t scratch_large_bytes,
                           long timestep)
 {
+  (void) kernel;
+  (void) scratch_large_ptr;
+  (void) scratch_large_bytes;
+  (void) timestep;
 #ifdef USE_BLAS_KERNEL
   for (long iter = 0; iter < kernel.iterations; iter++) {  
     size_t scratch_bytes = scratch_large_bytes / kernel.samples;
@@ -295,6 +301,7 @@ double execute_kernel_compute2(const Kernel &kernel)
 
 void execute_kernel_io(const Kernel &kernel)
 {
+  (void) kernel;
   assert(false);
 }
 
