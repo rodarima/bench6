@@ -18,6 +18,7 @@ $B b6_matmul_itampi_nanos6 1024 2 512 0
 $B b6_fibonacci_nanos6_notaskwait
 $B b6_stream_nanos6
 $B b6_hpccg_ompv_task 30 30 30 100 16
+$B b6_taskbench_omp -kernel load_imbalance -iter 100 -steps 500 -width 500
 
 # Output not compatible with bigotes
 # b6_tsunampi_tampi -r 10 # Disabled for now
