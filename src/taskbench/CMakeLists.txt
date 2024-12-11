@@ -27,3 +27,24 @@ if(OPENMPV_FOUND)
   target_sources(b6_taskbench_ompv PRIVATE openmp/main.cc)
   target_link_libraries(b6_taskbench_ompv PRIVATE taskbench_core OpenMPV)
 endif()
+
+if(MPI_FOUND)
+  mk_bench(b6_taskbench_mpi_isend)
+  target_sources(b6_taskbench_mpi_isend PRIVATE mpi/nonblock.cc)
+  target_link_libraries(b6_taskbench_mpi_isend
+    PRIVATE taskbench_core MPI::MPI_C)
+
+  if(OPENMP_FOUND)
+    mk_bench(b6_taskbench_mpi_isend_omp)
+    target_sources(b6_taskbench_mpi_isend_omp PRIVATE mpi/nonblock.cc)
+    target_link_libraries(b6_taskbench_mpi_isend_omp
+      PRIVATE taskbench_core MPI::MPI_C OpenMP::OpenMP_C)
+  endif()
+
+  if(OPENMPV_FOUND)
+    mk_bench(b6_taskbench_mpi_isend_ompv)
+    target_sources(b6_taskbench_mpi_isend_ompv PRIVATE mpi/nonblock.cc)
+    target_link_libraries(b6_taskbench_mpi_isend_ompv
+      PRIVATE taskbench_core MPI::MPI_C OpenMPV)
+  endif()
+endif()
