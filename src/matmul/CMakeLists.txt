@@ -2,7 +2,7 @@ include_directories(src)
 set(COMMON_SRC src/common/matmul.c src/mpi/main.c)
 set(COMMON_LIBS MPI::MPI_C Tampi::tampi-c BLAS::BLAS)
 
-if(BLAS_FOUND)
+if(MPI_FOUND AND TAMPI_FOUND AND BLAS_FOUND)
   if(NANOS6_FOUND)
     mk_bench(b6_matmul_tampi_nanos6)
     target_sources(b6_matmul_tampi_nanos6 PRIVATE ${COMMON_SRC} src/mpi/01.matmul_ompss2_tampi.c)
