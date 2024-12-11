@@ -22,6 +22,6 @@ if(MPI_FOUND AND TAMPI_FOUND)
     mk_bench(b6_hpcg_tampi_ompv)
     target_sources(b6_hpcg_tampi_ompv PRIVATE ${SOURCES})
     target_link_libraries(b6_hpcg_tampi_ompv
-      PRIVATE MPI::MPI_C Tampi::tampi-c OpenMPV)
+      PRIVATE MPI::MPI_CXX Tampi::tampi-c OpenMPV)
   endif()
 endif()
