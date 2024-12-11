@@ -371,7 +371,7 @@ OmpSsApp::OmpSsApp(int argc, char **argv)
       max_scratch_bytes_per_task = graph.scratch_bytes_per_task;
     }
     
-    printf("graph id %d, M = %d, N = %d\n, nb_fields %d\n", i, matrix[i].M, matrix[i].N, graph.nb_fields);
+    //printf("graph id %d, M = %d, N = %d\n, nb_fields %d\n", i, matrix[i].M, matrix[i].N, graph.nb_fields);
   }
   
   extra_local_memory = (char**)malloc(sizeof(char*) * (nb_workers+1));

@@ -694,8 +694,9 @@ static void show_help_message(int argc, char **argv) {
   printf("\nGeneral options:\n");
   printf("  %-18s show this help message and exit\n", "-h");
   printf("  %-18s number of nodes to use for estimating transfer statistics\n", NODES_FLAG);
-  printf("  %-18s enable verbose output\n", "-v");
-  printf("  %-18s enable extra verbose output\n", "-vv");
+  printf("  %-18s enable info output\n", "-v");
+  printf("  %-18s enable verbose output\n", "-vv");
+  printf("  %-18s enable extra verbose output\n", "-vvv");
 
   printf("\nOptions for configuring the task graph:\n");
   printf("  %-18s height of task graph\n", STEPS_FLAG " [INT]");
@@ -759,6 +760,10 @@ App::App(int argc, char **argv)
 
     if (!strcmp(argv[i], "-vv")) {
       verbose += 2;
+    }
+
+    if (!strcmp(argv[i], "-vvv")) {
+      verbose += 3;
     }
 
     if (!strcmp(argv[i], SKIP_GRAPH_VALIDATION_FLAG)) {
@@ -994,6 +999,9 @@ void App::check() const
 
 void App::display() const
 {
+  if (verbose == 0)
+    return;
+
   printf("Running Task Benchmark\n");
   printf("  Configuration:\n");
   int i = 0;
@@ -1015,7 +1023,7 @@ void App::display() const
     printf("      Output Bytes: %lu\n", g.output_bytes_per_task);
     printf("      Scratch Bytes: %lu\n", g.scratch_bytes_per_task);
 
-    if (verbose > 0) {
+    if (verbose >= 2) {
       for (long t = 0; t < g.timesteps; ++t) {
         long offset = g.offset_at_timestep(t);
         long width = g.width_at_timestep(t);
@@ -1046,7 +1054,7 @@ void App::display() const
           }
           printf("\n");
         }
-        if (verbose > 1) {
+        if (verbose >= 3) {
           printf("        Reverse Dependencies:\n");
           for (long p = last_offset; p < last_offset + last_width; ++p) {
             printf("          Point %ld:", p);
@@ -1171,6 +1179,11 @@ static std::tuple<long, long> clamp(long start, long end, long min_value, long m
 
 void App::report_timing(double elapsed_seconds) const
 {
+  if (verbose == 0) {
+    printf("%14e\n", elapsed_seconds);
+    return;
+  }
+
   long long total_num_tasks = 0;
   long long total_num_deps = 0;
   long long total_local_deps = 0;
