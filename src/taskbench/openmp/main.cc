@@ -373,7 +373,7 @@ OpenMPApp::OpenMPApp(int argc, char **argv)
       max_scratch_bytes_per_task = graph.scratch_bytes_per_task;
     }
     
-    printf("graph id %d, M = %d, N = %d, data %p, nb_fields %d\n", i, matrix[i].M, matrix[i].N, matrix[i].data, graph.nb_fields);
+    //printf("graph id %d, M = %d, N = %d, data %p, nb_fields %d\n", i, matrix[i].M, matrix[i].N, matrix[i].data, graph.nb_fields);
   }
   
   extra_local_memory = (char**)malloc(sizeof(char*) * nb_workers);
