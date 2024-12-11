@@ -14,6 +14,7 @@
     pkgs = import bscpkgs.inputs.nixpkgs {
       system = "x86_64-linux";
       overlays = [ bscpkgs.bscOverlay ];
+      config.allowUnfree = true;
     };
   in {
     devShells.x86_64-linux.default = self.outputs.devShells.x86_64-linux.run;
@@ -47,6 +48,7 @@
           tagaspi
           gpi-2
           openblas
+          #mkl
         ];
 
         NANOS6_HOME = pkgs.nanos6;
