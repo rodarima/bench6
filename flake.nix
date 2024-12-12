@@ -48,6 +48,7 @@
           tagaspi
           gpi-2
           openblas
+          ovni
           #mkl
         ];
 
