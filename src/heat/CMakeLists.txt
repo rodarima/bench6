@@ -45,6 +45,16 @@ if(NODES_FOUND)
   mk_heat_nodes(b6_heat_nodes_residual    solver_ompss2_residual.c)
 endif()
 
+if (OPENMP_FOUND)
+  mk_heat_smp(b6_heat_omp solver_openmp.c)
+  target_link_libraries(b6_heat_omp PRIVATE OpenMP::OpenMP_C)
+endif()
+
+if (OPENMPV_FOUND)
+  mk_heat_smp(b6_heat_ompv solver_openmp.c)
+  target_link_libraries(b6_heat_ompv PRIVATE OpenMPV)
+endif()
+
 # --- MPI based ---
 
 if(MPI_FOUND)
@@ -84,6 +94,16 @@ if(MPI_FOUND)
     endmacro()
     mk_heat_mpi_nodes(b6_heat_mpi_nodes_forkjoin solver_mpi_ompss2_forkjoin.c)
     mk_heat_mpi_nodes(b6_heat_mpi_nodes_tasks solver_mpi_ompss2_tasks.c)
+  endif()
+
+  if(OPENMP_FOUND)
+    mk_heat_mpi(b6_heat_mpi_omp solver_mpi_openmp.c)
+    target_link_libraries(b6_heat_mpi_omp PRIVATE OpenMP::OpenMP_C)
+  endif()
+
+  if(OPENMPV_FOUND)
+    mk_heat_mpi(b6_heat_mpi_ompv solver_mpi_openmp.c)
+    target_link_libraries(b6_heat_mpi_ompv PRIVATE OpenMPV)
   endif()
 endif()
 
