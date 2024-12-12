@@ -33,8 +33,8 @@ To install all the variants, you will need:
 - TAMPI
 - GPI-2
 - Tagaspi
-- BLAS
-- LAPACK
+- CBLAS
+- LAPACKE
 
 When a dependency is not found, those mini-apps variant that require it will not
 be built.

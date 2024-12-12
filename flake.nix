@@ -52,6 +52,7 @@
           tagaspi
           gpi-2
           openblas
+          openblas.dev
           ovni
           #mkl
           #blis

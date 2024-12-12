@@ -80,8 +80,8 @@ find_package(Tampi)
 find_package(Gaspi)
 find_package(Tagaspi)
 find_package(OpenMPV)
-find_package(BLAS)
-find_package(LAPACK)
+find_package(CBLAS)
+find_package(LAPACKE)
 
 set_property(GLOBAL PROPERTY bench6_list "")
 
