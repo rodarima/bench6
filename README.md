@@ -12,6 +12,15 @@ dependencies and enable them accordingly. All the binaries are prefixed with
     b6_nbody_omp -f -b 512
     ...
 
+## Build steps
+
+By default, cmake will try to build all mini-apps and all variants it can. Use
+the `-DAPPS` option to only build a subset of mini-apps. Example:
+
+    $ cmake -S . -B build -DAPPS="nbody;heat"
+
+The names of the mini-apps is the directory name under `src/`.
+
 To install all the variants, you will need:
 
 - Clang with support for OpenMP and OpenMP-V as well as OmpSs-2
@@ -26,6 +35,9 @@ To install all the variants, you will need:
 - Tagaspi
 - BLAS
 - LAPACK
+
+When a dependency is not found, those mini-apps variant that require it will not
+be built.
 
 A Nix package is available that includes all the variants. Use `nix develop` to
 build the benchmarks and enter a shell where you can run them.

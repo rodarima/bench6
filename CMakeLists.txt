@@ -100,6 +100,14 @@ macro(mk_bench NAME)
   install(TARGETS ${NAME} RUNTIME DESTINATION bin)
 endmacro()
 
+set(APPS "all" CACHE STRING "List of enabled miniapps separated by semicolons (default: all)")
+
+macro(add_app_directory NAME)
+  if ("all" IN_LIST APPS OR "${NAME}" IN_LIST APPS)
+    add_subdirectory("${NAME}")
+  endif()
+endmacro()
+
 add_subdirectory(src)
 
 include(FeatureSummary)
