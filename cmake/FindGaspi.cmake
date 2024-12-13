@@ -1,7 +1,7 @@
 include(GNUInstallDirs)
 
-find_library(GASPI_LIBRARY NAMES GPI2)
-find_path(GASPI_INCLUDE_DIR GASPI.h)
+find_library(GASPI_LIBRARY NAMES GPI2 PATHS "$ENV{GPI2_HOME}" "$ENV{GPI2_HOME}/lib")
+find_path(GASPI_INCLUDE_DIR GASPI.h PATHS "$ENV{GPI2_HOME}" "$ENV{GPI2_HOME}/include")
 
 include(FindPackageHandleStandardArgs)
 
