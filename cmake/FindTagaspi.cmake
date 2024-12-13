@@ -1,7 +1,7 @@
 include(GNUInstallDirs)
 
-find_library(TAGASPI_LIBRARY NAMES tagaspi)
-find_path(TAGASPI_INCLUDE_DIR TAGASPI.h)
+find_library(TAGASPI_LIBRARY NAMES tagaspi PATHS "$ENV{TAGASPI_HOME}" "$ENV{TAGASPI_HOME}/lib")
+find_path(TAGASPI_INCLUDE_DIR TAGASPI.h PATHS "$ENV{TAGASPI_HOME}" "$ENV{TAGASPI_HOME}/include")
 
 include(FindPackageHandleStandardArgs)
 
