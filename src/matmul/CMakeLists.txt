@@ -1,24 +1,24 @@
 include_directories(src)
 
-if(NANOS6_FOUND)
+if(NANOS6_FOUND AND BLAS_FOUND)
   mk_bench(b6_matmul_nanos6)
   target_sources(b6_matmul_nanos6 PRIVATE src/smp/matmul_ompss2.c)
   target_link_libraries(b6_matmul_nanos6 PRIVATE BLAS::BLAS Nanos6::nanos6)
 endif()
 
-if(NODES_FOUND)
+if(NODES_FOUND AND BLAS_FOUND)
   mk_bench(b6_matmul_nodes)
   target_sources(b6_matmul_nodes PRIVATE src/smp/matmul_ompss2.c)
   target_link_libraries(b6_matmul_nodes PRIVATE BLAS::BLAS Nodes::nodes)
 endif()
 
-if(OPENMP_FOUND)
+if(OPENMP_FOUND AND BLAS_FOUND)
   mk_bench(b6_matmul_omp_iter)
   target_sources(b6_matmul_omp_iter PRIVATE src/smp/matmul_openmp_iter.c)
   target_link_libraries(b6_matmul_omp_iter PRIVATE BLAS::BLAS OpenMP::OpenMP_C)
 endif()
 
-if(OPENMPV_FOUND)
+if(OPENMPV_FOUND AND BLAS_FOUND)
   mk_bench(b6_matmul_ompv_iter)
   target_sources(b6_matmul_ompv_iter PRIVATE src/smp/matmul_openmp_iter.c)
   target_link_libraries(b6_matmul_ompv_iter PRIVATE BLAS::BLAS OpenMPV)
