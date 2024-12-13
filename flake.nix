@@ -11,9 +11,12 @@
     #targetMachine = jungle.outputs.nixosConfigurations.hut;
     #pkgs = targetMachine.pkgs;
 
+    bench6Overlay = final: prev: {
+      mpi = prev.mpich;
+    };
     pkgs = import bscpkgs.inputs.nixpkgs {
       system = "x86_64-linux";
-      overlays = [ bscpkgs.bscOverlay ];
+      overlays = [ bscpkgs.bscOverlay bench6Overlay ];
       config.allowUnfree = true;
     };
   in {
