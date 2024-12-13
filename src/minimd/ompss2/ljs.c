@@ -709,7 +709,7 @@ check_neighbor_coords(Sim *sim)
                 Neigh *neigh = &box->neigh[i];
                 PackBuf *pb = &neigh->send_rvt;
 
-                pb->req[PB_BUF] = NULL;
+                pb->req[PB_BUF] = MPI_REQUEST_NULL;
 
                 /* Only need to send with distinct ranks */
                 if (neigh->rank == sim->rank)
@@ -757,7 +757,7 @@ check_neighbor_coords(Sim *sim)
 
                 PackBuf *pb = &neigh->recv_rvt;
 
-                pb->req[PB_BUF] = NULL;
+                pb->req[PB_BUF] = MPI_REQUEST_NULL;
 
                 if (neigh->rank == sim->rank)
                     continue;
