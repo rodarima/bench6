@@ -1,7 +1,7 @@
 include(GNUInstallDirs)
 
-find_library(TAMPI_LIBRARY NAMES tampi-c)
-find_path(TAMPI_INCLUDE_DIR TAMPI.h)
+find_library(TAMPI_LIBRARY NAMES tampi-c HINTS "$ENV{TAMPI_HOME}" "$ENV{TAMPI_HOME}/lib")
+find_path(TAMPI_INCLUDE_DIR TAMPI.h HINTS "$ENV{TAMPI_HOME}" "$ENV{TAMPI_HOME}/include")
 
 include(FindPackageHandleStandardArgs)
 
