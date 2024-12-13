@@ -1,5 +1,4 @@
 #include <mpi.h>
-#include <TAMPI.h>
 
 #include "utils_mpi.h"
 #include "heat.h"
