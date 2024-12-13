@@ -5,6 +5,8 @@
 // Copyright (C) 2021 Barcelona Supercomputing Center (BSC)
 //
 
+#define _DEFAULT_SOURCE
+
 #include "common.h"
 
 #include <assert.h>
