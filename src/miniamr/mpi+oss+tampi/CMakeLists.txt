@@ -19,6 +19,7 @@ if(MPI_FOUND AND TAMPI_FOUND)
     target_sources(b6_miniamr_tampi_nanos6 PRIVATE ${SOURCES})
     target_link_libraries(b6_miniamr_tampi_nanos6
       PRIVATE m MPI::MPI_C Tampi::tampi-c Nanos6::nanos6)
+    target_compile_definitions(b6_miniamr_tampi_nanos6 PRIVATE "USE_NANOS6")
   endif()
 
   if(NODES_FOUND)
@@ -26,5 +27,6 @@ if(MPI_FOUND AND TAMPI_FOUND)
     target_sources(b6_miniamr_tampi_nodes PRIVATE ${SOURCES})
     target_link_libraries(b6_miniamr_tampi_nodes
       PRIVATE m MPI::MPI_C Tampi::tampi-c Nodes::nodes)
+    target_compile_definitions(b6_miniamr_tampi_nodes PRIVATE "USE_NODES")
   endif()
 endif()

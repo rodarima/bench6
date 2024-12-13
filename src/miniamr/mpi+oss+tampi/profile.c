@@ -34,7 +34,13 @@
 #include <math.h>
 #include <mpi.h>
 
+#if defined(USE_NANOS6)
 #include <nanos6/debug.h>
+#elif defined(USE_NODES)
+#include <nodes/debug.h>
+#else
+# error "Need nanos6 or nodes"
+#endif
 
 #include "block.h"
 #include "comm.h"
