@@ -29,6 +29,7 @@
       bench6 = self.outputs.packages.x86_64-linux.bench6;
       bench6src = self.outputs.packages.x86_64-linux.bench6.src;
     };
+    packages.pkgs = pkgs;
     packages.x86_64-linux = rec {
       default = bench6;
       bench6 = pkgs.stdenv.mkDerivation rec {
@@ -53,6 +54,7 @@
           openblas
           ovni
           #mkl
+          #blis
         ];
 
         NANOS6_HOME = pkgs.nanos6;
