@@ -23,7 +23,7 @@ if (OPENMP_FOUND)
   target_link_libraries(b6_miniamr_mpi_omp PRIVATE miniamr m MPI::MPI_C OpenMP::OpenMP_C)
 endif()
 
-if (OPENMPV_COMPILER_FOUND)
+if (OPENMPV_FOUND)
   mk_bench(b6_miniamr_mpi_ompv)
   target_sources(b6_miniamr_mpi_ompv PRIVATE main.c)
   target_link_libraries(b6_miniamr_mpi_ompv PRIVATE miniamr m MPI::MPI_C)
