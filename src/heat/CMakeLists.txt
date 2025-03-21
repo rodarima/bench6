@@ -27,8 +27,7 @@ mk_heat_smp(b6_heat_seq solver_seq.c)
 if(NANOS6_FOUND)
   macro(mk_heat_nanos6 NAME SOURCE)
     mk_heat_smp(${NAME} ${SOURCE})
-    target_compile_options(${NAME}  PRIVATE "-fompss-2=libnanos6")
-    target_link_options(${NAME}     PRIVATE "-fompss-2=libnanos6")
+    target_link_libraries(${NAME} PRIVATE Nanos6::nanos6)
   endmacro()
 
   mk_heat_nanos6(b6_heat_nanos6           solver_ompss2.c)
@@ -58,33 +57,25 @@ endif()
 # --- MPI based ---
 
 if(MPI_FOUND)
-  add_library(heat_mpi_common STATIC main_mpi.c utils_mpi.c)
-  target_link_libraries(heat_mpi_common PUBLIC heat_common MPI::MPI_C)
-
   macro(mk_heat_mpi NAME SOURCE)
     mk_bench(${NAME})
     target_sources(${NAME} PRIVATE ${SOURCE})
     target_link_libraries(${NAME} PRIVATE heat_mpi_common)
   endmacro()
+
+  add_library(heat_mpi_common STATIC main_mpi.c utils_mpi.c)
+  target_link_libraries(heat_mpi_common PUBLIC heat_common MPI::MPI_C)
+
   mk_heat_mpi(b6_heat_mpi solver_mpi.c)
   mk_heat_mpi(b6_heat_mpi_nbuffer solver_mpi_nbuffer.c)
 
   if(NANOS6_FOUND)
     macro(mk_heat_mpi_nanos6 NAME SOURCE)
       mk_heat_mpi(${NAME} ${SOURCE})
-      target_compile_options(${NAME} PRIVATE "-fompss-2=libnanos6")
-      target_link_options(${NAME} PRIVATE "-fompss-2=libnanos6")
+      target_link_libraries(${NAME} PRIVATE Nanos6::nanos6)
     endmacro()
     mk_heat_mpi_nanos6(b6_heat_mpi_nanos6_forkjoin  solver_mpi_ompss2_forkjoin.c)
     mk_heat_mpi_nanos6(b6_heat_mpi_nanos6_tasks     solver_mpi_ompss2_tasks.c)
-
-    if(TAMPI_FOUND)
-      macro(mk_heat_tampi_nanos6 NAME SOURCE)
-        mk_heat_mpi_nanos6(${NAME} ${SOURCE})
-        target_link_libraries(${NAME} PRIVATE Tampi::tampi-c)
-      endmacro()
-      mk_heat_tampi_nanos6(b6_heat_itampi_nanos6_tasks solver_itampi_ompss2_tasks.c)
-    endif()
   endif()
 
   if(NODES_FOUND)
@@ -94,14 +85,6 @@ if(MPI_FOUND)
     endmacro()
     mk_heat_mpi_nodes(b6_heat_mpi_nodes_forkjoin solver_mpi_ompss2_forkjoin.c)
     mk_heat_mpi_nodes(b6_heat_mpi_nodes_tasks solver_mpi_ompss2_tasks.c)
-
-    if(TAMPI_FOUND)
-      macro(mk_heat_tampi_nodes NAME SOURCE)
-        mk_heat_mpi_nodes(${NAME} ${SOURCE})
-        target_link_libraries(${NAME} PRIVATE Tampi::tampi-c)
-      endmacro()
-      mk_heat_tampi_nodes(b6_heat_itampi_nodes_tasks solver_itampi_ompss2_tasks.c)
-    endif()
   endif()
 
   if(OPENMP_FOUND)
@@ -112,8 +95,34 @@ if(MPI_FOUND)
   if(OPENMPV_FOUND)
     mk_heat_mpi(b6_heat_mpi_ompv solver_mpi_openmp.c)
     target_link_libraries(b6_heat_mpi_ompv PRIVATE OpenMPV)
+
   endif()
-endif()
+
+  # --- TAMPI based (requires MPI) ---
+
+  if (TAMPI_FOUND)
+    macro(mk_heat_tampi NAME SOURCE)
+      mk_heat_mpi(${NAME} ${SOURCE})
+      target_link_libraries(${NAME} PRIVATE Tampi::tampi-c)
+    endmacro()
+
+    if(NANOS6_FOUND)
+      mk_heat_tampi(b6_heat_itampi_nanos6_tasks solver_itampi_ompss2_tasks.c)
+      target_link_libraries(b6_heat_itampi_nanos6_tasks PRIVATE Nanos6::nanos6)
+    endif()
+
+    if(NODES_FOUND)
+      mk_heat_tampi(b6_heat_itampi_nodes_tasks solver_itampi_ompss2_tasks.c)
+      target_link_libraries(b6_heat_itampi_nodes_tasks PRIVATE Nodes::nodes)
+    endif()
+
+    if(OPENMPV_FOUND)
+      mk_heat_tampi(b6_heat_tampi_ompv solver_tampi_openmp.c)
+      target_link_libraries(b6_heat_tampi_ompv PRIVATE OpenMPV)
+    endif(OPENMPV_FOUND)
+
+  endif(TAMPI_FOUND)
+endif(MPI_FOUND)
 
 # --- GASPI ---
 
