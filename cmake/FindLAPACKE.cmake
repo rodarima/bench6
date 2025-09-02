@@ -1,5 +1,15 @@
 include(GNUInstallDirs)
 
+set(MKL_THREADING "sequential")
+find_package(MKL CONFIG)
+if (TARGET MKL::MKL)
+  # If MKL is found, create an alias for CBLAS to MKL::MKL
+  target_compile_definitions(MKL::MKL INTERFACE USE_MKL)
+  add_library(LAPACKE ALIAS MKL::MKL)
+  set(LAPACKE_FOUND TRUE)
+  return()
+endif()
+
 find_library(LAPACKE_LIBRARY NAMES lapacke)
 find_path(LAPACKE_INCLUDE_DIR lapacke.h)
 

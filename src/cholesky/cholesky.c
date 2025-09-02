@@ -3,8 +3,12 @@
 #include <string.h>
 #include <time.h>
 
+#ifdef USE_MKL
+#include <mkl.h>
+#else
 #include <cblas.h>
 #include <lapacke.h>
+#endif
 
 #define PRIME1 293
 #define PRIME2 719

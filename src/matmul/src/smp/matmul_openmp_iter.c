@@ -4,7 +4,11 @@
 #include <malloc.h>
 #include <sys/time.h>
 #include <omp.h>
+#ifdef USE_MKL
+#include <mkl.h>
+#else
 #include <cblas.h>
+#endif
 
 static void initialize(long const N, long const M, long const TS,
 		double (* restrict A)[M/TS][TS][TS], double value) 

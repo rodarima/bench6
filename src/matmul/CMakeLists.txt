@@ -49,46 +49,11 @@ if(MPI_FOUND AND TAMPI_FOUND AND CBLAS_FOUND)
     target_link_libraries(b6_matmul_itampi_nodes
       PRIVATE MPI::MPI_C Tampi::tampi-c CBLAS Nodes::nodes)
   endif()
-endif()
-
-# Macro to set up MKL, TAMPI, and MPI configuration for targets
-macro(mk_bench_mpi_tampi_mkl target)
-  target_compile_definitions(${target} PRIVATE "USE_MKL")
-  target_link_libraries(${target} PRIVATE MPI::MPI_C Tampi::tampi-c MKL::MKL)
-endmacro()
-
-if(MPI_FOUND AND TAMPI_FOUND AND TARGET MKL::MKL)
-  set(MPI_SRC src/common/matmul.c src/mpi/main.c)
-  if(NANOS6_FOUND)
-    mk_bench(b6_matmul_tampi_mkl_nanos6)
-    target_sources(b6_matmul_tampi_mkl_nanos6 PRIVATE ${MPI_SRC} src/mpi/01.matmul_ompss2_tampi.c)
-    mk_bench_mpi_tampi_mkl(b6_matmul_tampi_mkl_nanos6)
-    target_link_libraries(b6_matmul_tampi_mkl_nanos6 PRIVATE Nanos6::nanos6)
-
-    mk_bench(b6_matmul_itampi_mkl_nanos6)
-    target_sources(b6_matmul_itampi_mkl_nanos6 PRIVATE ${MPI_SRC} src/mpi/01.matmul_ompss2_tampi.c)
-    mk_bench_mpi_tampi_mkl(b6_matmul_itampi_mkl_nanos6)
-    target_link_libraries(b6_matmul_itampi_mkl_nanos6 PRIVATE Nanos6::nanos6)
-  endif()
-
-  if(NODES_FOUND)
-    mk_bench(b6_matmul_tampi_mkl_nodes)
-    target_sources(b6_matmul_tampi_mkl_nodes PRIVATE ${MPI_SRC} src/mpi/01.matmul_ompss2_tampi.c)
-    mk_bench_mpi_tampi_mkl(b6_matmul_tampi_mkl_nodes)
-    target_link_libraries(b6_matmul_tampi_mkl_nodes PRIVATE Nodes::nodes)
-
-    mk_bench(b6_matmul_itampi_mkl_nodes)
-    target_sources(b6_matmul_itampi_mkl_nodes PRIVATE ${MPI_SRC} src/mpi/02.matmul_ompss2_itampi.c)
-    mk_bench_mpi_tampi_mkl(b6_matmul_itampi_mkl_nodes)
-    target_link_libraries(b6_matmul_itampi_mkl_nodes PRIVATE Nodes::nodes)
-  endif()
 
   if (NOSV_FOUND)
-    mk_bench(b6_matmul_tampi_mkl_nosv)
-    target_compile_definitions(b6_matmul_tampi_mkl_nosv PRIVATE USE_NOSV_ONLY)
-    target_sources(b6_matmul_tampi_mkl_nosv PRIVATE ${MPI_SRC} src/mpi/03.matmul_nosv_tampi.c)
-    mk_bench_mpi_tampi_mkl(b6_matmul_tampi_mkl_nosv)
-    target_link_libraries(b6_matmul_tampi_mkl_nosv PRIVATE Nosv::nosv)
+    mk_bench(b6_matmul_tampi_nosv)
+    target_sources(b6_matmul_tampi_nosv PRIVATE ${MPI_SRC} src/mpi/03.matmul_nosv_tampi.c)
+    target_link_libraries(b6_matmul_tampi_nosv
+      PRIVATE MPI::MPI_C Tampi::tampi-c CBLAS Nosv::nosv)
   endif()
 endif()
-
