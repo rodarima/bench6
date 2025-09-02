@@ -1,8 +1,10 @@
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdatomic.h>
 #include <mpi.h>
 #include <TAMPI.h>
+#include "utils_mpi.h"
 
 #ifdef USE_MKL
 #include <mkl.h>
@@ -11,7 +13,29 @@
 #endif
 
 #include "common/matmul.h"
-extern int rank, nranks;
+#include <nosv.h>
+
+#define CHECK_NOSV(...)                                                                \
+do {                                                                               \
+	const int __r = __VA_ARGS__;                                                   \
+	if (__r) {                                                                     \
+		fprintf(stderr, "Error: '%s' [%s:%i]: %i\n", #__VA_ARGS__, __FILE__, __LINE__, __r); \
+		exit(EXIT_FAILURE);                                                        \
+	}                                                                              \
+} while (0)
+
+nosv_task_t main_task;
+
+void matmul_register(void)
+{
+	CHECK_NOSV(nosv_init());
+	CHECK_NOSV(nosv_attach(&main_task, NULL, "main_matmul_attached", NOSV_ATTACH_NONE));
+}
+void matmul_unregister(void)
+{
+	CHECK_NOSV(nosv_detach(NOSV_DETACH_NONE));
+	CHECK_NOSV(nosv_shutdown());
+}
 
 static void matmul(size_t TS, double (*A)[TS], double (*B)[TS], 
 						double (*C)[TS], const double *Alpha, const double *Beta)

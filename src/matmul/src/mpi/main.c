@@ -5,36 +5,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include "utils_mpi.h"
 
 #include "common/matmul.h"
 
 int rank, nranks;
 
-#ifdef USE_NOSV_ONLY
-#include <nosv.h>
-
-#define CHECK_NOSV(...)                                                                \
-do {                                                                               \
-	const int __r = __VA_ARGS__;                                                   \
-	if (__r) {                                                                     \
-		fprintf(stderr, "Error: '%s' [%s:%i]: %i\n", #__VA_ARGS__, __FILE__, __LINE__, __r); \
-		exit(EXIT_FAILURE);                                                        \
-	}                                                                              \
-} while (0)
-
-nosv_task_t main_task;
-#endif
-
 int main(int argc, char **argv)
 {
-	#ifdef USE_NOSV_ONLY
-	CHECK_NOSV(nosv_init());
-	int required = MPI_THREAD_MULTIPLE;
-	#else
-	int required = MPI_TASK_MULTIPLE;
-	#endif
-
+	matmul_register();
 	// Initialize MPI and TAMPI
+	int required = MPI_TASK_MULTIPLE;
 	int provided;
 	MPI_Init_thread(&argc, &argv, required, &provided);
 	printf("MPI thread level: provided=%d, required=%d\n", provided, required);
@@ -43,10 +24,6 @@ int main(int argc, char **argv)
 			(required == MPI_TASK_MULTIPLE) ? "MPI_TASK_MULTIPLE" : "MPI_THREAD_MULTIPLE");
 		exit(1);
 	}
-
-	#ifdef USE_NOSV_ONLY
-	CHECK_NOSV(nosv_attach(&main_task, NULL, "main_matmul_attached", NOSV_ATTACH_NONE));
-	#endif
 
 	MPI_Barrier(MPI_COMM_WORLD);
 
@@ -122,10 +99,7 @@ int main(int argc, char **argv)
 	// Finalize MPI and TAMPI
 	MPI_Finalize();
 
-	#ifdef USE_NOSV_ONLY
-	CHECK_NOSV(nosv_detach(NOSV_DETACH_NONE));
-	CHECK_NOSV(nosv_shutdown());
-	#endif
+	matmul_unregister();
 
 	return 0;
 }
