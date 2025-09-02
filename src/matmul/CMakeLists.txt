@@ -53,9 +53,7 @@ endif()
 
 # Macro to set up MKL, TAMPI, and MPI configuration for targets
 macro(mk_bench_mpi_tampi_mkl target)
-  target_include_directories(${target} PUBLIC $<TARGET_PROPERTY:MKL::MKL,INTERFACE_INCLUDE_DIRECTORIES>)
-  target_compile_options(${target} PUBLIC ${TEST_COPT} $<TARGET_PROPERTY:MKL::MKL,INTERFACE_COMPILE_OPTIONS>)
-  target_compile_definitions(${target} PRIVATE "-DBENCH6_BLAS_MKL")
+  target_compile_definitions(${target} PRIVATE "BENCH6_USE_MKL")
   target_link_libraries(${target} PRIVATE MPI::MPI_C Tampi::tampi-c MKL::MKL)
 endmacro()
 

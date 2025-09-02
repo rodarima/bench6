@@ -1,16 +1,14 @@
-#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdatomic.h>
 #include <mpi.h>
 #include <TAMPI.h>
 
-#ifdef BENCH6_BLAS_MKL
+#ifdef BENCH6_USE_MKL
 #include <mkl.h>
 #else
 #include <cblas.h>
 #endif
-
-#include <stdatomic.h>
 
 #include "common/matmul.h"
 extern int rank, nranks;

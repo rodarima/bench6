@@ -4,7 +4,7 @@
 #include <mpi.h>
 #include <TAMPI.h>
 
-#ifdef BENCH6_BLAS_MKL
+#ifdef BENCH6_USE_MKL
 #include <mkl.h>
 #else
 #include <cblas.h>
