@@ -82,6 +82,8 @@ find_package(Tagaspi)
 find_package(OpenMPV)
 find_package(CBLAS)
 find_package(LAPACKE)
+set(MKL_THREADING "sequential")
+find_package(MKL CONFIG)
 
 set_property(GLOBAL PROPERTY bench6_list "")
 

@@ -1,8 +1,14 @@
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <mpi.h>
-#include <cblas.h>
 #include <TAMPI.h>
+
+#ifdef BENCH6_BLAS_MKL
+#include <mkl.h>
+#else
+#include <cblas.h>
+#endif
 
 #include <stdatomic.h>
 
