@@ -55,7 +55,7 @@
           openblas
           openblas.dev
           ovni
-          #mkl
+          mkl
           #blis
         ];
 
