@@ -53,7 +53,7 @@ endif()
 
 # Macro to set up MKL, TAMPI, and MPI configuration for targets
 macro(mk_bench_mpi_tampi_mkl target)
-  target_compile_definitions(${target} PRIVATE "BENCH6_USE_MKL")
+  target_compile_definitions(${target} PRIVATE "USE_MKL")
   target_link_libraries(${target} PRIVATE MPI::MPI_C Tampi::tampi-c MKL::MKL)
 endmacro()
 
@@ -85,7 +85,7 @@ if(MPI_FOUND AND TAMPI_FOUND AND TARGET MKL::MKL)
 
   if (NOSV_FOUND)
     mk_bench(b6_matmul_tampi_mkl_nosv)
-    target_compile_definitions(b6_matmul_tampi_mkl_nosv PRIVATE NOSV_ONLY)
+    target_compile_definitions(b6_matmul_tampi_mkl_nosv PRIVATE USE_NOSV_ONLY)
     target_sources(b6_matmul_tampi_mkl_nosv PRIVATE ${MPI_SRC} src/mpi/03.matmul_nosv_tampi.c)
     mk_bench_mpi_tampi_mkl(b6_matmul_tampi_mkl_nosv)
     target_link_libraries(b6_matmul_tampi_mkl_nosv PRIVATE Nosv::nosv)

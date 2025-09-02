@@ -10,7 +10,7 @@
 
 int rank, nranks;
 
-#ifdef NOSV_ONLY
+#ifdef USE_NOSV_ONLY
 #include <nosv.h>
 
 #define CHECK_NOSV(...)                                                                \
@@ -27,7 +27,7 @@ nosv_task_t main_task;
 
 int main(int argc, char **argv)
 {
-	#ifdef NOSV_ONLY
+	#ifdef USE_NOSV_ONLY
 	CHECK_NOSV(nosv_init());
 	int required = MPI_THREAD_MULTIPLE;
 	#else
@@ -44,7 +44,7 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	#ifdef NOSV_ONLY
+	#ifdef USE_NOSV_ONLY
 	CHECK_NOSV(nosv_attach(&main_task, NULL, "main_matmul_attached", NOSV_ATTACH_NONE));
 	#endif
 
@@ -83,7 +83,6 @@ int main(int argc, char **argv)
 
 	if (conf.warmup) {
 		matmul_solve(n, m_per_rank, ts, &matmul, conf.warmup);
-		#pragma oss taskwait
 
 		MPI_Barrier(MPI_COMM_WORLD);
 	}
@@ -92,7 +91,6 @@ int main(int argc, char **argv)
 	double start = matmul_gettime();
 
 	matmul_solve(n, m_per_rank, ts, &matmul, conf.timesteps);
-	#pragma oss taskwait
 
 	MPI_Barrier(MPI_COMM_WORLD);
 
@@ -124,7 +122,7 @@ int main(int argc, char **argv)
 	// Finalize MPI and TAMPI
 	MPI_Finalize();
 
-	#ifdef NOSV_ONLY
+	#ifdef USE_NOSV_ONLY
 	CHECK_NOSV(nosv_detach(NOSV_DETACH_NONE));
 	CHECK_NOSV(nosv_shutdown());
 	#endif
