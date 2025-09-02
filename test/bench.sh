@@ -3,6 +3,9 @@
 set -e
 set -x
 
+# FIXME: Disable OFI for now as we don't have a working hfi network
+export FI_PROVIDER=sockets
+
 #B=bigotes
 
 $B b6_heat_nanos6 -s 2048 -t 10 -b 64
