@@ -25,10 +25,8 @@ static void matmul(size_t TS, double (*A)[TS], double (*B)[TS],
 
 static void tampi_sendrecv(const void *sendbuff, int dst, void *recvbuff, int src, size_t size, int tag)
 {
-	MPI_Request requests[2];
-	MPI_Isend(sendbuff, size, MPI_BYTE, dst, tag, MPI_COMM_WORLD, &requests[0]);
-	MPI_Irecv(recvbuff, size, MPI_BYTE, src, tag, MPI_COMM_WORLD, &requests[1]);
-	TAMPI_Iwaitall(2, requests, MPI_STATUSES_IGNORE);
+	TAMPI_Isend(sendbuff, size, MPI_BYTE, dst, tag, MPI_COMM_WORLD);
+	TAMPI_Irecv(recvbuff, size, MPI_BYTE, src, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 }
 
 static void copy_tile(void *dstbuff, const void *srcbuff, size_t size)
@@ -102,4 +100,6 @@ void matmul_solve(
 			sendA = aux;
 		}
 	}
+
+	#pragma oss taskwait
 }

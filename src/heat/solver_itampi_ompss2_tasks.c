@@ -18,16 +18,12 @@ mpi_level(void)
 
 static inline void send(const double *data, int nelems, int dst, int tag)
 {
-	MPI_Request request;
-	MPI_Isend(data, nelems, MPI_DOUBLE, dst, tag, MPI_COMM_WORLD, &request);
-	TAMPI_Iwait(&request, MPI_STATUS_IGNORE);
+	TAMPI_Isend(data, nelems, MPI_DOUBLE, dst, tag, MPI_COMM_WORLD);
 }
 
 static inline void recv(double *data, int nelems, int src, int tag)
 {
-	MPI_Request request;
-	MPI_Irecv(data, nelems, MPI_DOUBLE, src, tag, MPI_COMM_WORLD, &request);
-	TAMPI_Iwait(&request, MPI_STATUS_IGNORE);
+	TAMPI_Irecv(data, nelems, MPI_DOUBLE, src, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 }
 
 static inline void gaussSeidelSolver(int64_t rows, int64_t cols, int rbs, int cbs, int nrb, int ncb, double M[rows][cols], char reps[nrb][ncb])

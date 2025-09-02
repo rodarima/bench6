@@ -52,6 +52,8 @@ int main(int argc, char **argv)
 
 	if (conf.warmup) {
 		matmul_solve(n, m_per_rank, ts, &matmul, conf.warmup);
+		#pragma oss taskwait
+
 		MPI_Barrier(MPI_COMM_WORLD);
 	}
 
