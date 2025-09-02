@@ -10,14 +10,45 @@
 
 int rank, nranks;
 
+#ifdef NOSV_ONLY
+#include <nosv.h>
+
+#define CHECK_NOSV(...)                                                                \
+do {                                                                               \
+	const int __r = __VA_ARGS__;                                                   \
+	if (__r) {                                                                     \
+		fprintf(stderr, "Error: '%s' [%s:%i]: %i\n", #__VA_ARGS__, __FILE__, __LINE__, __r); \
+		exit(EXIT_FAILURE);                                                        \
+	}                                                                              \
+} while (0)
+
+nosv_task_t main_task;
+#endif
 
 int main(int argc, char **argv)
 {
+	#ifdef NOSV_ONLY
+	CHECK_NOSV(nosv_init());
+	int required = MPI_THREAD_MULTIPLE;
+	#else
+	int required = MPI_TASK_MULTIPLE;
+	#endif
+
 	// Initialize MPI and TAMPI
 	int provided;
-	MPI_Init_thread(&argc, &argv, MPI_TASK_MULTIPLE, &provided);
-	if (provided != MPI_TASK_MULTIPLE)
-		matmul_fail("MPI_TASK_MULTIPLE not supported");
+	MPI_Init_thread(&argc, &argv, required, &provided);
+	printf("MPI thread level: provided=%d, required=%d\n", provided, required);
+	if (provided != required) {
+		fprintf(stderr, "error: %s not supported",
+			(required == MPI_TASK_MULTIPLE) ? "MPI_TASK_MULTIPLE" : "MPI_THREAD_MULTIPLE");
+		exit(1);
+	}
+
+	#ifdef NOSV_ONLY
+	CHECK_NOSV(nosv_attach(&main_task, NULL, "main_matmul_attached", NOSV_ATTACH_NONE));
+	#endif
+
+	MPI_Barrier(MPI_COMM_WORLD);
 
 	MPI_Info info;
 	MPI_Info_create(&info);
@@ -92,6 +123,11 @@ int main(int argc, char **argv)
 
 	// Finalize MPI and TAMPI
 	MPI_Finalize();
+
+	#ifdef NOSV_ONLY
+	CHECK_NOSV(nosv_detach(NOSV_DETACH_NONE));
+	CHECK_NOSV(nosv_shutdown());
+	#endif
 
 	return 0;
 }
