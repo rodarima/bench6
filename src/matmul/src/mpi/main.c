@@ -13,7 +13,8 @@ int rank, nranks;
 
 int main(int argc, char **argv)
 {
-	matmul_register();
+	matmul_init();
+
 	// Initialize MPI and TAMPI
 	int required = MPI_TASK_MULTIPLE;
 	int provided;
@@ -99,7 +100,7 @@ int main(int argc, char **argv)
 	// Finalize MPI and TAMPI
 	MPI_Finalize();
 
-	matmul_unregister();
+	matmul_finish();
 
 	return 0;
 }

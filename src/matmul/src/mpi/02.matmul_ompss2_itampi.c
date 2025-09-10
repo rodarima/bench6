@@ -14,11 +14,11 @@
 #include "common/matmul.h"
 extern int rank, nranks;
 
-void matmul_register(void)
+void matmul_init(void)
 {
 }
 
-void matmul_unregister(void)
+void matmul_finish(void)
 {
 }
 

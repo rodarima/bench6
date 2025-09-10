@@ -26,12 +26,12 @@ do {                                                                            
 
 nosv_task_t main_task;
 
-void matmul_register(void)
+void matmul_init(void)
 {
 	CHECK_NOSV(nosv_init());
 	CHECK_NOSV(nosv_attach(&main_task, NULL, "main_matmul_attached", NOSV_ATTACH_NONE));
 }
-void matmul_unregister(void)
+void matmul_finish(void)
 {
 	CHECK_NOSV(nosv_detach(NOSV_DETACH_NONE));
 	CHECK_NOSV(nosv_shutdown());
