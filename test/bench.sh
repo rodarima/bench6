@@ -6,8 +6,6 @@ set -x
 # FIXME: Disable OFI for now as we don't have a working hfi network
 export FI_PROVIDER=sockets
 
-ncores=`nproc`
-
 #B=bigotes
 
 $B b6_heat_nanos6 -s 2048 -t 10 -b 64
@@ -24,7 +22,7 @@ $B b6_fibonacci_nanos6_notaskwait
 $B b6_stream_nanos6
 $B b6_hpccg_ompv_task 30 30 30 100 16
 $B b6_taskbench_omp -kernel load_imbalance -iter 100 -steps 500 -width 500
-$B b6_matmul_nodes 8192 8192 8192 256
+$B b6_matmul_nodes 2048 2048 1024 32
 
 # Output not compatible with bigotes
 # b6_tsunampi_tampi -r 10 # Disabled for now
