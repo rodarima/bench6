@@ -1,3 +1,5 @@
+#include "common/matmul.h"
+
 #include <string.h>
 #include <stdlib.h>
 #include <stdatomic.h>
@@ -10,8 +12,6 @@
 #include <cblas.h>
 #endif
 
-#include "common/matmul.h"
-
 void matmul_init(void)
 {
 }
@@ -21,7 +21,7 @@ void matmul_finish(void)
 }
 
 static void matmul(size_t TS, double (*A)[TS], double (*B)[TS], 
-						double (*C)[TS], const double *Alpha, const double *Beta)
+		double (*C)[TS], const double *Alpha, const double *Beta)
 {
 	// Launch dgemm kernel 
 	cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans,

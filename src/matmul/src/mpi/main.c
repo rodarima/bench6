@@ -1,3 +1,5 @@
+#include "common/matmul.h"
+
 #include <mpi.h>
 #include <TAMPI.h>
 
@@ -5,8 +7,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-
-#include "common/matmul.h"
 
 int rank, nranks;
 

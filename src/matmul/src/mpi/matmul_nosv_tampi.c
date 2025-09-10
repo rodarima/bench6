@@ -14,26 +14,41 @@
 #include <cblas.h>
 #endif
 
-#define CHECK_NOSV(...)                                                                \
-do {                                                                               \
-	const int __r = __VA_ARGS__;                                                   \
-	if (__r) {                                                                     \
-		fprintf(stderr, "Error: '%s' [%s:%i]: %i\n", #__VA_ARGS__, __FILE__, __LINE__, __r); \
-		exit(EXIT_FAILURE);                                                        \
-	}                                                                              \
-} while (0)
-
 nosv_task_t main_task;
 
 void matmul_init(void)
 {
-	CHECK_NOSV(nosv_init());
-	CHECK_NOSV(nosv_attach(&main_task, NULL, "main_matmul_attached", NOSV_ATTACH_NONE));
+	int ret;
+
+	if ((ret = nosv_init())) {
+		fprintf(stderr, "nosv_init failed: %s\n",
+				nosv_get_error_string(ret));
+		exit(EXIT_FAILURE);
+	}
+
+	if ((ret = nosv_attach(&main_task, NULL, "main_matmul_attached",
+					NOSV_ATTACH_NONE))) {
+		fprintf(stderr, "nosv_attach failed: %s\n",
+				nosv_get_error_string(ret));
+		exit(EXIT_FAILURE);
+	}
 }
+
 void matmul_finish(void)
 {
-	CHECK_NOSV(nosv_detach(NOSV_DETACH_NONE));
-	CHECK_NOSV(nosv_shutdown());
+	int ret;
+
+	if ((ret = nosv_detach(NOSV_DETACH_NONE))) {
+		fprintf(stderr, "nosv_detach failed: %s\n",
+				nosv_get_error_string(ret));
+		exit(EXIT_FAILURE);
+	}
+
+	if ((ret = nosv_shutdown())) {
+		fprintf(stderr, "nosv_shutdown failed: %s\n",
+				nosv_get_error_string(ret));
+		exit(EXIT_FAILURE);
+	}
 }
 
 static void matmul(size_t TS, double (*A)[TS], double (*B)[TS], 
