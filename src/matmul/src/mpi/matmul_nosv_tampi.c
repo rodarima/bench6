@@ -52,7 +52,7 @@ void matmul_finish(void)
 }
 
 static void matmul(size_t TS, double (*A)[TS], double (*B)[TS], 
-						double (*C)[TS], const double *Alpha, const double *Beta)
+		double (*C)[TS], const double *Alpha, const double *Beta)
 {
 	// Launch dgemm kernel 
 	cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans,
