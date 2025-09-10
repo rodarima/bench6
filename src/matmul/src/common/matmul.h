@@ -7,11 +7,11 @@ extern int rank;
 extern int nranks;
 
 typedef struct {
-	size_t n;
-	size_t m;
-	size_t ts;
-	size_t timesteps;
-	size_t warmup;
+	size_t n; /* number of columns of output matrix */
+	size_t m; /* number of rows of the output matrix (in total) */
+	size_t ts; /* tile size (size of block size) */
+	size_t timesteps; /* iterations */
+	size_t warmup; /* iterations of warmup */
 } matmul_conf_t;
 
 typedef struct {
@@ -36,5 +36,6 @@ void matmul_barrier_issue(size_t N, size_t M, size_t TS, matmul_t *matmul);
 void matmul_barrier_notify(void);
 void matmul_init(void);
 void matmul_finish(void);
+void matmul_report(double t, matmul_conf_t *conf);
 
 #endif

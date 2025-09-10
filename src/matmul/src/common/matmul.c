@@ -96,3 +96,13 @@ int matmul_check(size_t N, size_t M, size_t TS, double (*A)[M/TS][TS][TS], doubl
 	}
 	return errors;
 }
+
+void matmul_report(double t, matmul_conf_t *conf)
+{
+	printf("%14e %zu %zu %zu %zu\n",
+			t,
+			conf->n,
+			conf->m,
+			conf->timesteps,
+			conf->ts /* tile size */);
+}
