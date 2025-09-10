@@ -18,7 +18,6 @@ int main(int argc, char **argv)
 	int required = MPI_TASK_MULTIPLE;
 	int provided;
 	MPI_Init_thread(&argc, &argv, required, &provided);
-	printf("MPI thread level: provided=%d, required=%d\n", provided, required);
 	if (provided != required) {
 		fprintf(stderr, "error: %s not supported",
 			(required == MPI_TASK_MULTIPLE) ? "MPI_TASK_MULTIPLE" : "MPI_THREAD_MULTIPLE");
