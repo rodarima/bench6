@@ -1,7 +1,5 @@
 include(GNUInstallDirs)
 
-set(MKL_THREADING "sequential")
-find_package(MKL CONFIG)
 if (TARGET MKL::MKL)
   # If MKL is found, create an alias for CBLAS to MKL::MKL
   target_compile_definitions(MKL::MKL INTERFACE USE_MKL)

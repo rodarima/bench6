@@ -81,6 +81,8 @@ find_package(Tampi)
 find_package(Gaspi)
 find_package(Tagaspi)
 find_package(OpenMPV)
+set(MKL_THREADING "sequential")
+find_package(MKL CONFIG) # Before CBLAS and LAPACKE
 find_package(CBLAS)
 find_package(LAPACKE)
 
