@@ -3,4 +3,12 @@ build:ci:
   tags:
     - nix
   script:
+    - nix build --no-link -L '.#bench6Mkl'
+    - nix build --no-link -L '.#bench6Openblas'
+
+test:ci:
+  stage: test
+  tags:
+    - nix
+  script:
     - test/ci.sh
