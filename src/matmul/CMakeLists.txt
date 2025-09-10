@@ -28,31 +28,31 @@ if(MPI_FOUND AND TAMPI_FOUND AND CBLAS_FOUND)
   set(MPI_SRC src/common/matmul.c src/mpi/main.c)
   if(NANOS6_FOUND)
     mk_bench(b6_matmul_tampi_nanos6)
-    target_sources(b6_matmul_tampi_nanos6 PRIVATE ${MPI_SRC} src/mpi/01.matmul_ompss2_tampi.c)
+    target_sources(b6_matmul_tampi_nanos6 PRIVATE ${MPI_SRC} src/mpi/matmul_ompss2_tampi.c)
     target_link_libraries(b6_matmul_tampi_nanos6
       PRIVATE MPI::MPI_C Tampi::tampi-c CBLAS Nanos6::nanos6)
 
     mk_bench(b6_matmul_itampi_nanos6)
-    target_sources(b6_matmul_itampi_nanos6 PRIVATE ${MPI_SRC} src/mpi/01.matmul_ompss2_tampi.c)
+    target_sources(b6_matmul_itampi_nanos6 PRIVATE ${MPI_SRC} src/mpi/matmul_ompss2_tampi.c)
     target_link_libraries(b6_matmul_itampi_nanos6
       PRIVATE MPI::MPI_C Tampi::tampi-c CBLAS Nanos6::nanos6)
   endif()
 
   if(NODES_FOUND)
     mk_bench(b6_matmul_tampi_nodes)
-    target_sources(b6_matmul_tampi_nodes PRIVATE ${MPI_SRC} src/mpi/01.matmul_ompss2_tampi.c)
+    target_sources(b6_matmul_tampi_nodes PRIVATE ${MPI_SRC} src/mpi/matmul_ompss2_tampi.c)
     target_link_libraries(b6_matmul_tampi_nodes
       PRIVATE MPI::MPI_C Tampi::tampi-c CBLAS Nodes::nodes)
 
     mk_bench(b6_matmul_itampi_nodes)
-    target_sources(b6_matmul_itampi_nodes PRIVATE ${MPI_SRC} src/mpi/02.matmul_ompss2_itampi.c)
+    target_sources(b6_matmul_itampi_nodes PRIVATE ${MPI_SRC} src/mpi/matmul_ompss2_itampi.c)
     target_link_libraries(b6_matmul_itampi_nodes
       PRIVATE MPI::MPI_C Tampi::tampi-c CBLAS Nodes::nodes)
   endif()
 
   if (NOSV_FOUND)
     mk_bench(b6_matmul_tampi_nosv)
-    target_sources(b6_matmul_tampi_nosv PRIVATE ${MPI_SRC} src/mpi/03.matmul_nosv_tampi.c)
+    target_sources(b6_matmul_tampi_nosv PRIVATE ${MPI_SRC} src/mpi/matmul_nosv_tampi.c)
     target_link_libraries(b6_matmul_tampi_nosv
       PRIVATE MPI::MPI_C Tampi::tampi-c CBLAS Nosv::nosv)
   endif()
