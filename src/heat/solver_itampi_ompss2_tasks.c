@@ -18,15 +18,15 @@ mpi_level(void)
 
 static inline void send(const double *data, int nelems, int dst, int tag)
 {
-	#if (TAMPI_VERSION_MAJOR == 4)
+#if (TAMPI_VERSION_MAJOR == 4)
 	TAMPI_Isend(data, nelems, MPI_DOUBLE, dst, tag, MPI_COMM_WORLD);
-	#elif (TAMPI_VERSION_MAJOR == 3)
+#elif (TAMPI_VERSION_MAJOR == 3)
 	MPI_Request request;
 	MPI_Isend(data, nelems, MPI_DOUBLE, dst, tag, MPI_COMM_WORLD, &request);
 	TAMPI_Iwait(&request, MPI_STATUS_IGNORE);
-	#else
+#else
 	#error "TAMPI version not supported for this benchmark"
-	#endif
+#endif
 }
 
 static inline void recv(double *data, int nelems, int src, int tag)
