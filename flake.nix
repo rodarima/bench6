@@ -33,7 +33,7 @@
     packages.pkgs = pkgs;
     packages.x86_64-linux = rec {
       default = bench6;
-      bench6 = pkgs.stdenv.mkDerivation rec {
+      bench6Bare = pkgs.stdenv.mkDerivation rec {
         pname = "bench6";
         version = if self ? shortRev then self.shortRev else "dirty";
 
@@ -52,11 +52,7 @@
           tampi
           tagaspi
           gpi-2
-          openblas
-          openblas.dev
           ovni
-          mkl
-          #blis
         ];
 
         NANOS6_HOME = pkgs.nanos6;
@@ -68,6 +64,19 @@
         hardeningDisable = [ "all" ];
         dontStrip = true;
       };
+
+      bench6Openblas = bench6Bare.overrideAttrs (old: {
+        buildInputs = old.buildInputs ++ (with pkgs; [
+          openblas
+          openblas.dev
+        ]);
+      });
+
+      bench6Mkl = bench6Bare.overrideAttrs (old: {
+        buildInputs = old.buildInputs ++ [ pkgs.mkl ];
+      });
+
+      bench6 = bench6Mkl;
 
       bench6Master = bench6.overrideAttrs (old: {
         src = builtins.fetchGit {
