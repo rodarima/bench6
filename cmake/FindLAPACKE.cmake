@@ -1,7 +1,7 @@
 include(GNUInstallDirs)
 
 if (TARGET MKL::MKL)
-  # If MKL is found, create an alias for CBLAS to MKL::MKL
+  # If MKL is found, create an alias for LAPACKE to MKL::MKL
   target_compile_definitions(MKL::MKL INTERFACE USE_MKL)
   add_library(LAPACKE ALIAS MKL::MKL)
   set(LAPACKE_FOUND TRUE)
