@@ -23,7 +23,7 @@ file(STRINGS "${TAMPI_INCLUDE_DIR}/TAMPI_Decl.h" version-minor-line
   REGEX "#define TAMPI_VERSION_MINOR .*")
 
 if (NOT version-major-line OR NOT version-minor-line)
-  message(FATAL "Cannot find TAMPI version lines")
+  message(FATAL_ERROR "Cannot find TAMPI version lines")
 endif()
 
 string(REGEX REPLACE "^#define[ \t]+TAMPI_VERSION_MAJOR[ \t]+([0-9]+)$" "\\1"
