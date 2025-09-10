@@ -1,19 +1,18 @@
+#include "common/matmul.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdatomic.h>
 #include <mpi.h>
 #include <TAMPI.h>
-#include "utils_mpi.h"
+#include <nosv.h>
 
 #ifdef USE_MKL
 #include <mkl.h>
 #else
 #include <cblas.h>
 #endif
-
-#include "common/matmul.h"
-#include <nosv.h>
 
 #define CHECK_NOSV(...)                                                                \
 do {                                                                               \

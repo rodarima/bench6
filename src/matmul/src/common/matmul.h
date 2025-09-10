@@ -34,5 +34,7 @@ int matmul_check(size_t N, size_t M, size_t TS, double (*A)[M/TS][TS][TS], doubl
 void matmul_solve(size_t N, size_t M, size_t TS, matmul_t *mm, size_t timesteps);
 void matmul_barrier_issue(size_t N, size_t M, size_t TS, matmul_t *matmul);
 void matmul_barrier_notify(void);
+void matmul_init(void);
+void matmul_finish(void);
 
 #endif

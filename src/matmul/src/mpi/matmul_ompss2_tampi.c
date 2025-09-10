@@ -3,7 +3,6 @@
 #include <stdatomic.h>
 #include <mpi.h>
 #include <TAMPI.h>
-#include "utils_mpi.h"
 
 #ifdef USE_MKL
 #include <mkl.h>
@@ -12,13 +11,12 @@
 #endif
 
 #include "common/matmul.h"
-extern int rank, nranks;
 
-void matmul_register(void)
+void matmul_init(void)
 {
 }
 
-void matmul_unregister(void)
+void matmul_finish(void)
 {
 }
 

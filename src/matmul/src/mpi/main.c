@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "utils_mpi.h"
 
 #include "common/matmul.h"
 
