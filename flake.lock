@@ -5,11 +5,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1741357271,
-        "narHash": "sha256-tmCTFMtk+JGUMtZCND9wwIoqxt5ASpEaWkWM5EjLAFI=",
+        "lastModified": 1757679660,
+        "narHash": "sha256-3zCrhxn27eHzM+o1GBSsXF7f4hdBJOsW6kGo3odBG5s=",
         "ref": "refs/heads/master",
-        "rev": "f962816eabd534eafe948499322589921f230e72",
-        "revCount": 958,
+        "rev": "00dfe801f48a54898515e96062f4edd0e8b7568b",
+        "revCount": 983,
         "type": "git",
         "url": "https://git.sr.ht/~rodarima/bscpkgs"
       },
@@ -20,10 +20,10 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1736867362,
-        "narHash": "sha256-i/UJ5I7HoqmFMwZEH6vAvBxOrjjOJNU739lnZnhUln8=",
-        "path": "/nix/store/2csx2kkb2hxyxhhmg2xs9jfyypikwwk6-source",
-        "rev": "9c6b49aeac36e2ed73a8c472f1546f6d9cf1addc",
+        "lastModified": 1752436162,
+        "narHash": "sha256-Kt1UIPi7kZqkSc5HVj6UY5YLHHEzPBkgpNUByuyxtlw=",
+        "path": "/nix/store/zk8v61cpk1wprp9ld5ayc1g5fq4pdkwv-source",
+        "rev": "dfcd5b901dbab46c9c6e80b265648481aafb01f8",
         "type": "path"
       },
       "original": {
