@@ -1,4 +1,4 @@
-add_app_directory(bench6)
+add_subdirectory(bench6)
 add_app_directory(cholesky)
 add_app_directory(fibonacci)
 add_app_directory(heat)
