@@ -3059,8 +3059,11 @@ int main(int argc, char *argv[])
       DumpToVisit(*locDom, opts.numFiles, myRank, numRanks) ;
    }
    
-   if ((myRank == 0) && (opts.quiet == 0)) {
-      VerifyAndWriteFinalOutput(elapsed_timeG, *locDom, opts.nx, numRanks, numThreads);
+   if (myRank == 0) {
+      printf("%e %s\n", elapsed_timeG, BENCH6_NAME);
+      if (opts.quiet == 0) {
+         VerifyAndWriteFinalOutput(elapsed_timeG, *locDom, opts.nx, numRanks, numThreads);
+      }
    }
 
 #if USE_MPI

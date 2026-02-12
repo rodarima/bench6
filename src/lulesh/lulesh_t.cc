@@ -3356,8 +3356,11 @@ numThreads = 1;
         DumpToVisit(*locDom, opts.numFiles, myRank, numRanks) ;
     }
 
-    if ((myRank == 0) && (opts.quiet == 0)) {
-        VerifyAndWriteFinalOutput(elapsed_timeG, *locDom, opts.nx, numRanks, numThreads, opts.num_tasks_ebs, opts.num_tasks_bs, opts.cs);
+    if (myRank == 0) {
+        printf("%e %s\n", elapsed_timeG, BENCH6_NAME);
+        if (opts.quiet == 0) {
+            VerifyAndWriteFinalOutput(elapsed_timeG, *locDom, opts.nx, numRanks, numThreads, opts.num_tasks_ebs, opts.num_tasks_bs, opts.cs);
+        }
     }
 
 #if USE_MPI
