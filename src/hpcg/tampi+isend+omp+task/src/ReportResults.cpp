@@ -324,6 +324,7 @@ void ReportResults(const SparseMatrix & A, int numberOfMgLevels, int numberOfCgS
     doc.get("Benchmark Time Summary")->add("SpMV",times[3]);
     doc.get("Benchmark Time Summary")->add("MG",times[5]);
     doc.get("Benchmark Time Summary")->add("Total",times[0]);
+    printf("%e %s\n", times[0], BENCH6_NAME);
     printf("time %e\n", times[0]);
     printf("iterations %d\n", optMaxIters);
 

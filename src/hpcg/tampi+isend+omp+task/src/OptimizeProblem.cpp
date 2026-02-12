@@ -98,10 +98,10 @@ int OptimizeProblem(
   die_if(numNeighComms <= 0, "Expected --ncomms=<num_neigh_comms> greater than 0");
   int chunk = A.localNumberOfRows/(int)(numBlocks);
   // OptimizeProblem is called one time for each multigrid level.
-  static int level = 0;
-  if (A.geom->rank==0)
-    printf("blocksize %d %lu\n", level, chunk*sizeof(double));
-  level++;
+//  static int level = 0;
+//  if (A.geom->rank==0)
+//    printf("blocksize %d %lu\n", level, chunk*sizeof(double));
+//  level++;
   die_if(!chunk, "chunk == 0");
   die_if(numNeighComms > 1 && A.localNumberOfRows%(A.geom->nx*A.geom->ny), "Using ncomms > 1 expects chunk to be multiple of nx*ny");
 
