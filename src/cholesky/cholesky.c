@@ -102,7 +102,7 @@ int main(int argc, char **argv)
 	performance = performance / duration;
 	performance /= 1000000000;
 
-	printf("%14e %14e %14ld %14ld\n", duration, performance, n, ts);
+	printf("%14e %14e %14ld %14ld %s\n", duration, performance, n, ts, BENCH6_NAME);
 
 	return 0;
 }

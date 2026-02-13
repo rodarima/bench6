@@ -42,8 +42,8 @@ do_run(int run)
 			{}
 		}
 		double t1 = bench6_time();
-		printf("%d,%d,%ld,%e\n",
-				run, d, ntasks, (t1 - t0) / ntasks);
+		printf("%d,%d,%ld,%e,%s\n",
+				run, d, ntasks, (t1 - t0) / ntasks, BENCH6_NAME);
 	}
 }
 
@@ -66,7 +66,7 @@ main(int argc, char *argv[])
 		}
 	}
 
-	printf("%s,%s,%s,%s\n", "run", "ndeps", "ntasks", "time_per_task");
+	printf("%s,%s,%s,%s,%s\n", "run", "ndeps", "ntasks", "time_per_task", "bench_name");
 	for (int run = 0; run < nruns; run++)
 		do_run(run);
 

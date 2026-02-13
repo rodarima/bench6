@@ -48,9 +48,9 @@ do_run(int run)
 
 	#pragma oss taskwait
 	double t1 = bench6_time();
-	printf("%d,%ld,%d,%e,%e\n",
+	printf("%d,%ld,%d,%e,%e,%s\n",
 			run, ntasks, ncpus, (t1 - t0),
-			(t1 - t0) / ((double) ntasks) * ((double) ncpus));
+			(t1 - t0) / ((double) ntasks) * ((double) ncpus), BENCH6_NAME);
 }
 
 int
@@ -74,7 +74,7 @@ main(int argc, char *argv[])
 
 	ncpus = get_ncpus();
 
-	printf("%s,%s,%s,%s,%s\n", "run", "ntasks", "ncpus", "time", "time_per_task_per_cpu");
+	printf("%s,%s,%s,%s,%s,%s\n", "run", "ntasks", "ncpus", "time", "time_per_task_per_cpu", "bench_name");
 	for (int run = 0; run < nruns; run++)
 		do_run(run);
 

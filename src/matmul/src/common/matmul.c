@@ -99,10 +99,11 @@ int matmul_check(size_t N, size_t M, size_t TS, double (*A)[M/TS][TS][TS], doubl
 
 void matmul_report(double t, matmul_conf_t *conf)
 {
-	printf("%14e %zu %zu %zu %zu\n",
+	printf("%14e %zu %zu %zu %zu %s\n",
 			t,
 			conf->n,
 			conf->m,
 			conf->timesteps,
-			conf->ts /* tile size */);
+			conf->ts, /* tile size */
+			BENCH6_NAME);
 }

@@ -192,8 +192,8 @@ int main(int argc, char *argv[])
 //			std::string yaml = doc.generateYAML();
 //			cout << yaml;
 //		}
-		printf("%14e %d %d %d %d %d\n", times[0],
-				nx, ny, nz, max_iter, num_tasks);
+		printf("%14e %d %d %d %d %d %s\n", times[0],
+				nx, ny, nz, max_iter, num_tasks, BENCH6_NAME);
 	}
 
 	// Compute difference between known exact solution and computed solution

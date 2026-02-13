@@ -12,13 +12,10 @@ target_link_libraries(heat_common PUBLIC m heat_kernel)
 
 # --- SMP based ---
 
-add_library(heat_smp_common STATIC main_smp.c)
-target_link_libraries(heat_smp_common PUBLIC heat_common)
-
 macro(mk_heat_smp NAME SOURCE)
   mk_bench(${NAME})
-  target_sources(${NAME} PRIVATE ${SOURCE})
-  target_link_libraries(${NAME} PRIVATE heat_smp_common)
+  target_sources(${NAME} PRIVATE ${SOURCE} main_smp.c)
+  target_link_libraries(${NAME} PUBLIC heat_common)
 endmacro()
 
 # No requisites
@@ -59,12 +56,9 @@ endif()
 if(MPI_FOUND)
   macro(mk_heat_mpi NAME SOURCE)
     mk_bench(${NAME})
-    target_sources(${NAME} PRIVATE ${SOURCE})
-    target_link_libraries(${NAME} PRIVATE heat_mpi_common)
+    target_sources(${NAME} PRIVATE ${SOURCE} main_mpi.c utils_mpi.c)
+    target_link_libraries(${NAME} PUBLIC heat_common MPI::MPI_C)
   endmacro()
-
-  add_library(heat_mpi_common STATIC main_mpi.c utils_mpi.c)
-  target_link_libraries(heat_mpi_common PUBLIC heat_common MPI::MPI_C)
 
   mk_heat_mpi(b6_heat_mpi solver_mpi.c)
   mk_heat_mpi(b6_heat_mpi_nbuffer solver_mpi_nbuffer.c)

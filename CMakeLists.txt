@@ -93,6 +93,7 @@ macro(mk_bench NAME)
     message(FATAL_ERROR "benchmark name must begin with b6_: ${NAME}")
   endif()
   add_executable(${NAME})
+  target_compile_definitions(${NAME} PUBLIC BENCH6_NAME=\"${NAME}\")
 
   get_property(BENCH6_LIST GLOBAL PROPERTY bench6_list)
   #message(STATUS "Before BENCH6_LIST=${BENCH6_LIST}")

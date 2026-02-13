@@ -94,8 +94,8 @@ int main(int argc, char **argv)
 		double t = end - start;
 		//fprintf(stdout, "size, %ld, size/rank, %ld, bs, %ld, ranks, %d, cpus, %d, timesteps, %d, time, %f, Mupdates/s, %f, Gbits/s, %f\n",
 		//		conf.size, conf.size/nranks, conf.bs, nranks, cpus, conf.timesteps, end-start, throughput, bandwidth);
-		printf("%14e %14e %14e %14ld %14ld %14d\n",
-				t, throughput, bandwidth, conf.size, conf.bs, conf.timesteps);
+		printf("%14e %14e %14e %14ld %14ld %14d %s\n",
+				t, throughput, bandwidth, conf.size, conf.bs, conf.timesteps, BENCH6_NAME);
 	}
 
 	finalize(&conf);

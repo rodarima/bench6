@@ -138,7 +138,7 @@ void nbody_stats(const nbody_conf_t *conf, double time)
 {
 	double throughput = nbody_compute_throughput(conf->num_particles, conf->timesteps, time);
 
-	fprintf(stdout, "%14e %14e %8d %8d %8d\n", 
+	fprintf(stdout, "%14e %14e %8d %8d %8d %s\n",
 			time, throughput,
-			conf->num_particles, conf->blocksize, conf->timesteps);
+			conf->num_particles, conf->blocksize, conf->timesteps, BENCH6_NAME);
 }

@@ -79,16 +79,16 @@ int main(int argc, char **argv)
 		int threads = 1;
 #endif
 
-		fprintf(stderr, "%14s %14s %14s %8s %8s %8s %8s %8s %8s\n",
+		fprintf(stderr, "%14s %14s %14s %8s %8s %8s %8s %8s %8s %s\n",
 				"time", "throughput", "error", 
 				"rows", "cols",
 				"rbs", "cbs", "threads",
-				"steps");
-		fprintf(stdout, "%14e %14e %14e %8ld %8ld %8d %8d %8d %8d\n", 
+				"steps", "bench_name");
+		fprintf(stdout, "%14e %14e %14e %8ld %8ld %8d %8d %8d %8d %s\n",
 				end-start, throughput, residual,
 				conf.rows, conf.cols, 
 				conf.rbs, conf.cbs, threads,
-				conf.convergenceTimesteps);
+				conf.convergenceTimesteps, BENCH6_NAME);
 
 	}
 

@@ -589,7 +589,7 @@ int main(int argc, char **argv)
 	double perf = ((pow(n, 2.8074)) / ((double)elapsed/1000000.0))/1000000.0;
 
 	// Print statistics
-	printf("%14e %14e %14d %14d %14d\n", t, perf, reps, n, final_depth);
+	printf("%14e %14e %14d %14d %14d %s\n", t, perf, reps, n, final_depth, BENCH6_NAME);
 
 	// Destroy
 	free(A);

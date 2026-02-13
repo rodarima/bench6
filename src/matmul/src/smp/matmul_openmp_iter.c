@@ -166,7 +166,7 @@ int main(int argc, char* argv[])
 
 	if (validates) {
 	//	printf("N, %lu, M, %lu, P, %lu, block size, %lu, nthreads, %lu, MFlops/s, %f, time (seg), %f\n", N, M, P, TS, nthreads, performance, elapsed_secs);
-		printf("%14e %zu %zu %zu\n", elapsed_secs, N, iterations, TS);
+		printf("%14e %zu %zu %zu %s\n", elapsed_secs, N, iterations, TS, BENCH6_NAME);
 	} else
 		printf("Incorrect result obtained\nExiting.\n");
 

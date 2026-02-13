@@ -68,7 +68,7 @@ main(int argc, char **argv)
 	time_taken = (time_taken + (tend.tv_usec - tstart.tv_usec))*1e-6;
 
 	//    printf("Execution time: %lf\n", time_taken);
-	printf("%14e %ld %ld %d\n", time_taken, BS, SIZE, NTIMES);
+	printf("%14e %ld %ld %d %s\n", time_taken, BS, SIZE, NTIMES, BENCH6_NAME);
 
 	return 0;
 }

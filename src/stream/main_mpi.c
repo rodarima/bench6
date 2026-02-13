@@ -108,7 +108,7 @@ main(int argc, char **argv)
 		free(c);
 		double time_taken = (tend.tv_sec - tstart.tv_sec)*1e6;
 		time_taken = (time_taken + (tend.tv_usec - tstart.tv_usec))*1e-6;
-		printf("%14e %ld %ld %d\n", time_taken, BS, SIZE, NTIMES);
+		printf("%14e %ld %ld %d %s\n", time_taken, BS, SIZE, NTIMES, BENCH6_NAME);
 	}
 
 	MPI_Finalize();

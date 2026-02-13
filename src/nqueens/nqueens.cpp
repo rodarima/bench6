@@ -84,7 +84,7 @@ int main(int argc, char **argv)
 
 	double t = tval_result.tv_sec + 1e-6 * tval_result.tv_usec;
 
-	printf("%14e %14d %14d\n", t, n, count_main);
+	printf("%14e %14d %14d %s\n", t, n, count_main, BENCH6_NAME);
 
 	return 0;
 }

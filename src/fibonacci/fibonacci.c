@@ -133,7 +133,7 @@ int main(int argc, char **argv)
 
 	double t = (double) elapsed / 1000000.0;
 
-	printf("%14e %zu %zu %zu\n", t, size, final_depth, final_result);
+	printf("%14e %zu %zu %zu %s\n", t, size, final_depth, final_result, BENCH6_NAME);
 
 	// Print results
 	//printf("\n");

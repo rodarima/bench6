@@ -110,7 +110,7 @@ int main(int argc, char **argv)
 		performance = performance / duration;
 		performance /= 1000000000;
 
-		printf("%14e %14e %14ld %14ld %14ld\n", duration, performance, n, ts, its);
+		printf("%14e %14e %14ld %14ld %14ld %s\n", duration, performance, n, ts, its, BENCH6_NAME);
 	}
 
 	MPI_Finalize();

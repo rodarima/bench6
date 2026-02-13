@@ -36,10 +36,10 @@ int main(int argc, char **argv)
 //			"time", "updates/s", "rel. error", 
 //			"rows", "cols",
 //			"rbs", "cbs", "iters");
-	fprintf(stdout, "%14e %14e %14e %8ld %8ld %8d %8d %8ld\n", 
+	fprintf(stdout, "%14e %14e %14e %8ld %8ld %8d %8d %8ld %s\n",
 			delta_time, throughput, residual,
 			conf.rows, conf.cols, 
-			conf.rbs, conf.cbs, niter);
+			conf.rbs, conf.cbs, niter, BENCH6_NAME);
 
 	if (conf.generateImage)
 		writeImage(conf.imageFileName, conf.matrix, rows, cols);

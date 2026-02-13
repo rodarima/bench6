@@ -99,11 +99,11 @@ do_run(int run)
 	if (run < 0)
 		return;
 
-	printf("%d,%ld,%d,%.3f,%e,%e\n",
+	printf("%d,%ld,%d,%.3f,%e,%e,%s\n",
 			run, ntasks_per_cpu,
 			ncpus, size_per_cpu_ns,
 			(t1 - t0) * 1e3,
-			(t1 - t0) * 1e9 / ntasks_per_cpu / ncpus);
+			(t1 - t0) * 1e9 / ntasks_per_cpu / ncpus, BENCH6_NAME);
 }
 
 static void
@@ -193,7 +193,7 @@ main(int argc, char *argv[])
 
 	ncpus = get_ncpus();
 
-	printf("%s,%s,%s,%s,%s,%s\n", "run", "ntasks_per_cpu", "ncpus", "size_per_cpu_ns", "time_ms", "avg_serve_time_ns");
+	printf("%s,%s,%s,%s,%s,%s,%s\n", "run", "ntasks_per_cpu", "ncpus", "size_per_cpu_ns", "time_ms", "avg_serve_time_ns", "bench_name");
 	do_warmup();
 
 	for (int run = 0; run < nruns; run++)
