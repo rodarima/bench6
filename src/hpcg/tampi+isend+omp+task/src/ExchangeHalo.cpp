@@ -79,7 +79,7 @@ void ExchangeHalo(const SparseMatrix & A, Vector & x, int numNeighComms) {
                        depend(out: sendBuffer[0] )
       {
         for (local_int_t i=0; i<size; i++) sendBuffer[i] = xv[elementsToSend[i]];
-#if (TAMPI_VERSION_MAJOR < 4)
+#if !defined(TAMPI_VERSION_MAJOR) || (TAMPI_VERSION_MAJOR < 4)
         MPI_Request request;
         MPI_Isend(sendBuffer, size, MPI_DOUBLE, neighbors[k], MPI_MY_TAG + n_exchange*numNeighComms + extraBlockIdx, MPI_COMM_WORLD, &request);
         TAMPI_Iwaitall(1, &request, MPI_STATUSES_IGNORE);
@@ -108,7 +108,7 @@ void ExchangeHalo(const SparseMatrix & A, Vector & x, int numNeighComms) {
 
       #pragma omp task firstprivate(n_exchange) depend(out: x_external[0] )
       {
-#if (TAMPI_VERSION_MAJOR < 4)
+#if !defined(TAMPI_VERSION_MAJOR) || (TAMPI_VERSION_MAJOR < 4)
         MPI_Request request;
         MPI_Irecv(x_external, size, MPI_DOUBLE, neighbors[k], MPI_MY_TAG + n_exchange*numNeighComms + extraBlockIdx, MPI_COMM_WORLD, &request);
         TAMPI_Iwaitall(1, &request, MPI_STATUSES_IGNORE);

@@ -18,12 +18,28 @@ summary(void)
 
 static inline void send(const double *data, int nelems, int dst, int tag)
 {
+#if !defined(TAMPI_VERSION_MAJOR) || (TAMPI_VERSION_MAJOR == 3)
+	MPI_Request request;
+	MPI_Isend(data, nelems, MPI_DOUBLE, dst, tag, MPI_COMM_WORLD, &request);
+	TAMPI_Iwait(&request, MPI_STATUS_IGNORE);
+#elif (TAMPI_VERSION_MAJOR == 4)
 	TAMPI_Isend(data, nelems, MPI_DOUBLE, dst, tag, MPI_COMM_WORLD);
+#else
+	#error "TAMPI version not supported for this benchmark"
+#endif
 }
 
 static inline void recv(double *data, int nelems, int src, int tag)
 {
+#if !defined(TAMPI_VERSION_MAJOR) || (TAMPI_VERSION_MAJOR == 3)
+	MPI_Request request;
+	MPI_Irecv(data, nelems, MPI_DOUBLE, src, tag, MPI_COMM_WORLD, &request);
+	TAMPI_Iwait(&request, MPI_STATUS_IGNORE);
+#elif (TAMPI_VERSION_MAJOR == 4)
 	TAMPI_Irecv(data, nelems, MPI_DOUBLE, src, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+#else
+	#error "TAMPI version not supported for this benchmark"
+#endif
 }
 
 static inline void gaussSeidelSolver(int64_t rows, int64_t cols, int rbs, int cbs, int nrb, int ncb, double M[rows][cols], char reps[nrb][ncb])

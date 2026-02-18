@@ -30,7 +30,7 @@ static void matmul(size_t TS, double (*A)[TS], double (*B)[TS],
 
 static void tampi_sendrecv(const void *sendbuff, int dst, void *recvbuff, int src, size_t size, int tag)
 {
-#if (TAMPI_VERSION_MAJOR == 3)
+#if !defined(TAMPI_VERSION_MAJOR) || (TAMPI_VERSION_MAJOR == 3)
 	MPI_Request requests[2];
 	MPI_Isend(sendbuff, size, MPI_BYTE, dst, tag, MPI_COMM_WORLD, &requests[0]);
 	MPI_Irecv(recvbuff, size, MPI_BYTE, src, tag, MPI_COMM_WORLD, &requests[1]);
