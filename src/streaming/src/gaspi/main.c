@@ -10,8 +10,10 @@
 #include <TAGASPI.h>
 #endif
 
-#ifdef _OMPSS_2
+#ifdef _OMPSS_2_NANOS6
 #include <nanos6/debug.h>
+#elif defined(_OMPSS_2_NODES)
+#include <nodes/debug.h>
 #endif
 
 gaspi_rank_t rank;

@@ -5,7 +5,7 @@ if(NANOS6_FOUND)
   target_sources(b6_lulesh_nanos6_task PRIVATE ${COMMON}
     lulesh-init.cc lulesh-comm.cc lulesh_t.cc)
   target_compile_definitions(b6_lulesh_nanos6_task
-    PRIVATE "USE_MPI=0" "NANOS6_RUNTIME")
+    PRIVATE "USE_MPI=0")
   target_link_libraries(b6_lulesh_nanos6_task
     PRIVATE Nanos6::nanos6)
 endif()

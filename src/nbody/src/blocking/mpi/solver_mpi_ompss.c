@@ -14,7 +14,12 @@
 #include <string.h>
 
 #include <mpi.h>
+
+#ifdef _OMPSS_2_NANOS6
 #include <nanos6/debug.h>
+#elif defined(_OMPSS_2_NODES)
+#include <nodes/debug.h>
+#endif
 
 static void calculate_forces(forces_block_t *forces, const particles_block_t *block1, const particles_block_t *block2, const int num_blocks);
 static void update_particles(particles_block_t *particles, forces_block_t *forces, const int num_blocks, const float time_interval);

@@ -6,12 +6,10 @@
 #include <omp.h>
 #endif
 
-#if _OMPSS_2
-#ifdef NANOS6_RUNTIME
+#ifdef _OMPSS_2_NANOS6
 #include <nanos6.h>
-#else
+#elif defined(_OMPSS_2_NODES)
 #include <nodes.h>
-#endif
 #endif
 
 #include <stdio.h>

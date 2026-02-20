@@ -13,8 +13,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <nanos6/debug.h>
-
 static void calculate_forces(forces_block_t *forces, const particles_block_t *particles, const int num_blocks);
 static void update_particles(particles_block_t *particles, forces_block_t *forces, const int num_blocks, const float time_interval);
 static void calculate_forces_block(forces_block_t *forces, const particles_block_t *block1, const particles_block_t *block2);
