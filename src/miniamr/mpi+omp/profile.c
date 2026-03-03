@@ -49,9 +49,8 @@ void profile(void)
    total_gflops = total_fp_ops/(average[38]*1024.0*1024.0*1024.0);
    gflops_rank = total_gflops/((double) num_pes);
 
-   printf("%14e %14e %s\n", average[0], gflops_rank, BENCH6_NAME);
-
    if (!my_pe) {
+      printf("%14e %14e %s\n", average[0], gflops_rank, BENCH6_NAME);
       if (report_perf & 1) {
          fp = fopen("results.yaml", "w");
          fprintf(fp, "code: miniAMR\n");

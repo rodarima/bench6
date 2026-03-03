@@ -58,6 +58,7 @@ void profile(void)
    num_cpus = omp_get_max_threads();
 
    if (!my_pe) {
+      printf("%14e %14e %s\n", average[0], gflops_rank, BENCH6_NAME);
       if (report_perf & 1) {
          fp = fopen("results.yaml", "w");
          fprintf(fp, "code: miniAMR\n");
