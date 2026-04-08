@@ -79,6 +79,7 @@ if(MPI_FOUND)
     endmacro()
     mk_heat_mpi_nodes(b6_heat_mpi_nodes_forkjoin solver_mpi_ompss2_forkjoin.c)
     mk_heat_mpi_nodes(b6_heat_mpi_nodes_tasks solver_mpi_ompss2_tasks.c)
+    mk_heat_mpi_nodes(b6_heat_mpi_nodes_taskloop solver_mpi_ompss2_taskloop.c)
   endif()
 
   if(OPENMP_FOUND)
