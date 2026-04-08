@@ -3,7 +3,7 @@
 const char *
 summary(void)
 {
-	return "Parallel version using OmpSs-2 tasklook";
+	return "Parallel version using OmpSs-2 taskloop";
 }
 
 static inline void gaussSeidelSolver(int64_t rows, int64_t cols, int rbs, int cbs, int nrb, int ncb, double M[rows][cols], char reps[nrb][ncb])
