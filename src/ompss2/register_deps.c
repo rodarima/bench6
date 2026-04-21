@@ -16,7 +16,7 @@ static long ntasks = 100;
 static int
 usage(char *argv[])
 {
-	fprintf(stderr, "Bench6: A set of Nanos6 micro-benchmarks\n");
+	fprintf(stderr, "Bench6: A set of OmpSs-2 micro-benchmarks\n");
 	fprintf(stderr, "Usage: %s [-r NRUNS] [-t NTASKS]\n", argv[0]);
 	fprintf(stderr, "\n");
 	fprintf(stderr,

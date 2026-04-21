@@ -3,7 +3,14 @@
 
 #include "bench6.h"
 
+#ifdef _OMPSS_2_NANOS6
 #include <nanos6.h>
+#include <nanos6/debug.h>
+#elif defined(_OMPSS_2_NODES)
+#include <nodes.h>
+#include <nodes/debug.h>
+#endif
+
 #include <stdatomic.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -87,7 +94,7 @@ main(int argc, char *argv[])
 		}
 	}
 
-	ncpus = get_ncpus();
+	ncpus = nanos6_get_num_cpus();
 
 	handle = calloc(ntasks, sizeof(void *));
 

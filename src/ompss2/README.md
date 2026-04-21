@@ -1,4 +1,4 @@
-This directory contains a set of microbenchmarks for Nanos6,
+This directory contains a set of microbenchmarks for OmpSs-2 runtimes,
 specifically target to expose the limitations of the runtime following
 the breakdown analysis.
 

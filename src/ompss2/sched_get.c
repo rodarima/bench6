@@ -3,6 +3,14 @@
 
 #include "bench6.h"
 
+#ifdef _OMPSS_2_NANOS6
+#include <nanos6.h>
+#include <nanos6/debug.h>
+#elif defined(_OMPSS_2_NODES)
+#include <nodes.h>
+#include <nodes/debug.h>
+#endif
+
 #include <stdio.h>
 #include <stdatomic.h>
 #include <stdlib.h>
@@ -72,7 +80,7 @@ main(int argc, char *argv[])
 		}
 	}
 
-	ncpus = get_ncpus();
+	ncpus = nanos6_get_num_cpus();
 
 	printf("%s,%s,%s,%s,%s,%s\n", "run", "ntasks", "ncpus", "time", "time_per_task_per_cpu", "bench_name");
 	for (int run = 0; run < nruns; run++)
