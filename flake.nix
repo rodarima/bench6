@@ -2,11 +2,10 @@
   description = "bench6";
   nixConfig.bash-prompt = "\[nix-develop\]$ ";
 
-  inputs.bscpkgs.url = "git+https://git.sr.ht/~rodarima/bscpkgs";
-  #inputs.jungle.url = "git+https://git.sr.ht/~rodarima/jungle";
-  #inputs.jungle.inputs.bscpkgs.follow = "bscpkgs";
+  inputs.jungle.url = "git+https://jungle.bsc.es/git/rarias/jungle";
+  #inputs.jungle.url = "git+https://git.sr.ht/~rodarima/jungle"; # Mirror
 
-  outputs = { self, bscpkgs, ... }:
+  outputs = { self, jungle, ... }:
   let
     #targetMachine = jungle.outputs.nixosConfigurations.hut;
     #pkgs = targetMachine.pkgs;
@@ -14,9 +13,9 @@
     bench6Overlay = final: prev: {
       mpi = prev.mpich;
     };
-    pkgs = import bscpkgs.inputs.nixpkgs {
+    pkgs = import jungle.inputs.nixpkgs {
       system = "x86_64-linux";
-      overlays = [ bscpkgs.bscOverlay bench6Overlay ];
+      overlays = [ jungle.bscOverlay bench6Overlay ];
       config.allowUnfree = true;
     };
   in {
