@@ -29,6 +29,18 @@
       bench6 = self.outputs.packages.x86_64-linux.bench6;
       bench6src = self.outputs.packages.x86_64-linux.bench6.src;
     };
+
+    devShells.x86_64-linux.plot = pkgs.mkShell {
+      name = "R";
+      buildInputs = [
+        (pkgs.rWrapper.override {
+          packages = with pkgs.rPackages; [
+            tidyverse rjson jsonlite egg
+          ];
+        })
+      ];
+    };
+
     packages.pkgs = pkgs;
     packages.x86_64-linux = rec {
       default = bench6;
