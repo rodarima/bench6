@@ -32,6 +32,7 @@
 
     devShells.x86_64-linux.plot = pkgs.mkShell {
       name = "R";
+      inherit self;
       buildInputs = [
         (pkgs.rWrapper.override {
           packages = with pkgs.rPackages; [

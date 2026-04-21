@@ -12,3 +12,13 @@ test:ci:
     - nix
   script:
     - test/ci.sh
+
+plot:ci:
+  stage: test
+  tags:
+    - nix
+  script:
+    - test/plot.sh
+  artifacts:
+    paths:
+      - test/data/miniapps.csv.png
