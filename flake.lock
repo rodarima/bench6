@@ -1,39 +1,42 @@
 {
   "nodes": {
-    "bscpkgs": {
+    "jungle": {
       "inputs": {
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1757679660,
-        "narHash": "sha256-3zCrhxn27eHzM+o1GBSsXF7f4hdBJOsW6kGo3odBG5s=",
+        "lastModified": 1776353666,
+        "narHash": "sha256-DhwH/xQWx/G3KAPGIWjz6Cz1k8e7YacHunN7ETJCiPg=",
         "ref": "refs/heads/master",
-        "rev": "00dfe801f48a54898515e96062f4edd0e8b7568b",
-        "revCount": 983,
+        "rev": "6ee4fbf82406ac933e735475310c3577a29f080f",
+        "revCount": 1655,
         "type": "git",
-        "url": "https://git.sr.ht/~rodarima/bscpkgs"
+        "url": "https://jungle.bsc.es/git/rarias/jungle"
       },
       "original": {
         "type": "git",
-        "url": "https://git.sr.ht/~rodarima/bscpkgs"
+        "url": "https://jungle.bsc.es/git/rarias/jungle"
       }
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1752436162,
-        "narHash": "sha256-Kt1UIPi7kZqkSc5HVj6UY5YLHHEzPBkgpNUByuyxtlw=",
-        "path": "/nix/store/zk8v61cpk1wprp9ld5ayc1g5fq4pdkwv-source",
-        "rev": "dfcd5b901dbab46c9c6e80b265648481aafb01f8",
-        "type": "path"
+        "lastModified": 1775595990,
+        "narHash": "sha256-OEf7YqhF9IjJFYZJyuhAypgU+VsRB5lD4DuiMws5Ltc=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "4e92bbcdb030f3b4782be4751dc08e6b6cb6ccf2",
+        "type": "github"
       },
       "original": {
-        "id": "nixpkgs",
-        "type": "indirect"
+        "owner": "NixOS",
+        "ref": "nixos-25.11",
+        "repo": "nixpkgs",
+        "type": "github"
       }
     },
     "root": {
       "inputs": {
-        "bscpkgs": "bscpkgs"
+        "jungle": "jungle"
       }
     }
   },
