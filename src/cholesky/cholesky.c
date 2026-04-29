@@ -37,20 +37,31 @@ static void cholesky(long N, long TS, double (*A)[N/TS][TS][TS])
 	#pragma oss taskwait
 }
 
-static void initialize(long N, long TS, double (*a)[N/TS][TS][TS])
+static void init_tile(long N, long TS, double (*a)[N/TS][TS][TS], long i0, long j0)
 {
-	for (long i=0; i < N; i++) {
-		for (long j=0; j < N; j++) {
-			// Generate a value that makes the matrix symmetric positive definite
-			double value = (((i+j) % PRIME1) + 1) * (((i+j) % PRIME2) + 1);
-			if (i == j) {
+	for (long i = i0; i < i0 + TS; i++) {
+		for (long j = j0; j < j0 + TS; j++) {
+			/* Generate a value that makes the matrix symmetric
+			 * positive definite */
+			long diag = i+j;
+			double value = ((diag % PRIME1) + 1) * ((diag % PRIME2) + 1);
+			if (i == j)
 				value += PRIME1 * PRIME2;
-			}
 
-			// Tiled layout
+			/* Tiled layout */
 			a[i/TS][j/TS][i%TS][j%TS] = value;
 		}
 	}
+}
+
+static void initialize(long N, long TS, double (*a)[N/TS][TS][TS])
+{
+	for (long i = 0; i < N; i += TS)
+		for (long j = 0; j < N; j += TS)
+			#pragma oss task label("init_tile")
+			init_tile(N, TS, a, i, j);
+
+	#pragma oss taskwait
 }
 
 int main(int argc, char **argv)
