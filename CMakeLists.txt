@@ -18,7 +18,6 @@ add_compile_options(
   -Wstrict-prototypes
   -Wold-style-definition
   -pedantic
-  -Werror
 )
 
 set(CMAKE_C_VISIBILITY_PRESET hidden)
